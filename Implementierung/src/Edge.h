@@ -5,37 +5,64 @@
 #include <utility>
 #include "main.h"
 
-class Edge {
+
+class Car;
+class Vertex;
+
+class Edge : SubjectEdge {
 
 	private:
 
-		//Kapazi‰t bei leerer Starﬂe
-		int baseCapacity;
+		//L‰nge der Straﬂe
+		float _LENGTH;
 
-		//Kapazit‰t der Straﬂe
-		int currentCapacity;
+		//Anzahl der Autos in der Queue
+		int carQueueCounter;
+
+		//Maximale Kapazit‰t der Queue
+		int _carQueueCapacity;
 
 		//Queue in der die Autos gespeichert werden.
 		std::queue<Car*> carQueue;
 
-		//L‰nge der Straﬂe
-		const float _LENGTH;
-
 		//Timetable in dem die Gewichte f¸r jeden Zeitabschnitt gespeichert werden.
-		int* timetable[_LENGTH * _CAR_SPEED]; 
-		
-		//Kreuzungen an denen die Straﬂe liegt.
-		std::pair <Intersection, Intersection> nodes;
+		int timetable[10];
 
 	public:
 		//Constructor
-		Edge(float length, );
+		Edge(float length, int capacity, int id);
 
-		//Observer Pattern
-		void notify();
+		Vertex* vertex;
 
-		void addCar();
+		//Adds and removes vertex the edge is pointing to
+		void addVertex(Vertex * vertex);
+		void removeVertex(Vertex * vertex);
 
-		void removeCar();
+		//Adds and remove weights on timetable at specified time
+		void addWeightTimetable(int time, int weight);
+		void removeWeightTimetable(int time, int weight);
+
+		//Pusht car auf queue
+		void pushCar(Car *car);
+
+		//Entfernt car von queue
+		Car * popCar();
+
+		//Gibt Auto an erster Stelle in Queue aus
+		Car * getFirstCar();
+
+		//Checkt ob Edge voll ist
+		bool isFull();
+
+		void printCars();
+
+		//Id
+		int _ID;
+
+		virtual void registerObserver(ObserverVertex * obs) {};
+		virtual void removeObserver(ObserverVertex * obs) {};
+
+		//Notifies attached Vertex that car has reached position 0
+		virtual void notifyVertex(Car* car) {};
 
 };

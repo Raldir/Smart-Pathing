@@ -1,57 +1,103 @@
-#include "Edge.h"
 #include <iostream>
 #include <queue>
 #include <utility>
+#include "ObserverPattern.h"
+#include "Vertex.h"
+#include "Car.h"
+#include "Edge.h"
 
-void Edge::Edge(float length) {
-	_LENGTH = length;
+Edge::Edge(float length, int capacity, int id) {
+	
+	this->_LENGTH = length;
+
+	_carQueueCapacity = capacity;
+
+	_ID = id;
+
+
+	//TODO Initalize timetable correctly
+	//int timetable[_SIMULATION_TIME];
 }
 
+
+//TODO Timetable stuff
 /**
 Adds weight to the timetable at specified time
 */
-void Edge::addWeight(int time, int weight) {
-
+void Edge::addWeightTimetable(int time, int weight) {
+	
+	//Add weight to timetable
+	//timetable[time] += weight;
 }
 
-/**
-	Puts car into queue
-*/
-void Edge::addCar(Car* car) {
-	carQueue.push(*car);
+void Edge::removeWeightTimetable(int time, int weight) {
+	
+	//Remove weight by using add function
+	//Edge::addWeightTimetable(time, weight * -1);
+	
 }
 
 ///<summary>
 ///Removes first car from queue
 ///</summary>
-void Edge::removeCar() {
+Car * Edge::popCar() {
 
 	//Save pointer for car in front of queue
-	Car* car = carQueue.front();
+	Car * carPtr = carQueue.front();
 
 	//Remove car from queue
 	carQueue.pop();
+
+	return carPtr;
 }
+
+void Edge::pushCar(Car * car) {
+
+	carQueue.push(car);
+}
+
+Car * Edge::getFirstCar() {
+	
+	return carQueue.front();
+}
+
+///<summary>
+///
+///</summary>
+bool Edge::isFull() {
+
+	return carQueue.size() >= _carQueueCapacity;
+}
+
+void Edge::addVertex(Vertex * vertex) {
+	this->vertex = vertex;
+}
+
+void Edge::removeVertex(Vertex * vertex) {
+	//TODO gucken wie geht nullpointer
+	//vertex = NULL;
+}
+
 
 ///<summary>
 ///Notifies obversers
 ///</summary>
-void Edge::notify() {
-
+void Edge::notifyVertex(Car* car) {
+	//Gives 
+	obs->TakeCar(this, car);
 }
 
-class TrafficLight {
+void Edge::printCars() {
 
-	void toggle() {
+	std::queue<Car*> q = carQueue;
 
-	}
-};
+	 do {
+		std::cout << "Car" << getFirstCar()->_ID << "\n";
+		q.pop();
+	 } while(!q.empty());
+}
 
-class Intersection {
-
-};
-
-class Car {
-
-};
+int Edge::getObserver() {
+	return obs->_ID;
+}
 
