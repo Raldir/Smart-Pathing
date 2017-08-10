@@ -4,65 +4,64 @@
 #include <queue>
 #include <utility>
 #include "main.h"
+#include "ObserverPattern.h"
 
 
 class Car;
 class Vertex;
-class ObserverVertex;
 
 class Edge : SubjectEdge {
 
-	private:
+public:
+	//Constructor
+	Edge(float length, int capacity, int id);
 
-		//Länge der Straße
-		float _LENGTH;
+	//
+	float getLength();
 
-		//Anzahl der Autos in der Queue
-		int carQueueCounter;
+	//Adds and remove weights on timetable at specified time
+	void addWeightTimetable(int time, int weight);
+	void removeWeightTimetable(int time, int weight);
 
-		//Maximale Kapazität der Queue
-		int _carQueueCapacity;
+	//Pusht car auf queue
+	void pushCar(Car *car);
 
-		//Queue in der die Autos gespeichert werden.
-		std::queue<Car*> carQueue;
+	//Entfernt car von queue
+	Car * popCar();
 
-		//Timetable in dem die Gewichte für jeden Zeitabschnitt gespeichert werden.
-		int timetable[10];
+	//Gibt Auto an erster Stelle in Queue aus
+	Car * getFrontCar();
 
-	public:
-		//Constructor
-		Edge(float length, int capacity, int id);
+	//Checkt ob Edge voll ist
+	bool isFull();
 
-		//Adds and removes vertex the edge is pointing to
-		virtual void registerObserver(ObserverVertex * vertex);
-		virtual void removeObserver(ObserverVertex * obs);
+	void printCars();
 
-		//Adds and remove weights on timetable at specified time
-		void addWeightTimetable(int time, int weight);
-		void removeWeightTimetable(int time, int weight);
+	virtual void registerObserver(ObserverVertex * obs) override;
+	virtual void removeObserver(ObserverVertex * obs) override;
 
-		//Pusht car auf queue
-		void pushCar(Car *car);
+	//Notifies attached Vertex that car has reached position 0
+	virtual void notifyVertex(Car* car) override;
 
-		//Entfernt car von queue
-		Car * popCar();
+	virtual int getObserver() override;
 
-		//Gibt Auto an erster Stelle in Queue aus
-		Car * getFirstCar();
+private:
 
-		//Checkt ob Edge voll ist
-		bool isFull();
+	//Länge der Straße
+	float _LENGTH;
 
-		void printCars();
+	//Id
+	int _ID;
 
-		//Id
-		int _ID;
+	//Anzahl der Autos in der Queue
+	int carQueueCounter;
 
-		virtual void registerObserver(ObserverVertex * obs) {};
-		virtual void removeObserver(ObserverVertex * obs) {};
+	//Maximale Kapazität der Queue
+	int _carQueueCapacity;
 
-		//Notifies attached Vertex that car has reached position 0
-		virtual void notifyVertex(Car* car);
+	//Queue in der die Autos gespeichert werden.
+	std::queue<Car*> carQueue;
 
-		virtual int getObserver();
+	//Timetable in dem die Gewichte für jeden Zeitabschnitt gespeichert werden.
+	int timetable[10];
 };

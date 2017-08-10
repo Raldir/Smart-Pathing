@@ -6,9 +6,7 @@
 #include "Car.h"
 #include "Edge.h"
 
-Edge::Edge(float length, int capacity, int id) {
-	
-	this->_LENGTH = length;
+Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 
 	_carQueueCapacity = capacity;
 
@@ -19,23 +17,31 @@ Edge::Edge(float length, int capacity, int id) {
 	//int timetable[_SIMULATION_TIME];
 }
 
+/*
+###### TIMETABLE
+*/
+
 
 //TODO Timetable stuff
 /**
 Adds weight to the timetable at specified time
 */
 void Edge::addWeightTimetable(int time, int weight) {
-	
+
 	//Add weight to timetable
 	//timetable[time] += weight;
 }
 
 void Edge::removeWeightTimetable(int time, int weight) {
-	
+
 	//Remove weight by using add function
 	//Edge::addWeightTimetable(time, weight * -1);
-	
+
 }
+
+/*
+###### QUEUE
+*/
 
 ///<summary>
 ///Removes first car from queue
@@ -56,8 +62,8 @@ void Edge::pushCar(Car * car) {
 	carQueue.push(car);
 }
 
-Car * Edge::getFirstCar() {
-	
+Car * Edge::getFrontCar() {
+
 	return carQueue.front();
 }
 
@@ -69,6 +75,22 @@ bool Edge::isFull() {
 	return carQueue.size() >= _carQueueCapacity;
 }
 
+void Edge::printCars() {
+
+	std::queue<Car*> q = carQueue;
+
+	//Iterate through queue and printing cars
+	do {
+		std::cout << "Car" << getFrontCar()->getID() << "\n";
+		q.pop();
+	} while (!q.empty());
+}
+
+
+/*
+###### OBSERVER
+*/
+
 void Edge::registerObserver(ObserverVertex * vertex) {
 	this->vertex = vertex;
 }
@@ -78,23 +100,12 @@ void Edge::removeObserver(ObserverVertex * vertex) {
 	//vertex = NULL;
 }
 
-
 ///<summary>
 ///Notifies obversers
 ///</summary>
 void Edge::notifyVertex(Car* car) {
 	//Gives 
 	vertex->TakeCar(this, car);
-}
-
-void Edge::printCars() {
-
-	std::queue<Car*> q = carQueue;
-
-	 do {
-		std::cout << "Car" << getFirstCar()->_ID << "\n";
-		q.pop();
-	 } while(!q.empty());
 }
 
 int Edge::getObserver() {

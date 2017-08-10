@@ -23,11 +23,11 @@ protected:
 	ObserverVertex* vertex;
 
 public:
-	virtual void registerObserver(ObserverVertex * obs) = 0;
-	virtual void removeObserver(ObserverVertex * obs) = 0;
+	virtual void registerObserver(ObserverVertex * obs) {};
+	virtual void removeObserver(ObserverVertex * obs) {};
 	
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVertex(Car* car) = 0;
+	virtual void notifyVertex(Car* car) {};
 
-	virtual int getObserver() = 0;
+	virtual int getObserver() { return 0; };
 };

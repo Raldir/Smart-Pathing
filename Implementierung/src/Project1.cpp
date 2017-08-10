@@ -5,8 +5,9 @@
 #include "Vertex.h"
 #include "Car.h"
 
+
 int main() {
-	
+
 	std::cout << "Hello";
 
 	Car car(45);
@@ -16,11 +17,11 @@ int main() {
 
 	Edge edge(10, 10, 12);
 	Edge * edgePtr;
-	
+
 	//Assign Pointer to edge
 	edgePtr = &edge;
-	
-	Vertex vertex(89);
+
+	Vertex vertex(3000);
 	Vertex * vertexPtr;
 
 	vertexPtr = &vertex;
@@ -30,13 +31,6 @@ int main() {
 	vertexPtr->printEdges();
 
 	edgePtr->pushCar(carPtr);
-	edgePtr->pushCar(carPtr);
-	edgePtr->pushCar(carPtr);
-	edgePtr->pushCar(carPtr);
-
-	edgePtr->printCars();
-
-	std::cout << vertexPtr->getId();
 
 	system("PAUSE");
 

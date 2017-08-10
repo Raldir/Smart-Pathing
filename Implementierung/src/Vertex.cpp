@@ -9,37 +9,45 @@
 */
 Vertex::Vertex(int id) : _ID(id) {
 
+}
+
+/*
+###### CARSTUFF
+*/
+
+void Vertex::transferCar(Car * car, std::pair<Edge*, Edge*> edges)
+{
+	//TODO Transfers car
+}
+
+/*
+###### EDGESTUFF
+*/
+
+//Adds pointer of incoming edge to Vector
+void Vertex::addIncomingEdges(Edge* edge) {
+	incomingEdges.push_back(edge);
+}
+
+//Adds Pointer of outgoing edge to Vector
+void Vertex::addOutgoingEdges(Edge* edge) {
+	outgoingEdges.push_back(edge);
+}
+
+/*void Vertex::update(Edge *edge, Car *car) {
+
+}*/
+
+void Vertex::printEdges() {
+	for (Edge* e : incomingEdges) {
+		std::cout << e->_ID;
 	}
+}
 
+int Vertex::getId() {
+	return _ID;
+}
 
-	void Vertex::transferCar(Car * car, std::pair<Edge*, Edge*> edges)
-	{
-		//TODO Transfers car
-	}
+void TakeCar(Edge* edge, Car* car) {
 
-	void Vertex::addIncomingEdges(Edge* edge) {
-		//TODO!!!
-		incomingEdges.push_back(edge);
-	}
-
-	void Vertex::addOutgoingEdges(Edge* edge) {
-
-	}
-
-	/*void Vertex::update(Edge *edge, Car *car) {
-
-	}*/
-	
-	void Vertex::printEdges() {
-		for (Edge* e : incomingEdges) {
-			std::cout << e->_ID;
-		}
-	}
-
-	int Vertex::getId() {
-		return _ID;
-	}
-
-	void TakeCar(Edge* edge, Car* car) {
-
-	}
+}
