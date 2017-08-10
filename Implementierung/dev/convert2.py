@@ -5,6 +5,18 @@ Partly use of the code of Brandon Martin-Anderson under the BSD License http://g
 import xml.sax
 import copy
 
+def twopointWays(i, size, file, nodes, edge):
+    if size > 2:
+        nodes = nodes + [edge.nds[i]] + [edge.nds[i+1]]
+        file.write(edge.nds[i] + " " + edge.nds[i + 1] + '\n')
+        return nodes + twopointWays(i + 1, size - 1, file, nodes, edge)
+    else:
+        nodes = nodes + [edge.nds[i]] + [edge.nds[i+1]]
+        file.write(edge.nds[i] + " " + edge.nds[i + 1])
+        file.write('\n')
+        #print(nodes)
+        return nodes
+
 def read_osm(filename_or_stream, only_roads=True):
     "TODO Nomalisiere Koordinaten der Nodes"
     osm = OSM(filename_or_stream)
@@ -14,19 +26,43 @@ def read_osm(filename_or_stream, only_roads=True):
     for key, edge in osm.ways.items():
         if only_roads and 'highway' not in edge.tags:
             continue
-        for i in range (0, len(edge.nds)):
-            print(i)
-            if i == 0 or i == len(edge.nds) - 1:
-                nodes = nodes + [edge.nds[i]]
-                f.write(edge.nds[i] + " ")
-        f.write('\n')
+        nodes  = nodes + twopointWays(0, len(edge.nds), f, [], edge)
+        
+
+            #print(i)
+            #if i == 0 or i == len(edge.nds) - 1:
+            #nodes = nodes + [edge.nds[i]]
+            #f.write(edge.nds[i] + " ")
+        #f.write('\n')
     f.close()
+    #values = positions(osm.nodes, nodes)
     f = open('nodes', 'w')
     for key, node in osm.nodes.items():
-        print(node.id)
+        #print(node.id)
         if node.id in nodes:
-            f.write(node.id + " " + str(node.x) + " " + str(node.y) + '\n')
+            f.write(node.id + " " + str(node.x * 1000) + " " + str(node.y * 1000) + '\n')
     f.close()
+
+"""
+def positions(allnodes, nodes):
+    meanX = 0
+    meanY = 0
+    varX = 0
+    varY = 0
+    for key, node in allnodes.items():
+        if(node.id in nodes):
+            meanX += node.x
+            meanY += node.y
+    meanX /= len(nodes)
+    meanY /= len(nodes)
+    for key, node in allnodes.items():
+        if(node.id in nodes):
+            varX += (node.x - meanX)**2
+            varY += (node.y - meanY)**2
+    varX /= len(nodes)
+    varY /= len(nodes)
+    return [meanX, meanY, varX, varY]
+"""
 
 class Node:
     def __init__(self, id, x, y):

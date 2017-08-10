@@ -2,3 +2,5 @@
 build
 *.log
 .tag*
+*.sdf
+.vs/SmartCarsSequentiell/v14/.suo
