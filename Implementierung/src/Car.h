@@ -27,6 +27,3 @@ private:
 	
 };
 
-struct {
-
-};

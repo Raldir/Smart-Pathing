@@ -69,11 +69,11 @@ bool Edge::isFull() {
 	return carQueue.size() >= _carQueueCapacity;
 }
 
-void Edge::addVertex(Vertex * vertex) {
+void Edge::registerObserver(ObserverVertex * vertex) {
 	this->vertex = vertex;
 }
 
-void Edge::removeVertex(Vertex * vertex) {
+void Edge::removeObserver(ObserverVertex * vertex) {
 	//TODO gucken wie geht nullpointer
 	//vertex = NULL;
 }
@@ -84,7 +84,7 @@ void Edge::removeVertex(Vertex * vertex) {
 ///</summary>
 void Edge::notifyVertex(Car* car) {
 	//Gives 
-	obs->TakeCar(this, car);
+	vertex->TakeCar(this, car);
 }
 
 void Edge::printCars() {
@@ -98,6 +98,6 @@ void Edge::printCars() {
 }
 
 int Edge::getObserver() {
-	return obs->_ID;
+	return vertex->getID();
 }
 

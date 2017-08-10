@@ -8,6 +8,7 @@
 
 class Car;
 class Vertex;
+class ObserverVertex;
 
 class Edge : SubjectEdge {
 
@@ -32,11 +33,9 @@ class Edge : SubjectEdge {
 		//Constructor
 		Edge(float length, int capacity, int id);
 
-		Vertex* vertex;
-
 		//Adds and removes vertex the edge is pointing to
-		void addVertex(Vertex * vertex);
-		void removeVertex(Vertex * vertex);
+		virtual void registerObserver(ObserverVertex * vertex);
+		virtual void removeObserver(ObserverVertex * obs);
 
 		//Adds and remove weights on timetable at specified time
 		void addWeightTimetable(int time, int weight);
@@ -63,6 +62,7 @@ class Edge : SubjectEdge {
 		virtual void removeObserver(ObserverVertex * obs) {};
 
 		//Notifies attached Vertex that car has reached position 0
-		virtual void notifyVertex(Car* car) {};
+		virtual void notifyVertex(Car* car);
 
+		virtual int getObserver();
 };
