@@ -11,24 +11,24 @@ class Car;
 class Vertex : public SubjectEdge {
 
 public:
-		Vertex(int id);
+	Vertex(int id);
 
-		//TrafficLight* trafficLight;
+	//TrafficLight* trafficLight;
 
-		void transferCar(Car * car, std::pair<Edge*, Edge*> edges);
+	void transferCar(Car * car, std::pair<Edge*, Edge*> edges);
 
-		void addIncomingEdges(Edge *edge);
-		void addOutgoingEdges(Edge *edge);
+	void addIncomingEdges(Edge *edge);
+	void addOutgoingEdges(Edge *edge);
 
-		void printEdges();
+	void printEdges();
 
-		int getId();
+	int getId();
 
 private:
 
-		std::vector<Edge*> incomingEdges;
-		//Edge* outgoingEdges[x];
+	std::vector<Edge*> incomingEdges;
+	std::vector<Edge*> outgoingEdges;
 
-		int _ID;
-		
+	int _ID;
+
 };
