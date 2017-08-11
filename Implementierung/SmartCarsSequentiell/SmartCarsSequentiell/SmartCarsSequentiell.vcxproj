@@ -112,18 +112,22 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Car.h" />
     <ClInclude Include="..\..\src\Edge.h" />
+    <ClInclude Include="..\..\src\EdgeHandler.h" />
     <ClInclude Include="..\..\src\main.h" />
     <ClInclude Include="..\..\src\ObserverPattern.h" />
     <ClInclude Include="..\..\src\TrafficLight.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
+    <ClInclude Include="..\..\src\VertexHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Car.cpp" />
     <ClCompile Include="..\..\src\Edge.cpp" />
+    <ClCompile Include="..\..\src\EdgeHandler.cpp" />
     <ClCompile Include="..\..\src\ObserverPattern.cpp" />
     <ClCompile Include="..\..\src\Project1.cpp" />
     <ClCompile Include="..\..\src\TrafficLight.cpp" />
     <ClCompile Include="..\..\src\Vertex.cpp" />
+    <ClCompile Include="..\..\src\VertexHandler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

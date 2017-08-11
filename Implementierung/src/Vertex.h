@@ -11,7 +11,7 @@ class Car;
 class Vertex : public SubjectEdge {
 
 public:
-	Vertex(int id);
+	Vertex(int id, float x, float y);
 
 	//TrafficLight* trafficLight;
 
@@ -30,5 +30,7 @@ private:
 	std::vector<Edge*> outgoingEdges;
 
 	int _ID;
+	float _X;
+	float _Y;
 
 };
