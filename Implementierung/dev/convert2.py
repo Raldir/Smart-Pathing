@@ -24,16 +24,17 @@ def read_osm(filename_or_stream, only_roads=True):
     print(type(osm.ways))
     nodes = []
     for key, edge in osm.ways.items():
-        if only_roads and 'highway' not in edge.tags:
+        if 'highway' not in edge.tags:
             continue
-        nodes  = nodes + twopointWays(0, len(edge.nds), f, [], edge)
-        
-
+            #nodes  = nodes + twopointWays(0, len(edge.nds), f, [], edge)
             #print(i)
-            #if i == 0 or i == len(edge.nds) - 1:
-            #nodes = nodes + [edge.nds[i]]
-            #f.write(edge.nds[i] + " ")
-        #f.write('\n')
+        if edge.tags.get('highway') != 'residential':
+            continue
+        for i in range(0, len(edge.nds)):
+            if i == 0 or i == len(edge.nds) - 1:
+                nodes = nodes + [edge.nds[i]]
+                f.write(edge.nds[i] + " ")
+        f.write('\n')
     f.close()
     #values = positions(osm.nodes, nodes)
     f = open('nodes', 'w')

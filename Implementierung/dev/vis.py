@@ -17,5 +17,5 @@ for line in f:
     G.add_edge(float(argumentsedge[0]), float(argumentsedge[1]))
 f.close()
 
-nx.draw(G, pos)
+nx.draw(G, pos, node_size = 2)
 plt.savefig("path.png")
