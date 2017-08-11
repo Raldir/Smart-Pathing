@@ -37,13 +37,15 @@ public:
 
 	void printCars();
 
+	virtual int getID() override;
+
 	virtual void registerObserver(ObserverVertex * obs) override;
 	virtual void removeObserver(ObserverVertex * obs) override;
 
 	//Notifies attached Vertex that car has reached position 0
 	virtual void notifyVertex(Car* car) override;
 
-	virtual int getObserver() override;
+	virtual ObserverVertex* getObserver() override;
 
 private:
 

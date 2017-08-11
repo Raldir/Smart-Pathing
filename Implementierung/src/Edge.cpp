@@ -57,7 +57,7 @@ Car * Edge::popCar() {
 	return carPtr;
 }
 
-void Edge::pushCar(Car * car) {
+void Edge::pushCar(Car* car) {
 
 	carQueue.push(car);
 }
@@ -80,10 +80,17 @@ void Edge::printCars() {
 	std::queue<Car*> q = carQueue;
 
 	//Iterate through queue and printing cars
-	do {
-		std::cout << "Car" << getFrontCar()->getID() << "\n";
-		q.pop();
-	} while (!q.empty());
+	if (!q.empty()) {
+		do {
+			std::cout << "Print Car:" << q.front()->getID() << " on Position " << q.front()->getCurrentPosition() << std::endl;
+			q.pop();
+		} while (!q.empty());
+	}
+
+}
+
+int Edge::getID() {
+	return _ID;
 }
 
 
@@ -108,7 +115,7 @@ void Edge::notifyVertex(Car* car) {
 	vertex->TakeCar(this, car);
 }
 
-int Edge::getObserver() {
-	return vertex->getID();
+ObserverVertex* Edge::getObserver() {
+	return vertex;
 }
 
