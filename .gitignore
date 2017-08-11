@@ -5,3 +5,7 @@ build
 *.sdf
 SmartCarsSequentiell/.vs/SmartCarsSequentiell/v14/.suo
 SmartCarsSequentiell/SmartCarsSequentiell.VC.db
+SmartCarsSequentiell/SmartCarsSequentiell/Debug/**
+SmartCarsSequentiell/SmartCarsSequentiell/x64/**
+SmartCarsSequentiell/Debug/**
+SmartCarsSequentiell/x64/**
