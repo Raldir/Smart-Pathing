@@ -114,6 +114,7 @@
     <ClInclude Include="..\..\src\Edge.h" />
     <ClInclude Include="..\..\src\main.h" />
     <ClInclude Include="..\..\src\ObserverPattern.h" />
+    <ClInclude Include="..\..\src\Project1.h" />
     <ClInclude Include="..\..\src\TrafficLight.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
   </ItemGroup>

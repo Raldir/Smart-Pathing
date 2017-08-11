@@ -15,14 +15,17 @@ public:
 
 	//TrafficLight* trafficLight;
 
-	void transferCar(Car * car, std::pair<Edge*, Edge*> edges);
+	//Makes the actual transition of the car
+	void transferCar(Edge* edge);
+
+	bool canTransit(Car* car);
 
 	void addIncomingEdges(Edge *edge);
 	void addOutgoingEdges(Edge *edge);
 
 	void printEdges();
 
-	int getId();
+	int getID();
 
 private:
 
@@ -30,5 +33,4 @@ private:
 	std::vector<Edge*> outgoingEdges;
 
 	int _ID;
-
 };
