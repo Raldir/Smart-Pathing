@@ -4,8 +4,6 @@
 #include "main.h"
 #include "Vertex.h"
 
-class Edge;
-
 class TrafficLight {
 	
 	public:
@@ -15,5 +13,5 @@ class TrafficLight {
 	private:
 
 		//Speichert edges durch ihre ID
-		int edgeID[]
+		int edgeID[];
 };

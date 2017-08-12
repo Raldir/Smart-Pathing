@@ -2,4 +2,7 @@
 
 int main();
 
-void test1();
+void testChristoph();
+
+void testRami();
+

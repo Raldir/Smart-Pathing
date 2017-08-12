@@ -7,7 +7,7 @@
 
 /**
 */
-Vertex::Vertex(int id) : _ID(id) {
+Vertex::Vertex(int id, float x, float y) : _ID(id), _X(x), _Y(y) {
 
 }
 
