@@ -6,6 +6,11 @@ Car::Car(int id) {
 	_ID = id;
 }
 
+Car::~Car()
+{
+	//TODO
+}
+
 void Car::updatePosition(float nextCriticalPosition) {
 
 	//Just to be sure because overflow is only needed when you cross an intersection
@@ -31,7 +36,7 @@ void Car::updatePosition(float nextCriticalPosition) {
 	}
 }
 
-int Car::getCurrentPosition() {
+float Car::getCurrentPosition() {
 	return currentPosition;
 }
 

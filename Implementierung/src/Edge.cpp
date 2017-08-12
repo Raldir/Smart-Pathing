@@ -17,6 +17,10 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 	//int timetable[_SIMULATION_TIME];
 }
 
+Edge::~Edge()
+{
+}
+
 float Edge::getLength()
 {
 	return _LENGTH;

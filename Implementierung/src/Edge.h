@@ -16,6 +16,8 @@ public:
 	//Constructor
 	Edge(float length, int capacity, int id);
 
+	~Edge();
+
 	//
 	float getLength();
 

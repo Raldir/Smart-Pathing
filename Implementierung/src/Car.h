@@ -14,10 +14,12 @@ public:
 
 	Car() {};
 
+	~Car();
+
 	//Updates position of car for one tick on the edge.
 	void updatePosition(float nextCarPosition);
 
-	int getCurrentPosition();
+	float getCurrentPosition();
 
 	//Pops current Vertex so the next point on the path is available
 	void popCurrentVertex();
