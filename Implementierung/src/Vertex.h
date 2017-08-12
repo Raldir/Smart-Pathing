@@ -33,10 +33,6 @@ private:
 	std::vector<Edge*> outgoingEdges;
 
 	int _ID;
-<<<<<<< HEAD
 	float _X;
 	float _Y;
-
-=======
->>>>>>> c9c87935356490dfbe41c0eba73a7914f774cf98
 };

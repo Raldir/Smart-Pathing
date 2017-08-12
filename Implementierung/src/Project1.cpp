@@ -6,15 +6,21 @@
 #include "Vertex.h"
 #include "Car.h"
 #include "Project1.h"
+#include "VertexHandler.h"
 
 
 int main() {
 
-	testChristoph();	
-
-	//Platz für Rami
+	//testChristoph();	
+	testRami();
 
 	return 0;
+}
+
+void testRami() {
+	VertexHandler* handler = new VertexHandler();
+	handler->readFile("nodes");
+	system("PAUSE");
 }
 
 void testChristoph() {
@@ -27,7 +33,7 @@ void testChristoph() {
 	//Assign Pointer to edge
 	edgePtr = &edge;
 
-	Vertex vertex(3000);
+	Vertex vertex(3000, 0 , 0);
 	Vertex * vertexPtr;
 
 	vertexPtr = &vertex;

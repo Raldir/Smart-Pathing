@@ -3,3 +3,5 @@
 int main();
 
 void testChristoph();
+
+void testRami();

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "main.h"
-#include "Veretx.h"
+#include "Vertex.h"
 
 class TrafficLight {
 	
