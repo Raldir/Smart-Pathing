@@ -15,6 +15,10 @@ Vertex::Vertex(int id) : _ID(id) {
 ###### CARSTUFF
 */
 
+/*
+	Takes stored vertex of car and searches for the edge connecting to vertex then
+	transfers car onto this edge
+*/
 void Vertex::transferCar(Edge* edge)
 {
 	//Get cat in front
@@ -25,23 +29,34 @@ void Vertex::transferCar(Edge* edge)
 
 	//Removes this point as destination to reveal next point
 	car->popCurrentVertex();
-	car->getCurrentVertex();
 
-	Vertex* nextVertex;
+	Edge* nextEdge;
+	bool nextEdgeFound = false;
 
 	for (Edge* edge : outgoingEdges) {
-		int ID = edge->getObserver()->getID();
 
-		if (ID == car->getCurrentVertex()->getID()) {
-
+		//Look if one of the edges has Vertex with matching ID from car
+		if (edge->getObserver()->getID() == car->getCurrentVertex()->getID()) {
+			nextEdge = edge;
+			nextEdgeFound = true;
+			break;
 		}
+		
+	}
+
+	if (nextEdgeFound) {
+		//Begin transfer
+
+
+	} else {
+		std::cout << "No edge found leading to next vertex!" << std::endl;
 	}
 }
 
-bool Vertex::canTransit(Car* car) {
+bool Vertex::canTransit(Edge* nextEdge) {
 	//TODO Implement when Traffic Light is ready
 
-	return NULL;
+	return !(nextEdge->isFull());
 }
 
 /*
@@ -60,7 +75,7 @@ void Vertex::addOutgoingEdges(Edge* edge) {
 
 void Vertex::printEdges() {
 	for (Edge* e : incomingEdges) {
-		std::cout << "Incoming Edge: "<< e->getID() << std::endl;
+		std::cout << "Incoming Edge: " << e->getID() << std::endl;
 	}
 
 	for (Edge* e : outgoingEdges) {

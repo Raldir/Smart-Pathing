@@ -10,16 +10,16 @@
 
 int main() {
 
-	testChristoph();	
+	test1();	
 
 	//Platz für Rami
 
 	return 0;
 }
 
-void testChristoph() {
+void test1() {
 
-	std::cout << "Hello";
+	std::cout << "TEST COUT";
 
 	Edge edge(10, 10, 12);
 	Edge * edgePtr;
@@ -50,9 +50,9 @@ void testChristoph() {
 
 	for (int i = 0; i < carAmount; i++) {
 
-		std::cout << "counter: " << i << std::endl;
+		std::cout << "Counter: " << i << std::endl;
 
-		std::cout << "Made car " << carss[i].getID() << std::endl;
+		std::cout << "Made car with ID " << carss[i].getID() << std::endl;
 
 		cars[i] = &carss[i];
 
@@ -60,13 +60,17 @@ void testChristoph() {
 
 		for (int j = 0; j <= i; j++) {
 
-			std::cout << "Pushe Car: " << cars[j]->getID() << " on queue." << std::endl;
+			std::cout << "Car: " << cars[j]->getID() << " on queue." << std::endl;
 		}
 	}
 
 	//Prints Cars in Edge
 	edgePtr->printCars();
 
-	system("PAUSE");
+	system("PAUSE"); //From C
+}
+
+void test2() {
+
 }
 

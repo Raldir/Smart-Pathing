@@ -17,6 +17,11 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 	//int timetable[_SIMULATION_TIME];
 }
 
+float Edge::getLength()
+{
+	return _LENGTH;
+}
+
 /*
 ###### TIMETABLE
 */
@@ -67,17 +72,27 @@ Car * Edge::getFrontCar() {
 	return carQueue.front();
 }
 
-///<summary>
-///
-///</summary>
+/*
+	Tells us whether or not space is still available (also accounting for minimum distance
+*/
 bool Edge::isFull() {
 
-	return carQueue.size() >= _carQueueCapacity;
+	bool queueFull = carQueue.size() >= _carQueueCapacity;
+
+	/*
+		If the gap behind the cars stretches over the edge of the street (smaller than 0)
+		then there is no place for another car
+	*/
+	bool spaceFull = 0 > (carQueue.back()->getCurrentPosition() - _CAR_MINIMUM_GAP);
+
+	return queueFull || spaceFull;
 }
 
 void Edge::printCars() {
 
 	std::queue<Car*> q = carQueue;
+
+	std::cout << "Printe nun Autos auf der Queue" << std::endl;
 
 	//Iterate through queue and printing cars
 	if (!q.empty()) {

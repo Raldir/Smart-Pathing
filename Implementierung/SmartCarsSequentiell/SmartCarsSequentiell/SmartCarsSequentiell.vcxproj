@@ -115,6 +115,7 @@
     <ClInclude Include="..\..\src\main.h" />
     <ClInclude Include="..\..\src\ObserverPattern.h" />
     <ClInclude Include="..\..\src\Project1.h" />
+    <ClInclude Include="..\..\src\RoutingTable.h" />
     <ClInclude Include="..\..\src\TrafficLight.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
   </ItemGroup>
@@ -123,6 +124,7 @@
     <ClCompile Include="..\..\src\Edge.cpp" />
     <ClCompile Include="..\..\src\ObserverPattern.cpp" />
     <ClCompile Include="..\..\src\Project1.cpp" />
+    <ClCompile Include="..\..\src\RoutingTable.cpp" />
     <ClCompile Include="..\..\src\TrafficLight.cpp" />
     <ClCompile Include="..\..\src\Vertex.cpp" />
   </ItemGroup>

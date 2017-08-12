@@ -10,6 +10,8 @@ void Car::updatePosition(float nextCriticalPosition) {
 
 	//Just to be sure because overflow is only needed when you cross an intersection
 	if (overflowPosition > 0) {
+
+		//Now we can safely calculate new overflow
 		overflowPosition = 0;
 	}
 
@@ -27,8 +29,6 @@ void Car::updatePosition(float nextCriticalPosition) {
 		//If no obstacles are found
 		currentPosition = newPosition;
 	}
-
-
 }
 
 int Car::getCurrentPosition() {
@@ -47,4 +47,6 @@ Vertex* Car::getCurrentVertex() {
 	return route.front();
 }
 
-int Car::getID() { return _ID; };
+int Car::getID() { 
+	return _ID; 
+};

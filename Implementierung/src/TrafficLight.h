@@ -2,13 +2,15 @@
 
 #include <iostream>
 #include "main.h"
-#include "Veretx.h"
+#include "Vertex.h"
+
+class Edge;
 
 class TrafficLight {
 	
 	public:
 
-		TrafficLight(int streetAmount, Edge* edges[]);
+		TrafficLight() {};
 
 	private:
 

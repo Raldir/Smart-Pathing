@@ -2,4 +2,4 @@
 
 int main();
 
-void testChristoph();
+void test1();

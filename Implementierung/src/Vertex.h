@@ -15,10 +15,14 @@ public:
 
 	//TrafficLight* trafficLight;
 
-	//Makes the actual transition of the car
+	/*
+		Makes the actual transition of the car
+		ONLY use when certain that transtition will be possible
+	*/
 	void transferCar(Edge* edge);
 
-	bool canTransit(Car* car);
+	//Checks wheter TrafficLight allow transit and wheter or not the next edge is full
+	bool canTransit(Edge* nextEdge);
 
 	void addIncomingEdges(Edge *edge);
 	void addOutgoingEdges(Edge *edge);
