@@ -8,7 +8,7 @@
 class Edge;
 class Car;
 
-class Vertex : public SubjectEdge {
+class Vertex : public ObserverVertex {
 
 public:
 	Vertex(int id, float x, float y);
@@ -19,7 +19,10 @@ public:
 		Makes the actual transition of the car
 		ONLY use when certain that transtition will be possible
 	*/
-	void transferCar(Edge* edge);
+	virtual void transferCar(Edge* edge) override;
+
+	//Hilfefunktion
+	Car* takeCar(Edge* edge);
 
 	//Checks wheter TrafficLight allow transit and wheter or not the next edge is full
 	bool canTransit(Edge* nextEdge);

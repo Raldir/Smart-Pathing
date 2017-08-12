@@ -10,9 +10,9 @@ class Car;
 class ObserverVertex {
 
 public:
-	virtual void TakeCar(Edge *edge, Car *car) {};
+	virtual void transferCar(Edge* edge) {};
 
-	virtual int getID() {};
+	virtual int getID() = 0;
 
 private:
 	int _ID;
@@ -31,7 +31,7 @@ public:
 	virtual void removeObserver(ObserverVertex * obs) {};
 
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVertex(Car* car) {};
+	virtual void notifyVertex(Edge* edge) {};
 
 	virtual ObserverVertex* getObserver() { return vertex; };
 

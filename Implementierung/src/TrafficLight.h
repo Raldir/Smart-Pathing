@@ -7,11 +7,9 @@
 class TrafficLight {
 	
 	public:
-
 		TrafficLight() {};
 
 	private:
-
 		//Speichert edges durch ihre ID
 		int edgeID[];
 };

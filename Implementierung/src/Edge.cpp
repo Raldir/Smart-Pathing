@@ -125,9 +125,8 @@ void Edge::removeObserver(ObserverVertex * vertex) {
 ///<summary>
 ///Notifies obversers
 ///</summary>
-void Edge::notifyVertex(Car* car) {
+void Edge::notifyVertex(Edge* edge) {
 	//Gives 
-	vertex->TakeCar(this, car);
 }
 
 ObserverVertex* Edge::getObserver() {

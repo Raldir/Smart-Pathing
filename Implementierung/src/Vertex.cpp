@@ -21,16 +21,12 @@ Vertex::Vertex(int id, float x, float y) : _ID(id), _X(x), _Y(y) {
 */
 void Vertex::transferCar(Edge* edge)
 {
-	//Get cat in front
-	Car* car = edge->getFrontCar();
-
-	//Remove car from edge
-	edge->popCar();
+	Car* car = takeCar(edge);
 
 	//Removes this point as destination to reveal next point
 	car->popCurrentVertex();
 
-	Edge* nextEdge;
+	Edge* nextEdge = NULL;
 	bool nextEdgeFound = false;
 
 	for (Edge* edge : outgoingEdges) {
@@ -41,16 +37,25 @@ void Vertex::transferCar(Edge* edge)
 			nextEdgeFound = true;
 			break;
 		}
-		
 	}
 
 	if (nextEdgeFound) {
-		//Begin transfer
-
-
-	} else {
+		nextEdge->pushCar(car);
+	}
+	else {
 		std::cout << "No edge found leading to next vertex!" << std::endl;
 	}
+}
+
+//Hilfsfunktion falls sich was an der Struktur verändert
+Car* Vertex::takeCar(Edge * edge) {
+	//Get cat in front
+	Car* car = edge->getFrontCar();
+
+	//Remove car from edge
+	edge->popCar();
+
+	return car;
 }
 
 bool Vertex::canTransit(Edge* nextEdge) {
@@ -85,8 +90,4 @@ void Vertex::printEdges() {
 
 int Vertex::getID() {
 	return _ID;
-}
-
-void TakeCar(Edge* edge, Car* car) {
-
 }
