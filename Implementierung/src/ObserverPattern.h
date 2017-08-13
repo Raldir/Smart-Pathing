@@ -10,21 +10,27 @@ class Car;
 class ObserverVertex {
 
 public:
-	virtual void transferCar(Edge* edge) {};
+	ObserverVertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {};
+
+	virtual void transferCar(Edge* edge) = 0;
 
 	virtual int getID() = 0;
 
-private:
+	virtual std::pair<float, float> getPosition() = 0;
+
+protected:
+
+	float _X;
+	float _Y;
+
 	int _ID;
 };
 
 class SubjectEdge {
 
-private:
-	int _ID;
-
 protected:
 	ObserverVertex* vertex;
+	int _ID;
 
 public:
 	virtual void registerObserver(ObserverVertex * obs) {};

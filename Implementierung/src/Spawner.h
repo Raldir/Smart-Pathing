@@ -7,10 +7,9 @@ class Spawner : ObserverVertex {
 
 public:
 
-	Spawner(int id) : _ID(id) {};
+	Spawner(int id, float x, float y);
+
+	void SpawnCar(Car* car);
 
 private:
-
-	int _ID;
-
 };

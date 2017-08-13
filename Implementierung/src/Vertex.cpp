@@ -7,7 +7,7 @@
 
 /**
 */
-Vertex::Vertex(int id, float x, float y) : _ID(id), _X(x), _Y(y) {
+Vertex::Vertex(int id, float x, float y) : ObserverVertex(id, x, y) {
 
 }
 
@@ -90,4 +90,9 @@ void Vertex::printEdges() {
 
 int Vertex::getID() {
 	return _ID;
+}
+
+std::pair<float, float> Vertex::getPosition()
+{
+	return std::make_pair(_X, _Y);
 }

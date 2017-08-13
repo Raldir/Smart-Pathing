@@ -32,14 +32,12 @@ public:
 
 	void printEdges();
 
-	int getID();
+	virtual int getID() override;
+
+	virtual std::pair<float, float> getPosition() override;
 
 private:
 
 	std::vector<Edge*> incomingEdges;
 	std::vector<Edge*> outgoingEdges;
-
-	int _ID;
-	float _X;
-	float _Y;
 };
