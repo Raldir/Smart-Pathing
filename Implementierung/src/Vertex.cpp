@@ -72,6 +72,15 @@ int Vertex::getID() {
 	return _ID;
 }
 
+float Vertex::getX() {
+	return _X;
+}
+
+float Vertex::getY() {
+	return _Y;
+}
+
+
 void TakeCar(Edge* edge, Car* car) {
 
 }

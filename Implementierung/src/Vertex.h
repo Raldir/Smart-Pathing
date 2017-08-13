@@ -8,7 +8,7 @@
 class Edge;
 class Car;
 
-class Vertex : public SubjectEdge {
+class Vertex{
 
 public:
 	Vertex(int id, float x, float y);
@@ -26,6 +26,8 @@ public:
 	void printEdges();
 
 	int getID();
+	float getX();
+	float getY();
 
 private:
 

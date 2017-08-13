@@ -5,11 +5,22 @@
 #include "Vertex.h"
 #include "Car.h"
 #include "Edge.h"
+#include "Main.h"
 
 Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 
 	_carQueueCapacity = capacity;
 
+	_ID = id;
+
+
+	//TODO Initalize timetable correctly
+	//int timetable[_SIMULATION_TIME];
+}
+
+Edge::Edge(float length, int id) : _LENGTH(length) {
+	_carQueueCapacity = int(length / _CAR_LENGTH);
+	
 	_ID = id;
 
 
