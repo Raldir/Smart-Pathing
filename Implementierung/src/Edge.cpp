@@ -27,6 +27,17 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 	//int timetable[_SIMULATION_TIME];
 }
 
+Edge::Edge(float length, int id, std::pair<Vertex*,Vertex*> nodes) : _LENGTH(length) {
+	_carQueueCapacity = int(length / _CAR_LENGTH);
+	startnode = nodes.first;
+	endnode = nodes.second;
+	_ID = id;
+
+
+	//TODO Initalize timetable correctly
+	//int timetable[_SIMULATION_TIME];
+}
+
 /*
 ###### TIMETABLE
 */

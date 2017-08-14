@@ -101,8 +101,6 @@ float Vertex::getY() {
 }
 
 
-void TakeCar(Edge* edge, Car* car) {
-
 std::pair<float, float> Vertex::getPosition()
 {
 	return std::make_pair(_X, _Y);

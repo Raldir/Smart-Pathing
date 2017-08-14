@@ -18,6 +18,8 @@ public:
 
 	Edge(float length, int id);
 
+	Edge(float length, int id, std::pair<Vertex*, Vertex*>);
+
 	//
 	float getLength();
 
