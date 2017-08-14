@@ -40,7 +40,7 @@ float Car::getCurrentPosition() {
 	return currentPosition;
 }
 
-void Car::assignRoute(std::queue<Vertex*> q) {
+void Car::assignRoute(std::queue<int> q) {
 	route = q;
 }
 
@@ -48,7 +48,7 @@ void Car::popCurrentVertex() {
 	route.pop();
 }
 
-Vertex* Car::getCurrentVertex() {
+int Car::getCurrentVertexID() {
 	return route.front();
 }
 

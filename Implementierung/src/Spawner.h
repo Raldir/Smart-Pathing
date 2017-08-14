@@ -1,9 +1,8 @@
 #pragma once
 
-#include "ObserverPattern.h"
+#include "Vertex.h"
 
-
-class Spawner : ObserverVertex {
+class Spawner : public Vertex {
 
 public:
 
