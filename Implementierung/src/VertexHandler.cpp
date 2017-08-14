@@ -7,10 +7,10 @@ using namespace std;
 VertexHandler::VertexHandler(vector<pair<int, int>> connections, string vertexpath)
 {
 	vector<Vertex*> vertices = readFile(vertexpath);
-	for (vector<pair<int, int>>::iterator it = connections.begin; it != connections.end(); it++) {
+	for (vector<pair<int, int>>::iterator it = connections.begin(); it != connections.end(); it++) {
 		int start = it->first;
 		int end = it->second;
-		for (vector<Vertex*>::iterator it2 = vertices.begin; it2 != vertices.end(); it2++) {
+		for (vector<Vertex*>::iterator it2 = vertices.begin(); it2 != vertices.end(); it2++) {
 		//*it2->addOutgoingEdges(start);
 		}
 	}

@@ -10,12 +10,15 @@
 
 
 int main() {
+	
+	//Platz für Rami
 
-	//testChristoph();	
+	testChristoph();	
 	testRami();
 
 	return 0;
 }
+
 
 void testRami() {
 	VertexHandler* handler = new VertexHandler();
@@ -25,7 +28,8 @@ void testRami() {
 
 void testChristoph() {
 
-	std::cout << "Hello";
+
+	std::cout << "TEST COUT";
 
 	Edge edge(10, 10, 12);
 	Edge * edgePtr;
@@ -45,34 +49,37 @@ void testChristoph() {
 
 	const int carAmount = 4;
 
-	Car* cars[4];
-	Car carss[4];
+	Car* carsPtr[4];
+	Car carStorage[4];
 
 	for (int c = 0; c < carAmount; c++) {
 		Car car(c);
 
-		carss[c] = car;
+		carStorage[c] = car;
 	}
 
 	for (int i = 0; i < carAmount; i++) {
 
-		std::cout << "counter: " << i << std::endl;
+		std::cout << "Counter: " << i << std::endl;
 
-		std::cout << "Made car " << carss[i].getID() << std::endl;
+		std::cout << "Made car with ID " << carStorage[i].getID() << std::endl;
 
-		cars[i] = &carss[i];
+		carsPtr[i] = &carStorage[i];
 
-		std::cout << "Pointer points to car :" << cars[i]->getID() << std::endl;
+		std::cout << "Pointer points to car :" << carsPtr[i]->getID() << std::endl;
 
 		for (int j = 0; j <= i; j++) {
 
-			std::cout << "Pushe Car: " << cars[j]->getID() << " on queue." << std::endl;
+			std::cout << "Car: " << carsPtr[j]->getID() << " on queue." << std::endl;
 		}
 	}
+
+	//Transfer car
+
 
 	//Prints Cars in Edge
 	edgePtr->printCars();
 
-	system("PAUSE");
+	system("PAUSE"); //From C
 }
 

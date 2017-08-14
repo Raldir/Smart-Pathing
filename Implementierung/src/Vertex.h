@@ -8,17 +8,24 @@
 class Edge;
 class Car;
 
-class Vertex{
+class Vertex : public ObserverVertex {
 
 public:
 	Vertex(int id, float x, float y);
 
 	//TrafficLight* trafficLight;
 
-	//Makes the actual transition of the car
-	void transferCar(Edge* edge);
+	/*
+		Makes the actual transition of the car
+		ONLY use when certain that transtition will be possible
+	*/
+	virtual void transferCar(Edge* edge) override;
 
-	bool canTransit(Car* car);
+	//Hilfefunktion
+	Car* takeCar(Edge* edge);
+
+	//Checks wheter TrafficLight allow transit and wheter or not the next edge is full
+	bool canTransit(Edge* nextEdge);
 
 	void addIncomingEdges(Edge *edge);
 	void addOutgoingEdges(Edge *edge);
@@ -29,12 +36,12 @@ public:
 	float getX();
 	float getY();
 
+	virtual int getID() override;
+
+	virtual std::pair<float, float> getPosition() override;
+
 private:
 
 	std::vector<Edge*> incomingEdges;
 	std::vector<Edge*> outgoingEdges;
-
-	int _ID;
-	float _X;
-	float _Y;
 };

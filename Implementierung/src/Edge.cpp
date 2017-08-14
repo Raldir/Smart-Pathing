@@ -20,7 +20,6 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 
 Edge::Edge(float length, int id) : _LENGTH(length) {
 	_carQueueCapacity = int(length / _CAR_LENGTH);
-	
 	_ID = id;
 
 

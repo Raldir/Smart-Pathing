@@ -1,11 +1,12 @@
 #pragma once
 #include "Vertex.h"
+#include <vector>
 
 class VertexHandler
 {
 public:
 
-	VertexHandler(vector<std::pair<int, int>> connections, string vertexpath);
+	VertexHandler(std::vector<std::pair<int, int>> connections, std::string vertexpath);
 
 	~VertexHandler();
 

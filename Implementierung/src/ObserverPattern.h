@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include "main.h"
 
 class Edge;
 class Car;
@@ -9,30 +10,36 @@ class Car;
 class ObserverVertex {
 
 public:
-	virtual void TakeCar(Edge *edge, Car *car) {};
-	
-	virtual int getID() {};
+	ObserverVertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {};
 
-private:
+	virtual void transferCar(Edge* edge) = 0;
+
+	virtual int getID() = 0;
+
+	virtual std::pair<float, float> getPosition() = 0;
+
+protected:
+
+	float _X;
+	float _Y;
+
 	int _ID;
 };
 
 class SubjectEdge {
 
-private:
-	int _ID;
-
 protected:
 	ObserverVertex* vertex;
+	int _ID;
 
 public:
 	virtual void registerObserver(ObserverVertex * obs) {};
 	virtual void removeObserver(ObserverVertex * obs) {};
-	
-	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVertex(Car* car) {};
 
-	virtual ObserverVertex* getObserver() { return vertex;  };
+	//Notifies attached Vertex that car has reached position 0
+	virtual void notifyVertex(Edge* edge) {};
+
+	virtual ObserverVertex* getObserver() { return vertex; };
 
 	virtual int getID() = 0;
 };

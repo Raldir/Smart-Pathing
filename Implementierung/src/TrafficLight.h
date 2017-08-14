@@ -7,11 +7,9 @@
 class TrafficLight {
 	
 	public:
-
-		TrafficLight(int streetAmount, Edge* edges[]);
+		TrafficLight() {};
 
 	private:
-
 		//Speichert edges durch ihre ID
-		int edgeID[]
+		int edgeID[];
 };
