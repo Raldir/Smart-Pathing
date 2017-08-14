@@ -29,7 +29,8 @@ protected:
 class SubjectEdge {
 
 protected:
-	ObserverVertex* vertex;
+	ObserverVertex* endVertex;
+	ObserverVertex* startVertex;
 	int _ID;
 
 public:
@@ -39,7 +40,7 @@ public:
 	//Notifies attached Vertex that car has reached position 0
 	virtual void notifyVertex(Edge* edge) {};
 
-	virtual ObserverVertex* getObserver() { return vertex; };
+	virtual ObserverVertex* getObserver() { return endVertex; };
 
 	virtual int getID() = 0;
 };

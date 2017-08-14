@@ -47,7 +47,7 @@ public:
 	virtual void removeObserver(ObserverVertex * obs) override;
 
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVertex(Car* car) override;
+	virtual void notifyVertex(Edge* edge) override;
 
 	virtual ObserverVertex* getObserver() override;
 

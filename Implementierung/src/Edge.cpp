@@ -29,8 +29,8 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 
 Edge::Edge(float length, int id, std::pair<Vertex*,Vertex*> nodes) : _LENGTH(length) {
 	_carQueueCapacity = int(length / _CAR_LENGTH);
-	startnode = nodes.first;
-	endnode = nodes.second;
+	startVertex = nodes.first;
+	endVertex = nodes.second;
 	_ID = id;
 
 
@@ -110,6 +110,10 @@ void Edge::printCars() {
 
 }
 
+float Edge::getLength() {
+	return _LENGTH;
+}
+
 int Edge::getID() {
 	return _ID;
 }
@@ -120,7 +124,7 @@ int Edge::getID() {
 */
 
 void Edge::registerObserver(ObserverVertex * vertex) {
-	this->vertex = vertex;
+	this->endVertex = vertex;
 }
 
 void Edge::removeObserver(ObserverVertex * vertex) {
@@ -131,12 +135,12 @@ void Edge::removeObserver(ObserverVertex * vertex) {
 ///<summary>
 ///Notifies obversers
 ///</summary>
-void Edge::notifyVertex(Car* car) {
+void Edge::notifyVertex(Edge* edge) {
 	//Gives 
-	vertex->TakeCar(this, car);
+	endVertex->transferCar(edge);
 }
 
 ObserverVertex* Edge::getObserver() {
-	return vertex;
+	return endVertex;
 }
 

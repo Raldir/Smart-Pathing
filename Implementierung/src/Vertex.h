@@ -32,7 +32,6 @@ public:
 
 	void printEdges();
 
-	int getID();
 	float getX();
 	float getY();
 
