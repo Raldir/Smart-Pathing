@@ -32,7 +32,7 @@ void Vertex::transferCar(int incomingEdgeID)
 	for (std::pair<int, Edge*> e : outgoingEdges) {
 
 		//Look if one of the edges has Vertex with matching ID from car
-		if (e.second->getVerticies().second->getID() == car->getCurrentVertexID()) {
+		if (e.second->getVertices().second->getID() == car->getCurrentVertexID()) {
 			nextEdge = e.second;
 			nextEdgeFound = true;
 			break;
@@ -94,6 +94,9 @@ Edge* Vertex::getEdgeFromID(int edgeID) {
 			return p.second;
 		}
 	}
+
+	std::cout << "No Edge with matching id has been found" << std::endl;
+	return NULL;
 }
 
 void Vertex::setEdgeIsFull(int outgoingEdgeID, bool isFull)

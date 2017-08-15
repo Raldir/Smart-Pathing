@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vertex.h"
+#include "main.h"
 
 class Spawner : public Vertex {
 
@@ -11,4 +12,5 @@ public:
 	void SpawnCar(Car* car);
 
 private:
+
 };

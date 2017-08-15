@@ -137,7 +137,7 @@ void Edge::notifyVerticies(Edge* edge) {
 	if (isFull() != lastTickIsFull) {
 		startVertex->setEdgeIsFull(_ID, isFull());
 
-		lastTickIsFull == isFull();
+		lastTickIsFull = isFull();
 	}
 	
 	//TODO !!!!
@@ -148,6 +148,6 @@ void Edge::notifyVerticies(Edge* edge) {
 
 std::pair<Vertex*, Vertex*> Edge::getVertices()
 {
-	return std::pair<Vertex*, Vertex*>();
+	return std::make_pair(startVertex, endVertex);
 }
 
