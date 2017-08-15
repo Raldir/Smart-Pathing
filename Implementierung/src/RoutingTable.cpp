@@ -4,12 +4,16 @@
 
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
-
+	//Pushes originID into first map and int queue pair into the second
+	routingMatrix[originID][destID] = route;
 }
 
 void RoutingTable::removeRoute(int originID, int destID)
 {
+	//Erases queue origin to destination
+	routingMatrix[originID].erase(destID);
 
+	std::cout << "Deleted queue from " << originID << " to " << destID << std::endl;
 }
 
 void RoutingTable::replaceRoute(int originID, int destID, std::queue<int> route)
@@ -25,7 +29,7 @@ std::queue<int> RoutingTable::getRoute(int originID, int destID) {
 
 	std::queue<int> queue;
 
-	auto iterOrigin = routingMatrix.find(originID);
+	RoutingMatrix::iterator iterOrigin = routingMatrix.find(originID);
 
 	if (iterOrigin != routingMatrix.end()) {
 		//Map where destinationID and queues are stored

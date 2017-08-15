@@ -22,7 +22,7 @@ public:
 	//Notifies attached Vertex that car has reached position 0
 	virtual void notifyVerticies(Edge* edge) = 0;
 
-	virtual std::pair<Vertex*,Vertex*> getVerticies() = 0;
+	virtual std::pair<Vertex*, Vertex*> getVertices() = 0;
 
 	virtual int getID() = 0;
 };

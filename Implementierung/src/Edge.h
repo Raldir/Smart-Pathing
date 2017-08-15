@@ -49,9 +49,7 @@ public:
 	//Notifies attached Vertex that car has reached position 0
 	virtual void notifyVerticies(Edge* edge) override;
 
-	virtual std::pair<Vertex*, Vertex*> getVerticies() override;
-
-	std::pair<Vertex*, Vertex*> getVertices();
+	virtual std::pair<Vertex*, Vertex*> getVertices() override;
 
 private:
 

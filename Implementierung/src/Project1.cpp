@@ -14,7 +14,7 @@ int main() {
 	
 	//Platz für Rami
 
-	//testChristoph();	
+	testChristoph();	
 	testRami();
 
 	return 0;
@@ -40,11 +40,13 @@ void testChristoph() {
 	edgePtr = &edge;
 
 	Vertex vertex(3000, 0 , 0);
-	Vertex * vertexPtr;
+	Vertex* vertexPtr;
 
 	vertexPtr = &vertex;
 
 	vertexPtr->addIncomingEdges(edgePtr);
+
+	const int vertexAmount = 2;
 
 	//Prints Edges of Vertex
 	vertexPtr->printEdges();

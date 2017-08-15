@@ -9,9 +9,12 @@ class Graph;
 class Spawner;
 class Vertex;
 
+typedef std::map<int, std::map<int, std::queue<int>>> RoutingMatrix;
+
 class RoutingTable {
 
 public:
+	//TODO Mulitple Routenfindungsalgorithmen implementieren
 
 	RoutingTable() {}
 
@@ -30,7 +33,6 @@ private:
 	/*
 		First int --> ID of origin vertex
 		Second int --> ID of destination vertex
-		//TODO *Spawner pointer oder ID?
 	*/
-	std::map<int, std::map<int, std::queue<int>>> routingMatrix;
+	RoutingMatrix routingMatrix;
 };
