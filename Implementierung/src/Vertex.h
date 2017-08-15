@@ -12,6 +12,8 @@ class Car;
 class Vertex {
 
 public:
+	Vertex() {};
+
 	Vertex(int id, float x, float y);
 
 	//TrafficLight* trafficLight;
@@ -30,6 +32,9 @@ public:
 
 	void addIncomingEdges(Edge *edge);
 	void addOutgoingEdges(Edge *edge);
+
+	std::vector<Edge*> getIncomingEdges();
+	std::vector<Edge*> getOutgoingEdges();
 
 	Edge* getEdgeFromID(int edgeID);
 

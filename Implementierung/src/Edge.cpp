@@ -138,10 +138,14 @@ void Edge::notifyVerticies(Edge* edge) {
 		startVertex->setEdgeIsFull(_ID, isFull());
 
 		lastTickIsFull = isFull();
+
+		std::cout << "Toggled lastTickIsFull flag to " << lastTickIsFull << std::endl;
 	}
 	
-	//TODO !!!!
-	if (true) {
+	//TODO Implementiere Notification bei Transfer
+	if (getFrontCar()->getCurrentPosition() == 0) {
+		std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car" << std::endl;
+
 		endVertex->transferCar(_ID);
 	}
 }

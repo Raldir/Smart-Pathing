@@ -6,14 +6,20 @@ void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
 	//Pushes originID into first map and int queue pair into the second
 	routingMatrix[originID][destID] = route;
+	
+	//Pushes queue on symmetrical pair
+	routingMatrix[destID][originID] = route;
+
+	std::cout << "Added queue from " << originID << " to " << destID << " and reverse." << std::endl;
 }
 
 void RoutingTable::removeRoute(int originID, int destID)
 {
-	//Erases queue origin to destination
+	//Erases queue origin to destination and reverse
 	routingMatrix[originID].erase(destID);
+	routingMatrix[destID].erase(originID);
 
-	std::cout << "Deleted queue from " << originID << " to " << destID << std::endl;
+	std::cout << "Deleted queue from " << originID << " to " << destID << " and reverse." << std::endl;
 }
 
 void RoutingTable::replaceRoute(int originID, int destID, std::queue<int> route)

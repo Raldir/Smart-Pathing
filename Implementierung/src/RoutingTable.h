@@ -6,7 +6,6 @@
 #include <map>
 
 class Graph;
-class Spawner;
 class Vertex;
 
 typedef std::map<int, std::map<int, std::queue<int>>> RoutingMatrix;
