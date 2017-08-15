@@ -11,10 +11,9 @@
 
 
 int main() {
-	
-	//Platz für Rami
 
-	testChristoph();	
+	//Platz für Rami
+	testChristoph();
 	testRami();
 
 	return 0;
@@ -22,34 +21,46 @@ int main() {
 
 
 void testRami() {
-	std::vector<Vertex*> vertices = readVertexFile("nodes"); 
+	std::vector<Vertex*> vertices = readVertexFile("nodes");
 	std::vector<Edge*> edges = calculateEdges(vertices, "edges");
 	//connectVertices(edges);
 	system("PAUSE");
 }
 
+
 void testChristoph() {
 
-
 	std::cout << "TEST COUT";
-
-	Edge edge(10, 10, 12);
-	Edge * edgePtr;
-
-	//Assign Pointer to edge
-	edgePtr = &edge;
-
-	Vertex vertex(3000, 0 , 0);
-	Vertex* vertexPtr;
-
-	vertexPtr = &vertex;
-
-	vertexPtr->addIncomingEdges(edgePtr);
 
 	const int vertexAmount = 2;
 
 	//Prints Edges of Vertex
-	vertexPtr->printEdges();
+	Vertex vertices[vertexAmount];
+	std::vector<Vertex*> vertexPtrs;
+
+	for (int i = 0; i < vertexAmount; i++) {
+
+		Vertex vertex(i,0,0);
+		vertices[i] = vertex;
+
+		vertexPtrs[i] = &vertices[i];
+	}
+
+	Edge edge(10, 10, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
+	Edge edge2(1,10,100);
+	Edge * edgePtr;
+	Edge * edgePtr2;
+
+	//Assign Pointer to edge
+	edgePtr = &edge;
+	edgePtr2 = &edge2;
+
+	vertexPtrs[0]->addOutgoingEdges(edgePtr);
+	vertexPtrs[1]->addIncomingEdges(edgePtr);
+	vertexPtrs[1]->addOutgoingEdges(edgePtr2);
+
+	vertexPtrs[0]->printEdges();
+	vertexPtrs[1]->printEdges();
 
 	const int carAmount = 4;
 
@@ -65,11 +76,9 @@ void testChristoph() {
 	for (int i = 0; i < carAmount; i++) {
 
 		std::cout << "Counter: " << i << std::endl;
-
 		std::cout << "Made car with ID " << carStorage[i].getID() << std::endl;
 
 		carsPtr[i] = &carStorage[i];
-
 		std::cout << "Pointer points to car :" << carsPtr[i]->getID() << std::endl;
 
 		for (int j = 0; j <= i; j++) {

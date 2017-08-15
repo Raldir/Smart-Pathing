@@ -12,6 +12,8 @@ class Car;
 class Vertex {
 
 public:
+	Vertex() {};
+
 	Vertex(int id, float x, float y);
 
 	//TrafficLight* trafficLight;
