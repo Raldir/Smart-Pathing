@@ -13,7 +13,6 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 
 	_ID = id;
 
-
 	//TODO Initalize timetable correctly
 	//int timetable[_SIMULATION_TIME];
 }
@@ -58,7 +57,6 @@ void Edge::removeWeightTimetable(int time, int weight) {
 
 	//Remove weight by using add function
 	//Edge::addWeightTimetable(time, weight * -1);
-
 }
 
 /*
@@ -108,7 +106,6 @@ void Edge::printCars() {
 			q.pop();
 		} while (!q.empty());
 	}
-
 }
 
 float Edge::getLength() {
@@ -119,16 +116,15 @@ int Edge::getID() {
 	return _ID;
 }
 
-
 /*
 ###### OBSERVER
 */
 
-void Edge::registerObserver(ObserverVertex * vertex) {
-	this->endVertex = vertex;
+void Edge::registerObserver(Vertex * vertex, std::string indicator) {
+	endVertex = vertex;
 }
 
-void Edge::removeObserver(ObserverVertex * vertex) {
+void Edge::removeObserver(Vertex * vertex, std::string indicator) {
 	//TODO gucken wie geht nullpointer
 	//vertex = NULL;
 }
@@ -136,13 +132,18 @@ void Edge::removeObserver(ObserverVertex * vertex) {
 ///<summary>
 ///Notifies obversers
 ///</summary>
-void Edge::notifyVertex(Edge* edge) {
-	//Gives 
-	endVertex->transferCar(edge);
-}
+void Edge::notifyVerticies(Edge* edge) {
 
-ObserverVertex* Edge::getObserver() {
-	return endVertex;
+	if (isFull() != lastTickIsFull) {
+		startVertex->setEdgeIsFull(_ID, isFull());
+
+		lastTickIsFull == isFull();
+	}
+	
+	//TODO !!!!
+	if (true) {
+		endVertex->transferCar(_ID);
+	}
 }
 
 std::pair<Vertex*, Vertex*> Edge::getVertices()

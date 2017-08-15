@@ -10,7 +10,7 @@
 class Car;
 class Vertex;
 
-class Edge : SubjectEdge {
+class Edge : virtual SubjectEdge {
 
 public:
 	//Constructor
@@ -20,7 +20,7 @@ public:
 
 	Edge(float length, int id, std::pair<Vertex*, Vertex*>);
 
-	//
+
 	float getLength();
 
 	//Adds and remove weights on timetable at specified time
@@ -28,13 +28,13 @@ public:
 	void removeWeightTimetable(int time, int weight);
 
 	//Pusht car auf queue
-	void pushCar(Car *car);
+	void pushCar(Car* car);
 
 	//Entfernt car von queue
-	Car * popCar();
+	Car* popCar();
 
 	//Gibt Auto an erster Stelle in Queue aus
-	Car * getFrontCar();
+	Car* getFrontCar();
 
 	//Checkt ob Edge voll ist
 	bool isFull();
@@ -43,13 +43,13 @@ public:
 
 	virtual int getID() override;
 
-	virtual void registerObserver(ObserverVertex * obs) override;
-	virtual void removeObserver(ObserverVertex * obs) override;
+	virtual void registerObserver(Vertex * obs, std::string indicator) override;
+	virtual void removeObserver(Vertex * obs, std::string indicator) override;
 
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVertex(Edge* edge) override;
+	virtual void notifyVerticies(Edge* edge) override;
 
-	virtual ObserverVertex* getObserver() override;
+	virtual std::pair<Vertex*, Vertex*> getVerticies() override;
 
 	std::pair<Vertex*, Vertex*> getVertices();
 
@@ -72,4 +72,7 @@ private:
 
 	//Timetable in dem die Gewichte für jeden Zeitabschnitt gespeichert werden.
 	int timetable[10];
+
+	//Indicates if the edge was full last tick
+	bool lastTickIsFull;
 };

@@ -7,7 +7,7 @@
 
 /**
 */
-Vertex::Vertex(int id, float x, float y) : ObserverVertex(id, x, y) {
+Vertex::Vertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {
 
 }
 
@@ -19,9 +19,9 @@ Vertex::Vertex(int id, float x, float y) : ObserverVertex(id, x, y) {
 	Takes stored vertex of car and searches for the edge connecting to vertex then
 	transfers car onto this edge
 */
-void Vertex::transferCar(Edge* edge)
+void Vertex::transferCar(int incomingEdgeID)
 {
-	Car* car = takeCar(edge);
+	Car* car = takeCar(incomingEdgeID);
 
 	//Removes this point as destination to reveal next point
 	car->popCurrentVertex();
@@ -29,11 +29,11 @@ void Vertex::transferCar(Edge* edge)
 	Edge* nextEdge = NULL;
 	bool nextEdgeFound = false;
 
-	for (Edge* edge : outgoingEdges) {
+	for (std::pair<int, Edge*> e : outgoingEdges) {
 
 		//Look if one of the edges has Vertex with matching ID from car
-		if (edge->getObserver()->getID() == car->getCurrentVertex()->getID()) {
-			nextEdge = edge;
+		if (e.second->getVerticies().second->getID() == car->getCurrentVertexID()) {
+			nextEdge = e.second;
 			nextEdgeFound = true;
 			break;
 		}
@@ -48,20 +48,21 @@ void Vertex::transferCar(Edge* edge)
 }
 
 //Hilfsfunktion falls sich was an der Struktur verändert
-Car* Vertex::takeCar(Edge * edge) {
+Car* Vertex::takeCar(int incomingEdgeID) {
 	//Get cat in front
-	Car* car = edge->getFrontCar();
+	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
 
 	//Remove car from edge
-	edge->popCar();
+	getEdgeFromID(incomingEdgeID)->popCar();
 
 	return car;
 }
 
-bool Vertex::canTransit(Edge* nextEdge) {
+bool Vertex::canTransit(int outgoingEdgeID) {
 	//TODO Implement when Traffic Light is ready
 
-	return !(nextEdge->isFull());
+	return isEdgeFullMap[outgoingEdgeID];
+	//return !(getEdgeFromID(outgoingEdgeID)->isFull());
 }
 
 /*
@@ -70,21 +71,43 @@ bool Vertex::canTransit(Edge* nextEdge) {
 
 //Adds pointer of incoming edge to Vector
 void Vertex::addIncomingEdges(Edge* edge) {
-	incomingEdges.push_back(edge);
+	incomingEdges[edge->getID()] = edge;
 }
 
 //Adds Pointer of outgoing edge to Vector
 void Vertex::addOutgoingEdges(Edge* edge) {
-	outgoingEdges.push_back(edge);
+	outgoingEdges[edge->getID()] = edge;
+}
+
+Edge* Vertex::getEdgeFromID(int edgeID) {
+
+	//Searches through the pairs in the map and matches the IDs
+	for (std::pair<int, Edge*> p : incomingEdges) {
+		if (p.first == edgeID) {
+			return p.second;
+		}
+	}
+
+	//Searches through the pairs in the map and matches the IDs
+	for (std::pair<int, Edge*> p : incomingEdges) {
+		if (p.first == edgeID) {
+			return p.second;
+		}
+	}
+}
+
+void Vertex::setEdgeIsFull(int outgoingEdgeID, bool isFull)
+{
+	isEdgeFullMap[outgoingEdgeID] = isFull;
 }
 
 void Vertex::printEdges() {
-	for (Edge* e : incomingEdges) {
-		std::cout << "Incoming Edge: " << e->getID() << std::endl;
+	for (std::pair<int, Edge*> e : incomingEdges) {
+		std::cout << "Incoming Edge: " << e.second->getID() << std::endl;
 	}
 
-	for (Edge* e : outgoingEdges) {
-		std::cout << "Outgoing Edge: " << e->getID() << std::endl;
+	for (std::pair<int, Edge*> e : outgoingEdges) {
+		std::cout << "Outgoing Edge: " << e.second->getID() << std::endl;
 	}
 }
 
@@ -99,7 +122,6 @@ float Vertex::getX() {
 float Vertex::getY() {
 	return _Y;
 }
-
 
 std::pair<float, float> Vertex::getPosition()
 {

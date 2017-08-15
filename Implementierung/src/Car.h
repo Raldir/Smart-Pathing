@@ -25,17 +25,17 @@ public:
 	void popCurrentVertex();
 
 	//Gets current nearest vertex the car is headed for
-	Vertex* getCurrentVertex();
+	int getCurrentVertexID();
 
 	//Assigns new queue to path (when path is recalculated) and deletes the old one
-	void assignRoute(std::queue<Vertex*> q);
+	void assignRoute(std::queue<int> q);
 
 	//Gets ID of Car
 	int getID();
 
 private:
 	//Stores the route as queue of ids
-	std::queue<Vertex*> route;
+	std::queue<int> route;
 
 	//Current Position on edge
 	float currentPosition;
