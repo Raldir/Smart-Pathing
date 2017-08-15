@@ -51,6 +51,8 @@ public:
 
 	virtual ObserverVertex* getObserver() override;
 
+	std::pair<Vertex*, Vertex*> getVertices();
+
 private:
 
 	//Länge der Straße

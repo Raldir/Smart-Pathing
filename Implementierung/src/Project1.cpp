@@ -6,14 +6,15 @@
 #include "Vertex.h"
 #include "Car.h"
 #include "Project1.h"
-#include "VertexHandler.h"
+#include "VertexFileReader.h"
+#include "EdgeFileReader.h"
 
 
 int main() {
 	
 	//Platz für Rami
 
-	testChristoph();	
+	//testChristoph();	
 	testRami();
 
 	return 0;
@@ -21,8 +22,9 @@ int main() {
 
 
 void testRami() {
-	VertexHandler* handler = new VertexHandler();
-	handler->readFile("nodes");
+	std::vector<Vertex*> vertices = readVertexFile("nodes"); 
+	std::vector<Edge*> edges = calculateEdges(vertices, "edges");
+	//connectVertices(edges);
 	system("PAUSE");
 }
 

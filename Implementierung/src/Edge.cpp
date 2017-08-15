@@ -19,7 +19,8 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 }
 
 Edge::Edge(float length, int id) : _LENGTH(length) {
-	_carQueueCapacity = int(length / _CAR_LENGTH);
+	//TODO Capacität nicht ganz korrekt, da auch bspw. für ein Auto ein Gap existieren muss damit es Kapazität 1 hat
+	_carQueueCapacity = int(length / (_CAR_LENGTH + _CAR_MINIMUM_GAP));
 	_ID = id;
 
 
@@ -142,5 +143,10 @@ void Edge::notifyVertex(Edge* edge) {
 
 ObserverVertex* Edge::getObserver() {
 	return endVertex;
+}
+
+std::pair<Vertex*, Vertex*> Edge::getVertices()
+{
+	return std::pair<Vertex*, Vertex*>();
 }
 
