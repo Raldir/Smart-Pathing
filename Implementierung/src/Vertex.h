@@ -61,6 +61,5 @@ private:
 
 	float _X;
 	float _Y;
-
 	int _ID;
 };

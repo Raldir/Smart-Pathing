@@ -14,7 +14,7 @@ int main() {
 	
 	//Platz für Rami
 
-	testChristoph();	
+	//testChristoph();	
 	testRami();
 
 	return 0;

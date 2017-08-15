@@ -11,11 +11,12 @@ vector<Vertex*> readVertexFile(string s){
 	while (getline(infile, line))
 	{
 		istringstream iss(line);
-		float a, b, c;
+		int a;
+		float b, c;
 		if (!(iss >> a >> b >> c)) { break; } // error
 		else {
-			cout << a << ' ' << b << ' ' << c;
-			vertices.push_back(new Vertex(static_cast<int> (a), b, c));
+			//cout << a << ' ' << b << ' ' << c;
+			vertices.push_back(new Vertex(a, b, c));
 		} 
 	}
 	return vertices;
