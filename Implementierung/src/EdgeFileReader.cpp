@@ -8,13 +8,13 @@ std::vector<Edge*> calculateEdges(vector<Vertex*> vertices, string path)
 {
 	vector<std::pair<int, int>> connections = readEdgeFile(path);
 	vector<Edge*> edges;
+	int id = 0;
 	for (vector<pair<int, int>>::iterator it = connections.begin(); it != connections.end(); it++) {
 		int start = it->first;
 		int end = it->second;
-		cout << start << " " << end;
+		//cout << start << " " << end;
 		pair<float, float> coordinates1;
 		pair<float, float> coordinates2;
-		int id = 0;
 		Vertex* startv = NULL;
 		Vertex* endv = NULL;
 		for (vector<Vertex*>::iterator it2 = vertices.begin(); it2 != vertices.end(); it2++) {
@@ -29,7 +29,7 @@ std::vector<Edge*> calculateEdges(vector<Vertex*> vertices, string path)
 		}
 		float length = sqrt(pow((coordinates1.first + coordinates1.first), 2.0f) + pow((coordinates1.second + coordinates2.second), 2.0f));
 		edges.push_back(new Edge(length, id, std::pair<Vertex*, Vertex*>(startv, endv)));
-		//cout << length << " " << id << " " << startv->getID() << endv->getID();
+		cout << length << " " << id << " " << startv->getID() << " " << endv->getID() <<"\n";
 		id++;
 	}
 	return edges;
@@ -44,11 +44,11 @@ vector<std::pair<int, int>> readEdgeFile(string s) {
 	while (getline(infile, line))
 	{
 		istringstream iss(line);
-		float a, b;
+		int a, b;
 		if (!(iss >> a >> b)) { break; } // error
 		else {
-			cout << a << ' ' << b;
-			connectionID.push_back(std::pair <int, int>(static_cast<int> (a), static_cast<int> (b)));
+			//cout << a << ' ' << b;
+			connectionID.push_back(std::pair <int, int>(a, b));
 		}
 	}
 	return connectionID;

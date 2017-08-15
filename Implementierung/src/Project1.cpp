@@ -12,7 +12,6 @@
 
 int main() {
 
-	//Platz für Rami
 	testChristoph();
 	testRami();
 
@@ -30,20 +29,24 @@ void testRami() {
 
 void testChristoph() {
 
-	std::cout << "TEST COUT";
+	std::cout << "TEST COUT" << std::endl;
 
 	const int vertexAmount = 2;
 
 	//Prints Edges of Vertex
 	Vertex vertices[vertexAmount];
-	std::vector<Vertex*> vertexPtrs;
+	Vertex* vertexPtrs[vertexAmount];
 
 	for (int i = 0; i < vertexAmount; i++) {
 
 		Vertex vertex(i,0,0);
+		std::cout << "Vertex mit ID: " << vertex.getID() << " erstellt." << std::endl;
+
 		vertices[i] = vertex;
 
 		vertexPtrs[i] = &vertices[i];
+
+		std::cout << "VertexPtr Test: VertexOriginalID: " << vertices[i].getID() << ". VertexPtrID: " << vertexPtrs[i]->getID() << std::endl;
 	}
 
 	Edge edge(10, 10, std::make_pair(vertexPtrs[0], vertexPtrs[1]));

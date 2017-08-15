@@ -33,6 +33,9 @@ public:
 	void addIncomingEdges(Edge *edge);
 	void addOutgoingEdges(Edge *edge);
 
+	std::vector<Edge*> getIncomingEdges();
+	std::vector<Edge*> getOutgoingEdges();
+
 	Edge* getEdgeFromID(int edgeID);
 
 	void setEdgeIsFull(int, bool);
@@ -63,6 +66,5 @@ private:
 
 	float _X;
 	float _Y;
-
 	int _ID;
 };

@@ -79,6 +79,28 @@ void Vertex::addOutgoingEdges(Edge* edge) {
 	outgoingEdges[edge->getID()] = edge;
 }
 
+std::vector<Edge*> Vertex::getIncomingEdges()
+{
+	std::vector<Edge*> v;
+
+	for (std::pair<int, Edge*> e : incomingEdges) {
+		v.push_back(e.second);
+	}
+
+	return v;
+}
+
+std::vector<Edge*> Vertex::getOutgoingEdges()
+{
+	std::vector<Edge*> v;
+
+	for (std::pair<int, Edge*> e : outgoingEdges) {
+		v.push_back(e.second);
+	}
+
+	return v;
+}
+
 Edge* Vertex::getEdgeFromID(int edgeID) {
 
 	//Searches through the pairs in the map and matches the IDs
