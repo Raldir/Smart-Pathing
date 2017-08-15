@@ -49,9 +49,15 @@ void Car::popCurrentVertex() {
 }
 
 int Car::getCurrentVertexID() {
-	return route.front();
+
+	if (!route.empty()) {
+		return route.front();
+	}
+	else {
+		return NULL;
+	}
 }
 
-int Car::getID() { 
-	return _ID; 
+int Car::getID() {
+	return _ID;
 };

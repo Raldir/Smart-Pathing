@@ -21,10 +21,7 @@ Vertex::Vertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {
 */
 void Vertex::transferCar(int incomingEdgeID)
 {
-	Car* car = takeCar(incomingEdgeID);
-
-	//Removes this point as destination to reveal next point
-	car->popCurrentVertex();
+	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
 
 	Edge* nextEdge = NULL;
 	bool nextEdgeFound = false;
@@ -40,9 +37,20 @@ void Vertex::transferCar(int incomingEdgeID)
 	}
 
 	if (nextEdgeFound) {
-		nextEdge->pushCar(car);
+		if (canTransit(nextEdge->getID())) {
+
+			Car* car = takeCar(incomingEdgeID);
+
+			giveCar(nextEdge, car);
+			//Removes the next point as destination
+			car->popCurrentVertex();
+		}
+		else {
+			//TODO
+		}
 	}
 	else {
+		//TODO No next edge found?
 		std::cout << "No edge found leading to next vertex!" << std::endl;
 	}
 }
@@ -56,6 +64,11 @@ Car* Vertex::takeCar(int incomingEdgeID) {
 	getEdgeFromID(incomingEdgeID)->popCar();
 
 	return car;
+}
+
+void Vertex::giveCar(Edge* outgoingEdge, Car* car)
+{
+	outgoingEdge->pushCar(car);
 }
 
 bool Vertex::canTransit(int outgoingEdgeID) {
