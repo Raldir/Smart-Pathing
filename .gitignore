@@ -3,9 +3,11 @@ build
 *.log
 .tag*
 *.sdf
-SmartCarsSequentiell/.vs/SmartCarsSequentiell/v14/.suo
-SmartCarsSequentiell/SmartCarsSequentiell.VC.db
-SmartCarsSequentiell/SmartCarsSequentiell/Debug/**
-SmartCarsSequentiell/SmartCarsSequentiell/
-SmartCarsSequentiell/Debug/**
-SmartCarsSequentiell/x64/**
+Implementierung/SmartCarsSequentiell/.vs/
+Implementierung/SmartCarsSequentiell/SmartCarsSequentiell.VC.opendb
+Implementierung/SmartCarsSequentiell/SmartCarsSequentiell.VC.VC.opendb
+Implementierung/SmartCarsSequentiell/SmartCarsSequentiell.VC.db
+Implementierung/SmartCarsSequentiell/SmartCarsSequentiell/
+Implementierung/SmartCarsSequentiell/enc_temp_folder/
+Implementierung/SmartCarsSequentiell/Debug/**
+Implementierung/SmartCarsSequentiell/x64/
