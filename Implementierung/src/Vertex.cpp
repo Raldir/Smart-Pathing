@@ -140,11 +140,13 @@ void Vertex::setEdgeIsFull(int outgoingEdgeID, bool isFull)
 }
 
 void Vertex::printEdges() {
+	std::cout << "Vertex:" << _ID << " ";
 	for (std::pair<int, Edge*> e : incomingEdges) {
 		std::cout << "Incoming Edge: " << e.second->getID() << std::endl;
 	}
 
 	for (std::pair<int, Edge*> e : outgoingEdges) {
+		std::cout << "Vertex:" << _ID << " ";
 		std::cout << "Outgoing Edge: " << e.second->getID() << std::endl;
 	}
 }

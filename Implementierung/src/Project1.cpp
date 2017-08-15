@@ -23,7 +23,7 @@ int main() {
 void testRami() {
 	std::vector<Vertex*> vertices = readVertexFile("nodes");
 	std::vector<Edge*> edges = calculateEdges(vertices, "edges");
-	//connectVertices(edges);
+	connectVertices(edges);
 	system("PAUSE");
 }
 
