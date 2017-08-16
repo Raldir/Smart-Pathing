@@ -60,7 +60,8 @@ void Graph::calculateRoutingPaths(){
 		int start = (*it2)->getID();
 		for (std::vector<Vertex*>::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
-			if (_routingTable->getRoute(goal, start) == NULL) {
+			//CHRISTOPH: Habe hier bei leerer queue fall von NULL zu empty verändert
+			if (_routingTable->getRoute(goal, start).empty()) {
 				break;
 			}
 
