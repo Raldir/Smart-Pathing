@@ -1,3 +1,4 @@
+#Requires NetworX library
 import networkx as nx
 import matplotlib.pyplot as plt
 
