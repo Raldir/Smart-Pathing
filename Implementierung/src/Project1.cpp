@@ -54,7 +54,7 @@ void testChristoph() {
 	Edge edge2(1,10,2);
 	Edge edge0(1,5,0);
 
-	edge0.registerObserver(vertexPtrs[0],"hallo");
+	edge0.registerObserver(vertexPtrs[0],"end");
 
 	Edge * edgePtr;
 	Edge * edgePtr2;

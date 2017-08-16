@@ -132,7 +132,13 @@ int Edge::getID() {
 */
 
 void Edge::registerObserver(Vertex * vertex, std::string indicator) {
-	endVertex = vertex;
+	if (indicator == "end")
+	{
+		endVertex = vertex; 
+	}
+	else if (indicator == "start") {
+		startVertex = vertex;
+	}
 }
 
 void Edge::removeObserver(Vertex * vertex, std::string indicator) {
