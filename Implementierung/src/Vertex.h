@@ -37,6 +37,8 @@ public:
 	std::vector<Edge*> getIncomingEdges();
 	std::vector<Edge*> getOutgoingEdges();
 
+	std::vector<Edge*> getEdges();
+
 	Edge* getEdgeFromID(int edgeID);
 
 	void setEdgeIsFull(int, bool);
