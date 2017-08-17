@@ -24,11 +24,25 @@ Graph::Graph()
 
 
 void Graph::filterSpawner() {
-	for (std::vector<Vertex*>::iterator it2 = _vertices.begin(); it2 != _vertices.end(); it2++) {
-		if ((*it2)->getIncomingEdges().empty() || (*it2)->getOutgoingEdges().empty()) {
-			_spawner.push_back(*it2);
+	for (std::vector<Vertex*>::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+	//	std::vector<Edge*> edges = (*it)->getEdges();
+	//	//TODO Laufzeit ist katastrophal, bessere Lösung überlegen
+	//	int edgecount = edges.size();
+	//	for (std::vector<Edge*>::iterator it2 = edges.begin(); it2 != edges.end(); it2++){
+	//		for (std::vector<Edge*>::iterator it3 = edges.begin(); it3 != edges.end(); it3++) {
+	//			if ((*it2)->getVertices().first->getID() == (*it3)->getVertices().second->getID()) {
+	//				edgecount --;
+	//				break;
+	//			}
+	//		}
+	//	}
+		//TODO Wert nicht statisch setzen sondern dynamisch bestimmen. Veilleicht später die n wenigsten verbundenen
+		//Knoten nehmen
+		if ((*it)->getEdges().size() == 2) {
+			std::cout << "hello";
+			_spawner.push_back(*it);
 		}
-	}
+		}
 }
 
 
@@ -76,7 +90,7 @@ private:
 
 void Graph::calculateRoutingPaths(){
 	// specify some types
-	typedef adjacency_list<listS, vecS, undirectedS, no_property,
+	typedef adjacency_list<listS, vecS, directedS, no_property,
 		property<edge_weight_t, int> > mygraph_t;
 	typedef property_map<mygraph_t, edge_weight_t>::type WeightMap;
 	typedef mygraph_t::vertex_descriptor vertex;

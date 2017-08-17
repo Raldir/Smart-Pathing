@@ -114,6 +114,17 @@ std::vector<Edge*> Vertex::getOutgoingEdges()
 	return v;
 }
 
+std::vector<Edge*> Vertex::getEdges()
+{
+	std::vector<Edge*> edges;
+	std::vector<Edge*> outgoingEdges = getOutgoingEdges();
+	std::vector<Edge*> incomingEdges = getIncomingEdges();
+	edges.reserve(getOutgoingEdges().size() + getIncomingEdges().size());
+	edges.insert(edges.end(), outgoingEdges.begin(), outgoingEdges.end());
+	edges.insert(edges.end(), incomingEdges.begin(), incomingEdges.end());
+	return edges;
+}
+
 Edge* Vertex::getEdgeFromID(int edgeID) {
 
 	//Searches through the pairs in the map and matches the IDs

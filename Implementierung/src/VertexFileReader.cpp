@@ -28,7 +28,6 @@ void connectVertices(vector<Edge*> edges)
 	for (vector<Edge*>::iterator it = edges.begin(); it != edges.end(); it++) {
 			(*it)->getVertices().first->addOutgoingEdges(*it);
 			(*it)->getVertices().second->addIncomingEdges(*it);
-			(*it)->getVertices().first->printEdges();
 	}
 	
 }
