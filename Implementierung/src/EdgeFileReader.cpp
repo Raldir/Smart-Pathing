@@ -27,7 +27,8 @@ std::vector<Edge*> calculateEdges(vector<Vertex*> vertices, string path)
 				coordinates2 = std::pair <float, float>((*it2)->getX(), (*it2)->getY());
 			}
 		}
-		float length = sqrt(pow((coordinates1.first + coordinates1.first), 2.0f) + pow((coordinates1.second + coordinates2.second), 2.0f));
+		float length = sqrt(pow((coordinates1.first - coordinates2.first), 2.0f) 
+			+ pow((coordinates1.second - coordinates2.second), 2.0f));
 		edges.push_back(new Edge(length, id, std::pair<Vertex*, Vertex*>(startv, endv)));
 		//cout << length << " " << id << " " << startv->getID() << " " << endv->getID() <<"\n";
 		id++;
@@ -54,7 +55,7 @@ vector<std::pair<int, int>> readEdgeFile(string s) {
 	return connectionID;
 }
 
-map<int, Edge*> VertexMap(std::vector<Edge*> edges) {
+map<int, Edge*> edgeMap(std::vector<Edge*> edges) {
 	map<int, Edge*> edgeMap;
 	for (vector<Edge*>::iterator it = edges.begin(); it != edges.end(); it++) {
 		edgeMap[(*it)->getID] = (*it);

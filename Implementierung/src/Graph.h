@@ -18,8 +18,8 @@ private:
 	std::vector<Vertex*> _spawner;
 	std::vector<Edge*> _edges;
 	std:: vector<Vertex*> _vertices;
-	std::map<int, Edge*> _edgesMap;
-	std::map<int, Vertex*> _verticesMap;
+	std::map<int, Edge*> _edgeMap;
+	std::map<int, Vertex*> _vertexMap;
 	RoutingTable* _routingTable;
 };
 

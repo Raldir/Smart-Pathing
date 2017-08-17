@@ -33,10 +33,11 @@ void connectVertices(vector<Edge*> edges)
 	
 }
 
-std::map<int, Vertex*> VertexMap(std::vector<Vertex*> vertices) {
-	std::map<int, Vertex*> vertexMap;
-	std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++){
-		vertexMap[(*it)->]
+map<int, Vertex*> vertexMap(std::vector<Vertex*> vertices) {
+	map<int, Vertex*> vertexMap;
+	for(vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++){
+		vertexMap[(*it)->getID] = (*it);
 	}
+	return vertexMap;
 }
 

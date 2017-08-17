@@ -27,7 +27,7 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 	//int timetable[_SIMULATION_TIME];
 }
 
-Edge::Edge(float length, int id, std::pair<Vertex*,Vertex*> nodes) : _LENGTH(length) {
+Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(length) {
 	_carQueueCapacity = int(length / _CAR_LENGTH);
 	startVertex = nodes.first;
 	endVertex = nodes.second;
@@ -68,13 +68,19 @@ void Edge::removeWeightTimetable(int time, int weight) {
 ///</summary>
 Car * Edge::popCar() {
 
-	//Save pointer for car in front of queue
-	Car * carPtr = carQueue.front();
+	if (!carQueue.empty())
+	{
+		//Save pointer for car in front of queue
+		Car* carPtr = carQueue.front();
 
-	//Remove car from queue
-	carQueue.pop();
+		//Remove car from queue
+		carQueue.pop();
 
-	return carPtr;
+		return carPtr;
+	}
+	else {
+		return NULL;
+	}
 }
 
 void Edge::pushCar(Car* car) {
@@ -84,7 +90,12 @@ void Edge::pushCar(Car* car) {
 
 Car * Edge::getFrontCar() {
 
-	return carQueue.front();
+	if (!carQueue.empty()) 	{
+		return carQueue.front();
+	}
+	else {
+		return NULL;
+	}
 }
 
 ///<summary>
@@ -121,7 +132,13 @@ int Edge::getID() {
 */
 
 void Edge::registerObserver(Vertex * vertex, std::string indicator) {
-	endVertex = vertex;
+	if (indicator == "end")
+	{
+		endVertex = vertex; 
+	}
+	else if (indicator == "start") {
+		startVertex = vertex;
+	}
 }
 
 void Edge::removeObserver(Vertex * vertex, std::string indicator) {
@@ -141,7 +158,7 @@ void Edge::notifyVerticies(Edge* edge) {
 
 		std::cout << "Toggled lastTickIsFull flag to " << lastTickIsFull << std::endl;
 	}
-	
+
 	//TODO Implementiere Notification bei Transfer
 	if (getFrontCar()->getCurrentPosition() == 0) {
 		std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car" << std::endl;

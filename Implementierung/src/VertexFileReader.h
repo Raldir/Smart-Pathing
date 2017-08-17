@@ -6,6 +6,8 @@
 
 std::vector<Vertex*> readVertexFile(std::string path);
 
+std::map<int, Vertex*> vertexMap(std::vector<Vertex*>);
+
 void connectVertices(std::vector<Edge*>);
 
 

@@ -93,10 +93,9 @@ void Graph::calculateRoutingPaths(){
 		int start = (*it2)->getID();
 		for (std::vector<Vertex*>::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
-			/*if (_routingTable->getRoute(goal, start) == NULL) {
+			if (_routingTable->getRoute(goal, start).empty()) {
 				break;
-			}*/
-
+			}
 			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
 			std::vector<int> d(num_vertices(g));
 			try {

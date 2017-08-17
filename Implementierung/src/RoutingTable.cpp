@@ -1,7 +1,6 @@
 #include <iostream>
 #include "RoutingTable.h"
 
-
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
 	//Pushes originID into first map and int queue pair into the second
@@ -42,6 +41,10 @@ std::queue<int> RoutingTable::getRoute(int originID, int destID) {
 		std::map<int, std::queue<int>> destinationMap = iterOrigin->second;
 
 		queue = destinationMap.find(destID)->second;
+	}
+	else {
+		std::cout << "No queue found in Routing Table from" << originID << " to " << destID << std::endl;
+		return std::queue<int>();
 	}
 
 	return queue;

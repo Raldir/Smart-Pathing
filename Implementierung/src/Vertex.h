@@ -26,6 +26,7 @@ public:
 
 	//Hilfefunktion
 	Car* takeCar(int incomingEdgeID);
+	void giveCar(Edge* edge, Car* car);
 
 	//Checks wheter TrafficLight allow transit and wheter or not the next edge is full
 	bool canTransit(int outgoingEdgeID);

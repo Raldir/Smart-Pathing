@@ -8,6 +8,7 @@
 #include "Project1.h"
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
+#include "RoutingTable.h"
 
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -239,8 +240,8 @@ void testChristoph() {
 	const int vertexAmount = 2;
 
 	//Prints Edges of Vertex
-	Vertex vertices[vertexAmount];
-	Vertex* vertexPtrs[vertexAmount];
+	Vertex vertices[2];
+	Vertex* vertexPtrs[2];
 
 	for (int i = 0; i < vertexAmount; i++) {
 
@@ -254,15 +255,22 @@ void testChristoph() {
 		std::cout << "VertexPtr Test: VertexOriginalID: " << vertices[i].getID() << ". VertexPtrID: " << vertexPtrs[i]->getID() << std::endl;
 	}
 
-	Edge edge(10, 10, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
-	Edge edge2(1,10,100);
+	Edge edge(10, 1, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
+	Edge edge2(1,10,2);
+	Edge edge0(1,5,0);
+
+	edge0.registerObserver(vertexPtrs[0],"end");
+
 	Edge * edgePtr;
 	Edge * edgePtr2;
+	Edge * edgePtr0;
 
 	//Assign Pointer to edge
 	edgePtr = &edge;
 	edgePtr2 = &edge2;
+	edgePtr0 = &edge0;
 
+	vertexPtrs[0]->addIncomingEdges(edgePtr0);
 	vertexPtrs[0]->addOutgoingEdges(edgePtr);
 	vertexPtrs[1]->addIncomingEdges(edgePtr);
 	vertexPtrs[1]->addOutgoingEdges(edgePtr2);
@@ -300,6 +308,26 @@ void testChristoph() {
 
 	//Prints Cars in Edge
 	edgePtr->printCars();
+
+	//ROUTING TABLES
+	RoutingTable table;
+
+	std::deque<int> d{ vertexPtrs[0]->getID(), vertexPtrs[1]->getID() };
+	std::queue<int> q(d);
+
+	table.insertRoute(0,1,q);
+
+	std::queue<int> route = table.getRoute(0,1);
+
+	carsPtr[0]->assignRoute(q);
+
+	//SUPER TRANSFER STUFF
+	edgePtr0->pushCar(carsPtr[0]);
+	std::cout << "Pushed car with ID: "<< edgePtr0->getFrontCar()->getID() << " on Edge 0" << std::endl;
+
+	vertexPtrs[0]->transferCar(0);
+
+	std::cout << "Car " << edgePtr->getFrontCar()->getID() << "is on Edge 1" << std::endl;
 
 	system("PAUSE"); //From C
 }
