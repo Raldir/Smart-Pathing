@@ -7,3 +7,4 @@
 
 	std::vector<std::pair<int, int>> readEdgeFile(std::string path);
 
+	std::map<int, Edge*> edgeMap(std::vector<Edge*>);

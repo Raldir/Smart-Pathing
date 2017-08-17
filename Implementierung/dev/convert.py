@@ -5,6 +5,15 @@ Partly use of the code of Brandon Martin-Anderson under the BSD License http://g
 import xml.sax
 import copy
 
+def mapVertices(vertices):
+    iDMapping = {}
+    count = 0
+    for node in vertices:
+        iDMapping[node.id] = count
+        count+=1
+    
+    return iDMapping
+
 def twopointWays(i, size, file, nodes, edge):
     if size > 2:
         nodes = nodes + [edge.nds[i]] + [edge.nds[i+1]]
@@ -20,8 +29,6 @@ def twopointWays(i, size, file, nodes, edge):
 def read_osm(filename_or_stream, only_roads=True):
     "TODO Nomalisiere Koordinaten der Nodes"
     osm = OSM(filename_or_stream)
-    f = open('edges', 'w')
-    print(type(osm.ways))
     nodes = []
     for key, edge in osm.ways.items():
         if 'highway' not in edge.tags:
@@ -33,7 +40,24 @@ def read_osm(filename_or_stream, only_roads=True):
         for i in range(0, len(edge.nds)):
             if i == 0 or i == len(edge.nds) - 1:
                 nodes = nodes + [edge.nds[i]]
-                f.write(edge.nds[i] + " ")
+    nodesFiltered = []
+    for key, node in osm.nodes.items():
+        #print(node.id)
+        if node.id in nodes:
+            nodesFiltered = nodesFiltered + [node]
+    mappedID = mapVertices(nodesFiltered)
+    f = open('edges', 'w')
+    print(type(osm.ways))
+    for key, edge in osm.ways.items():
+        if 'highway' not in edge.tags:
+            continue
+            #nodes  = nodes + twopointWays(0, len(edge.nds), f, [], edge)
+            #print(i)
+        if edge.tags.get('highway') != 'residential':
+            continue
+        for i in range(0, len(edge.nds)):
+            if i == 0 or i == len(edge.nds) - 1:
+                f.write(str(mappedID[edge.nds[i]]) + " ")
         f.write('\n')
     f.close()
     #values = positions(osm.nodes, nodes)
@@ -41,7 +65,7 @@ def read_osm(filename_or_stream, only_roads=True):
     for key, node in osm.nodes.items():
         #print(node.id)
         if node.id in nodes:
-            f.write(node.id + " " + str(node.x * 1000) + " " + str(node.y * 1000) + '\n')
+            f.write(str(mappedID[node.id]) + " " + str(node.x * 1000) + " " + str(node.y * 1000) + '\n')
     f.close()
 
 """

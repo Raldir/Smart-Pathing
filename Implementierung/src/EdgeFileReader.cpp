@@ -53,3 +53,11 @@ vector<std::pair<int, int>> readEdgeFile(string s) {
 	}
 	return connectionID;
 }
+
+map<int, Edge*> VertexMap(std::vector<Edge*> edges) {
+	map<int, Edge*> edgeMap;
+	for (vector<Edge*>::iterator it = edges.begin(); it != edges.end(); it++) {
+		edgeMap[(*it)->getID] = (*it);
+	}
+	return edgeMap;
+}

@@ -1,13 +1,20 @@
 #include "Graph.h"
 #include <boost/config.hpp>
 #include <iostream>
-#include <boost/graph/adjacency_list.hpp>
 #include <algorithm>
 #include <vector>
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
 
-#include "boost/graph/graph_traits.hpp"
+#include <boost/graph/astar_search.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/random.hpp>
+#include <boost/random.hpp>
+#include <boost/graph/graphviz.hpp>
+#include <time.h>
+#include <list>
+#include <fstream>
+#include <math.h>    // for sqrt
 
 using namespace boost;
 
@@ -17,18 +24,44 @@ Graph::Graph()
 	_vertices = readVertexFile("nodes");
 	_edges = calculateEdges(_vertices, "edges");
 	connectVertices(_edges);
-	_spawner = filterSpawner();
-	 _routingTable = new RoutingTable();
+	filterSpawner();
+	_vertexMap = vertexMap(_vertices);
+	_edgeMap = edgeMap(_edges);
+	_routingTable = new RoutingTable();
 }
 
 
-std::vector<Vertex*> Graph::filterSpawner() {
+void Graph::filterSpawner() {
 	for (std::vector<Vertex*>::iterator it2 = _vertices.begin(); it2 != _vertices.end(); it2++) {
-		if ((*it2)->getIncomingEdges().empty() || (*it2)->getOutgoingEdges.empty()) {
-			_spawner.push_back((*it2));
+		if ((*it2)->getIncomingEdges().empty() || (*it2)->getOutgoingEdges().empty()) {
+			_spawner.push_back(*it2);
 		}
 	}
 }
+
+float Graph::distance_heuristic(int start, int goal) {
+	std::pair<int, int> korStart = _vertexMap[start]->getPosition();
+	std::pair<int, int> korEnd = _vertexMap[goal]->getPosition();
+	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +
+		pow((korStart.second - korEnd.second), 2.0f));
+}
+
+
+struct found_goal {};
+
+template <class Vertex>
+class astar_goal_visitor : public boost::default_astar_visitor
+{
+public:
+	astar_goal_visitor(Vertex goal) : m_goal(goal) {}
+	template <class Graph>
+	void examine_vertex(Vertex u, Graph& g) {
+		if (u == m_goal)
+			throw found_goal();
+	}
+private:
+	Vertex m_goal;
+};
 
 void Graph::calculateRoutingPaths(){
 	// specify some types
@@ -39,10 +72,10 @@ void Graph::calculateRoutingPaths(){
 	typedef mygraph_t::edge_descriptor edge_descriptor;
 	typedef mygraph_t::vertex_iterator vertex_iterator;
 
-	unsigned int num_edges = _edges.size();
+	unsigned int num_edges = unsigned int(_edges.size());
 	std::vector<int> vertices_ID;
 	for (std::vector<Vertex*>::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
-		vertices_ID.push_back((*it)->getID);
+		vertices_ID.push_back((*it)->getID());
 	}
 
 	// create graph
@@ -60,55 +93,45 @@ void Graph::calculateRoutingPaths(){
 		int start = (*it2)->getID();
 		for (std::vector<Vertex*>::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
-			if (_routingTable->getRoute(goal, start) == NULL) {
+			/*if (_routingTable->getRoute(goal, start) == NULL) {
 				break;
+			}*/
+
+			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
+			std::vector<int> d(num_vertices(g));
+			try {
+				// call astar named parameter interface
+				astar_search
+					(g, start,
+						distance_heuristic(start, goal),
+						predecessor_map(&p[0]).distance_map(&d[0]).
+						visitor(astar_goal_visitor<vertex>(goal)));
+
+
+			}
+			catch (found_goal fg) { // found a path to the goal
+				std::list<vertex> shortest_path;
+				for (vertex v = goal;; v = p[v]) {
+					shortest_path.push_front(v);
+					if (p[v] == v)
+						break;
+				}
+				std::cout << "Shortest path from " << _vertexMap[start]->getID()  << " to "
+					<< _vertexMap[goal]->getID() << ": ";
+				std::list<vertex>::iterator spi = shortest_path.begin();
+				std::cout << _vertexMap[start]->getID();
+				for (++spi; spi != shortest_path.end(); ++spi)
+					std::cout << " -> " << _vertexMap[*spi]->getID();
+				std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
 			}
 
+			std::cout << "Didn't find a path from " << _vertexMap[start]->getID() << "to"
+				<< _vertexMap[goal]->getID() << "!" << std::endl;
 		}
 	}
 
-	ofstream dotfile;
-	dotfile.open("test-astar-cities.dot");
-	write_graphviz(dotfile, g,
-		city_writer<const char **, location*>
-		(name, locations, 73.46, 78.86, 40.67, 44.93,
-			480, 400),
-		time_writer<WeightMap>(weightmap));
 
-
-	vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
-	vector<cost> d(num_vertices(g));
-	try {
-		// call astar named parameter interface
-		astar_search
-			(g, start,
-				distance_heuristic<mygraph_t, cost, location*>
-				(locations, goal),
-				predecessor_map(&p[0]).distance_map(&d[0]).
-				visitor(astar_goal_visitor<vertex>(goal)));
-
-
-	}
-	catch (found_goal fg) { // found a path to the goal
-		list<vertex> shortest_path;
-		for (vertex v = goal;; v = p[v]) {
-			shortest_path.push_front(v);
-			if (p[v] == v)
-				break;
-		}
-		cout << "Shortest path from " << name[start] << " to "
-			<< name[goal] << ": ";
-		list<vertex>::iterator spi = shortest_path.begin();
-		cout << name[start];
-		for (++spi; spi != shortest_path.end(); ++spi)
-			cout << " -> " << name[*spi];
-		cout << endl << "Total travel time: " << d[goal] << endl;
-		return 0;
-	}
-
-	cout << "Didn't find a path from " << name[start] << "to"
-		<< name[goal] << "!" << endl;
-	return 0;
+	
 
 }
 
