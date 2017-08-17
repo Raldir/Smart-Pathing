@@ -9,6 +9,7 @@
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
 #include "RoutingTable.h"
+#include "Graph.h"
 
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -24,17 +25,18 @@
 using namespace boost;
 using namespace std;
 
-//int main() {
-//
-//	testChristoph();
-//	testRami();
-//
-//	return 0;
-//}
+int main() {
+
+	//testchristoph();
+	//testRami();
+	Graph* g = new Graph();
+	system("PAUSE");
 
 
-void testRami() {
+	return 0;
 }
+
+
 
 	// auxiliary types
 struct location
@@ -118,7 +120,7 @@ private:
 };
 
 
-int main()
+void testRami()
 {
   
   // specify some types
@@ -223,12 +225,11 @@ int main()
     for(++spi; spi != shortest_path.end(); ++spi)
       cout << " -> " << name[*spi];
     cout << endl << "Total travel time: " << d[goal] << endl;
-    return 0;
   }
   
   cout << "Didn't find a path from " << name[start] << "to"
        << name[goal] << "!" << endl;
-  return 0;
+  system("PAUSE");
   
 }
 

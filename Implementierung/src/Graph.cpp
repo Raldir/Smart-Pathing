@@ -1,20 +1,11 @@
 #include "Graph.h"
-#include <boost/config.hpp>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
 
-#include <boost/graph/astar_search.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/random.hpp>
-#include <boost/random.hpp>
-#include <boost/graph/graphviz.hpp>
-#include <time.h>
-#include <list>
-#include <fstream>
-#include <math.h>    // for sqrt
+
 
 using namespace boost;
 
@@ -28,6 +19,7 @@ Graph::Graph()
 	_vertexMap = vertexMap(_vertices);
 	_edgeMap = edgeMap(_edges);
 	_routingTable = new RoutingTable();
+	calculateRoutingPaths();
 }
 
 
@@ -39,15 +31,34 @@ void Graph::filterSpawner() {
 	}
 }
 
-float Graph::distance_heuristic(int start, int goal) {
-	std::pair<int, int> korStart = _vertexMap[start]->getPosition();
-	std::pair<int, int> korEnd = _vertexMap[goal]->getPosition();
+
+float Graph::distance_heuristic2(size_t start, size_t goal) {
+	std::pair<float, float> korStart = _vertexMap[start]->getPosition();
+	std::pair<float, float> korEnd = _vertexMap[goal]->getPosition();
 	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +
 		pow((korStart.second - korEnd.second), 2.0f));
 }
 
 
-struct found_goal {};
+template <class Graph, class CostType, class LocMap>
+class distance_heuristic : public astar_heuristic<Graph, CostType>
+{
+public:
+	typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+	distance_heuristic(LocMap l, Vertex goal)
+		: m_location(l), m_goal(goal) {}
+	CostType operator()(Vertex u)
+	{
+		CostType dx = m_location[m_goal]->getPosition().first - m_location[u]->getPosition().first;
+		CostType dy = m_location[m_goal]->getPosition().second - m_location[u]->getPosition().second;
+		return ::sqrt(dx * dx + dy * dy);
+	}
+private:
+	LocMap m_location;
+	Vertex m_goal;
+};
+
+struct found_goal {};// exception for termination
 
 template <class Vertex>
 class astar_goal_visitor : public boost::default_astar_visitor
@@ -65,12 +76,11 @@ private:
 
 void Graph::calculateRoutingPaths(){
 	// specify some types
-	typedef adjacency_list<listS, vecS, directedS, no_property,
+	typedef adjacency_list<listS, vecS, undirectedS, no_property,
 		property<edge_weight_t, int> > mygraph_t;
 	typedef property_map<mygraph_t, edge_weight_t>::type WeightMap;
 	typedef mygraph_t::vertex_descriptor vertex;
 	typedef mygraph_t::edge_descriptor edge_descriptor;
-	typedef mygraph_t::vertex_iterator vertex_iterator;
 
 	unsigned int num_edges = unsigned int(_edges.size());
 	std::vector<int> vertices_ID;
@@ -93,16 +103,17 @@ void Graph::calculateRoutingPaths(){
 		int start = (*it2)->getID();
 		for (std::vector<Vertex*>::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
-			if (_routingTable->getRoute(goal, start).empty()) {
-				break;
-			}
+			//if (!_routingTable->getRoute(goal, start).empty()) {
+			//continue;
+			//}
 			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
-			std::vector<int> d(num_vertices(g));
+			std::vector<float> d(num_vertices(g));
 			try {
 				// call astar named parameter interface
 				astar_search
 					(g, start,
-						distance_heuristic(start, goal),
+						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+						(_vertexMap, goal),
 						predecessor_map(&p[0]).distance_map(&d[0]).
 						visitor(astar_goal_visitor<vertex>(goal)));
 
@@ -119,19 +130,16 @@ void Graph::calculateRoutingPaths(){
 					<< _vertexMap[goal]->getID() << ": ";
 				std::list<vertex>::iterator spi = shortest_path.begin();
 				std::cout << _vertexMap[start]->getID();
-				for (++spi; spi != shortest_path.end(); ++spi)
-					std::cout << " -> " << _vertexMap[*spi]->getID();
+				for (++spi; spi != shortest_path.end(); ++spi) {
+					std::cout << " -> " << _vertexMap[int(*spi)]->getID();
+				}
 				std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
+				continue;
 			}
-
 			std::cout << "Didn't find a path from " << _vertexMap[start]->getID() << "to"
-				<< _vertexMap[goal]->getID() << "!" << std::endl;
+					<< _vertexMap[goal]->getID() << "!" << std::endl;
 		}
 	}
-
-
-	
-
 }
 
 Graph::~Graph()
