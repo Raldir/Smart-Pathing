@@ -140,13 +140,18 @@ void Graph::calculateRoutingPaths(){
 					if (p[v] == v)
 						break;
 				}
-				std::cout << "Shortest path from " << _vertexMap[start]->getID()  << " to "
+				std::cout << "Shortest path from " << _vertexMap[start]->getID() << " to "
 					<< _vertexMap[goal]->getID() << ": ";
 				std::list<vertex>::iterator spi = shortest_path.begin();
 				std::cout << _vertexMap[start]->getID();
+				std::queue<int> route;
 				for (++spi; spi != shortest_path.end(); ++spi) {
 					std::cout << " -> " << _vertexMap[int(*spi)]->getID();
+					route.push(_vertexMap[int(*spi)]->getID());
 				}
+				_routingTable->insertRoute(start, goal, route);
+				if (!route.empty()) 
+				std::cout << route.front();
 				std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
 				continue;
 			}
