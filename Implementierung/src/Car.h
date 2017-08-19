@@ -17,10 +17,12 @@ public:
 	~Car();
 
 	//Updates position of car for one tick on the edge.
-	void updatePosition(float nextCarPosition);
+	void Update(float nextCarPosition);
+
+	void updateWithOverflowPosition(float nextCarPosition);
 
 	//Updates position based on overflow
-	void updateWithOverflowPosition(float nextCarPosition);
+	//void updateWithOverflowPosition(float nextCarPosition);
 
 	void setPosition(float newPosition);
 
@@ -55,9 +57,9 @@ private:
 		When reaching the maximum allow position on the edge the leftover
 		distance is stored in the overflow variable to use
 		it e.g. for crossing an intersection
-		Probably only needed for intersection crossing
+		Probably only needed for intersection crossing and second update
 	*/
-	float overflowPosition;
+	float overflow;
 
 	int _ID;
 

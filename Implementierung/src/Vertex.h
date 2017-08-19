@@ -8,6 +8,7 @@
 
 class Edge;
 class Car;
+class TrafficLight;
 
 class Vertex {
 
@@ -15,6 +16,11 @@ public:
 	Vertex() {};
 
 	Vertex(int id, float x, float y);
+
+	void setTrafficLight(TrafficLight* tL);
+
+	void InitialUpdate();
+	void ContinueUpdate(int edgeID);
 
 	//TrafficLight* trafficLight;
 
@@ -53,6 +59,8 @@ public:
 	std::pair<float, float> getPosition();
 
 private:
+
+	TrafficLight* trafficLight;
 
 	/*
 		First int -> ID of edge

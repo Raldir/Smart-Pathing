@@ -27,34 +27,47 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	_ID = id;
 }
 
-void Edge::updatePositions(int cycleNumber) {
+void Edge::Update() {
+	//Copy carQueue
 	std::queue<Car*> copy = carQueue;
 
-	float nextCarPosition = 0;
+	//Set the first critical as end of street
+	float nextCarPosition = _LENGTH;
 
+	//Iterate through carQueue
 	while (!copy.empty()) {
 		Car* car = copy.front();
 
 		//Taking overflow position or speed as updating method
-		if (cycleNumber <= 1) {
-			car->updatePosition(nextCarPosition);
+		/*if (cycleNumber <= 1) {
+			car->Update(nextCarPosition);
 		}
 		else {
 			car->updateWithOverflowPosition(nextCarPosition);
-		}
+		}*/
 
-
-		if (car->getCurrentPosition() <= 0) {
-			notifyVerticies();
-		}
+		//Update car's position
+		car->Update(nextCarPosition);
 
 		//Testing wheter or not car has transitioned
-		if (car->getCurrentVertexID() == endVertex->getID())
-		{
+		if (car->getCurrentVertexID() == endVertex->getID()) {
 			nextCarPosition = car->getCurrentPosition();
 
-		}		copy.pop();
+		}
+		//If it has the street end is the next crititcal position
+		else {
+			nextCarPosition = _LENGTH;
+		}
+		
+		//Reveal next car
+		copy.pop();
+
+		//After each updated car
+		notifyVerticies();
 	}
+
+	//Tell vertex to update preceding vertecies
+	startVertex->ContinueUpdate(_ID);
 }
 
 /*
@@ -69,7 +82,7 @@ void Edge::addWeightTimetable(int timeStamp, int weight) {
 	//Gibt gültigen TimeStamp für timetable aus
 	int timeStampAdjusted = calculateTimestamp(timeStamp);
 
-	timetable[timeStampAdjusted % timetableSpan] += weight;
+	timetable[timeStampAdjusted % timetableSpan] = timetable[timeStampAdjusted % timetableSpan] + weight;
 }
 
 void Edge::removeWeightTimetable(int timeStamp, int weight) {
@@ -77,13 +90,12 @@ void Edge::removeWeightTimetable(int timeStamp, int weight) {
 }
 
 //Rundet ab auf nächst kleineren wert
-int Edge::calculateTimestamp(int timeStamp)
-{
+int Edge::calculateTimestamp(int timeStamp) {
+
 	return (timeStamp / timetableInterval) * timetableInterval;
 }
 
-int Edge::calculateInterval(int crossingDistanceGraph)
-{
+int Edge::calculateInterval(int crossingDistanceGraph) {
 	return crossingDistanceGraph;
 }
 
@@ -96,8 +108,7 @@ int Edge::calculateInterval(int crossingDistanceGraph)
 ///</summary>
 Car * Edge::popCar() {
 
-	if (!carQueue.empty())
-	{
+	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
 		Car* carPtr = carQueue.front();
 
@@ -114,8 +125,9 @@ Car * Edge::popCar() {
 void Edge::pushCar(Car* car) {
 
 	carQueue.push(car);
+	
+	car->setPosition(0.0);
 	car->updateWithOverflowPosition(carQueue.back()->getCurrentPosition());
-
 }
 
 Car * Edge::getFrontCar() {
@@ -195,7 +207,7 @@ void Edge::notifyVerticies() {
 	}
 
 	//TODO Implementiere Notification bei Transfer
-	if (getFrontCar()->getCurrentPosition() == 0) {
+	if (getFrontCar()->getCurrentPosition() >= _LENGTH) {
 		std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car" << std::endl;
 
 		endVertex->transferCar(_ID);

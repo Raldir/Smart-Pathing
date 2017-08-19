@@ -21,7 +21,7 @@ public:
 
 	Edge(float length, int id, std::pair<Vertex*, Vertex*>);
 
-	void updatePositions(int cycleNumber);
+	void Update();
 
 	float getLength();
 
