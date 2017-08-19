@@ -4,11 +4,50 @@
 #include "ObserverPattern.h"
 #include "Car.h"
 #include "Edge.h"
+#include "TrafficLight.h"
 
 /**
 */
 Vertex::Vertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {
 
+}
+
+void Vertex::setTrafficLight(TrafficLight* tL) {
+	this->trafficLight = tL;
+}
+
+//Initialize update wave for edges that have a red phased edge
+void Vertex::InitialUpdate() {
+
+	trafficLight->Update();
+
+	std::pair<int, int> pair = trafficLight->getCurrentPhase();
+
+	for (auto p : trafficLight->getPossiblePhase()) {
+
+		if (p != pair) {
+			//Update edges which have a red light (no green light)
+			getEdgeFromID(p.first)->Update();
+			getEdgeFromID(p.second)->Update();
+		}
+	}
+}
+
+//Update for edges that do have a green phase
+void Vertex::ContinueUpdate(int edgeID)
+{
+	std::pair<int,int> pair = trafficLight->getCurrentPhase();
+
+	//If the endvertex of our calling edge is not the start vertex of a potential green phase edge then this edge can be updated
+	if (getEdgeFromID(pair.first)->getVertices().first->getID() != getEdgeFromID(edgeID)->getVertices().second->getID()) {
+
+		getEdgeFromID(pair.first)->Update();
+	}
+
+	if (getEdgeFromID(pair.second)->getVertices().first->getID() != getEdgeFromID(edgeID)->getVertices().second->getID()) {
+
+		getEdgeFromID(pair.second)->Update();
+	}
 }
 
 /*
@@ -29,24 +68,26 @@ void Vertex::transferCar(int incomingEdgeID)
 	for (std::pair<int, Edge*> e : outgoingEdges) {
 
 		//Look if one of the edges has Vertex with matching ID from car
-		if (e.second->getVertices().second->getID() == car->getCurrentVertexID()) {
+		if (e.second->getVertices().second->getID() == car->getNextVertexID()) {
 			nextEdge = e.second;
 			nextEdgeFound = true;
 			break;
 		}
 	}
 
+	//If there is an edge the car can transported to
 	if (nextEdgeFound) {
 		if (canTransit(nextEdge->getID())) {
 
 			Car* car = takeCar(incomingEdgeID);
 
 			giveCar(nextEdge, car);
+
 			//Removes the next point as destination
 			car->popCurrentVertex();
 		}
 		else {
-			//TODO
+			//DO NOTHING AS NOTHING WAS CHANGED
 		}
 	}
 	else {
@@ -178,3 +219,5 @@ std::pair<float, float> Vertex::getPosition()
 {
 	return std::make_pair(_X, _Y);
 }
+
+

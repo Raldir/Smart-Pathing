@@ -117,6 +117,7 @@
     <ClInclude Include="..\..\src\Car.h" />
     <ClInclude Include="..\..\src\Edge.h" />
     <ClInclude Include="..\..\src\EdgeFileReader.h" />
+    <ClInclude Include="..\..\src\Graph.h" />
     <ClInclude Include="..\..\src\main.h" />
     <ClInclude Include="..\..\src\ObserverPattern.h" />
     <ClInclude Include="..\..\src\Project1.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="..\..\src\Car.cpp" />
     <ClCompile Include="..\..\src\Edge.cpp" />
     <ClCompile Include="..\..\src\EdgeFileReader.cpp" />
+    <ClCompile Include="..\..\src\Graph.cpp" />
     <ClCompile Include="..\..\src\ObserverPattern.cpp" />
     <ClCompile Include="..\..\src\Project1.cpp" />
     <ClCompile Include="..\..\src\RoutingTable.cpp" />

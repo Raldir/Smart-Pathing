@@ -17,10 +17,10 @@ protected:
 
 public:
 	virtual void registerObserver(Vertex * obs, std::string indicator) {};
-	virtual void removeObserver(Vertex * obs, std::string indicator) {};
+	virtual void removeObserver(std::string indicator) {};
 
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVerticies(Edge* edge) = 0;
+	virtual void notifyVerticies() = 0;
 
 	virtual std::pair<Vertex*, Vertex*> getVertices() = 0;
 

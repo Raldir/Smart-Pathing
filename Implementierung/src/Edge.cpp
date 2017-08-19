@@ -12,51 +12,91 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 	_carQueueCapacity = capacity;
 
 	_ID = id;
-
-	//TODO Initalize timetable correctly
-	//int timetable[_SIMULATION_TIME];
 }
 
 Edge::Edge(float length, int id) : _LENGTH(length) {
 	//TODO Capacität nicht ganz korrekt, da auch bspw. für ein Auto ein Gap existieren muss damit es Kapazität 1 hat
 	_carQueueCapacity = int(length / (_CAR_LENGTH + _CAR_MINIMUM_GAP));
 	_ID = id;
-
-
-	//TODO Initalize timetable correctly
-	//int timetable[_SIMULATION_TIME];
 }
 
 Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(length) {
-	_carQueueCapacity = int(length / _CAR_LENGTH);
+	_carQueueCapacity = int(length / (_CAR_LENGTH + _CAR_MINIMUM_GAP));
 	startVertex = nodes.first;
 	endVertex = nodes.second;
 	_ID = id;
+}
 
+void Edge::Update() {
+	//Copy carQueue
+	std::queue<Car*> copy = carQueue;
 
-	//TODO Initalize timetable correctly
-	//int timetable[_SIMULATION_TIME];
+	//Set the first critical as end of street
+	float nextCarPosition = _LENGTH;
+
+	//Iterate through carQueue
+	while (!copy.empty()) {
+		Car* car = copy.front();
+
+		//Taking overflow position or speed as updating method
+		/*if (cycleNumber <= 1) {
+			car->Update(nextCarPosition);
+		}
+		else {
+			car->updateWithOverflowPosition(nextCarPosition);
+		}*/
+
+		//Update car's position
+		car->Update(nextCarPosition);
+
+		//Testing wheter or not car has transitioned
+		if (car->getCurrentVertexID() == endVertex->getID()) {
+			nextCarPosition = car->getCurrentPosition();
+
+		}
+		//If it has the street end is the next crititcal position
+		else {
+			nextCarPosition = _LENGTH;
+		}
+		
+		//Reveal next car
+		copy.pop();
+
+		//After each updated car
+		notifyVerticies();
+	}
+
+	//Tell vertex to update preceding vertecies
+	startVertex->ContinueUpdate(_ID);
 }
 
 /*
 ###### TIMETABLE
 */
 
-
-//TODO Timetable stuff
 /**
 Adds weight to the timetable at specified time
 */
-void Edge::addWeightTimetable(int time, int weight) {
+void Edge::addWeightTimetable(int timeStamp, int weight) {
 
-	//Add weight to timetable
-	//timetable[time] += weight;
+	//Gibt gültigen TimeStamp für timetable aus
+	int timeStampAdjusted = calculateTimestamp(timeStamp);
+
+	timetable[timeStampAdjusted % timetableSpan] = timetable[timeStampAdjusted % timetableSpan] + weight;
 }
 
-void Edge::removeWeightTimetable(int time, int weight) {
+void Edge::removeWeightTimetable(int timeStamp, int weight) {
+	addWeightTimetable(timeStamp, weight * -1);
+}
 
-	//Remove weight by using add function
-	//Edge::addWeightTimetable(time, weight * -1);
+//Rundet ab auf nächst kleineren wert
+int Edge::calculateTimestamp(int timeStamp) {
+
+	return (timeStamp / timetableInterval) * timetableInterval;
+}
+
+int Edge::calculateInterval(int crossingDistanceGraph) {
+	return crossingDistanceGraph;
 }
 
 /*
@@ -68,8 +108,7 @@ void Edge::removeWeightTimetable(int time, int weight) {
 ///</summary>
 Car * Edge::popCar() {
 
-	if (!carQueue.empty())
-	{
+	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
 		Car* carPtr = carQueue.front();
 
@@ -86,6 +125,9 @@ Car * Edge::popCar() {
 void Edge::pushCar(Car* car) {
 
 	carQueue.push(car);
+	
+	car->setPosition(0.0);
+	car->updateWithOverflowPosition(carQueue.back()->getCurrentPosition());
 }
 
 Car * Edge::getFrontCar() {
@@ -141,15 +183,20 @@ void Edge::registerObserver(Vertex * vertex, std::string indicator) {
 	}
 }
 
-void Edge::removeObserver(Vertex * vertex, std::string indicator) {
-	//TODO gucken wie geht nullpointer
-	//vertex = NULL;
+void Edge::removeObserver(std::string indicator) {
+	
+	if (indicator == "end") {
+		endVertex = NULL;
+	}
+	else if (indicator == "start") {
+		startVertex = NULL;
+	}
 }
 
 ///<summary>
 ///Notifies obversers
 ///</summary>
-void Edge::notifyVerticies(Edge* edge) {
+void Edge::notifyVerticies() {
 
 	if (isFull() != lastTickIsFull) {
 		startVertex->setEdgeIsFull(_ID, isFull());
@@ -160,7 +207,7 @@ void Edge::notifyVerticies(Edge* edge) {
 	}
 
 	//TODO Implementiere Notification bei Transfer
-	if (getFrontCar()->getCurrentPosition() == 0) {
+	if (getFrontCar()->getCurrentPosition() >= _LENGTH) {
 		std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car" << std::endl;
 
 		endVertex->transferCar(_ID);

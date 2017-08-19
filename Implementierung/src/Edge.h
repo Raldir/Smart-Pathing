@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <queue>
+#include <map>
 #include <utility>
 #include "main.h"
 #include "ObserverPattern.h"
@@ -20,12 +21,16 @@ public:
 
 	Edge(float length, int id, std::pair<Vertex*, Vertex*>);
 
+	void Update();
 
 	float getLength();
 
 	//Adds and remove weights on timetable at specified time
-	void addWeightTimetable(int time, int weight);
-	void removeWeightTimetable(int time, int weight);
+	void addWeightTimetable(int timeStamp, int weight);
+	void removeWeightTimetable(int timeStamp, int weight);
+
+	int calculateTimestamp(int time);
+	int calculateInterval(int crossingDistanceGraph);
 
 	//Pusht car auf queue
 	void pushCar(Car* car);
@@ -44,10 +49,10 @@ public:
 	virtual int getID() override;
 
 	virtual void registerObserver(Vertex * obs, std::string indicator) override;
-	virtual void removeObserver(Vertex * obs, std::string indicator) override;
+	virtual void removeObserver(std::string indicator) override;
 
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVerticies(Edge* edge) override;
+	virtual void notifyVerticies() override;
 
 	virtual std::pair<Vertex*, Vertex*> getVertices() override;
 
@@ -59,18 +64,21 @@ private:
 	//Id
 	int _ID;
 
-	//Anzahl der Autos in der Queue
-	int carQueueCounter;
-
 	//Maximale Kapazität der Queue
 	int _carQueueCapacity;
 
 	//Queue in der die Autos gespeichert werden.
 	std::queue<Car*> carQueue;
 
-	//Timetable in dem die Gewichte für jeden Zeitabschnitt gespeichert werden.
-	int timetable[10];
-
 	//Indicates if the edge was full last tick
 	bool lastTickIsFull;
+
+	//Timetable in dem die Gewichte für jeden Zeitabschnitt gespeichert werden.
+	std::map <int,int> timetable;
+
+	//Zeitspanne
+	int timetableSpan;
+
+	//Interval of timetable
+	int timetableInterval;
 };

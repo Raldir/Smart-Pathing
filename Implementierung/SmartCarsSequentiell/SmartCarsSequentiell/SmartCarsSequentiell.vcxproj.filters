@@ -11,6 +11,7 @@
     <ClCompile Include="..\..\src\Spawner.cpp" />
     <ClCompile Include="..\..\src\EdgeFileReader.cpp" />
     <ClCompile Include="..\..\src\VertexFileReader.cpp" />
+    <ClCompile Include="..\..\src\Graph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Car.h" />
@@ -24,5 +25,6 @@
     <ClInclude Include="..\..\src\Spawner.h" />
     <ClInclude Include="..\..\src\EdgeFileReader.h" />
     <ClInclude Include="..\..\src\VertexFileReader.h" />
+    <ClInclude Include="..\..\src\Graph.h" />
   </ItemGroup>
 </Project>
