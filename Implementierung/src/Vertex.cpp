@@ -166,6 +166,23 @@ std::vector<Edge*> Vertex::getEdges()
 	return edges;
 }
 
+Edge* Vertex::outgoingNeighbor(int destID) {
+	for (std::pair<int, Edge*> p : outgoingEdges) {
+		if (p.second->getVertices().second->getID() == destID) {
+			return p.second;
+		}
+	}
+}
+
+Edge* Vertex::incomingNeighbor(int destID) {
+	for (std::pair<int, Edge*> p : incomingEdges) {
+		if (p.second->getVertices().first->getID() == destID) {
+			return p.second;
+		}
+	}
+}
+
+
 Edge* Vertex::getEdgeFromID(int edgeID) {
 
 	//Searches through the pairs in the map and matches the IDs

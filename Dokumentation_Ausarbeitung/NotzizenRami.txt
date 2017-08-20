@@ -1,0 +1,2 @@
+Spawnedges wurden statisch gewählt, jene, von denen nur 1 Straße abgeht. Später möglicherweise dynamischer, durch berechnung der Edges mit
+minimaler Anzahl an Straßen und diese als Referenz nehmen mit Threshhold

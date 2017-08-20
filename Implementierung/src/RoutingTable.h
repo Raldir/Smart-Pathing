@@ -9,6 +9,8 @@ class Graph;
 class Vertex;
 
 typedef std::map<int, std::map<int, std::queue<int>>> RoutingMatrix;
+typedef std::map<int, std::map<int, float>> CostMatrix;
+
 
 class RoutingTable {
 
@@ -23,7 +25,10 @@ public:
 	void replaceRoute(int originID, int destID, std::queue<int> route);
 
 	//Get Route from origin to destination
-	std::queue<int> getRoute(int originID, int destID);
+	std::queue<int>  getRoute(int originID, int destID);
+
+	void setCost(int originID, int destID, float cost);
+	float getCost(int originID, int destID);
 
 private:
 	int dimension;
@@ -34,4 +39,5 @@ private:
 		Second int --> ID of destination vertex
 	*/
 	RoutingMatrix routingMatrix;
+	CostMatrix costMatrix;
 };

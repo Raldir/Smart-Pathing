@@ -15,4 +15,6 @@ const int _SIMULATION_SECONDS_PER_TICK = 5;
 
 const float _CAR_SPEED_PER_TICK = _SIMULATION_SECONDS_PER_TICK * _CAR_SPEED;
 
+const int carDensity = 10;
+
 
