@@ -1,10 +1,11 @@
 #include "Spawner.h"
+#include <stdlib.h>
 
 
 Spawner::Spawner(int id, float x, float y) : Vertex(id, x, y) {
-
+	_spawnRate = rand() % carDensity + 1;
 }
 
-void Spawner::SpawnCar(Car * car) {
+void Spawner::SpawnCar(Car * car, RoutingTable routingTable) {
 
 }

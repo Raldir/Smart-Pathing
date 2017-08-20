@@ -1,15 +1,19 @@
 #pragma once
+#include "Graph.h"
+#include "Spawner.h"
+#include "main.h"
+
 class Simulation
 {
 public:
 	Simulation();
-	void init();
-	void nextTick();
 	~Simulation();
+	void writeResults();
+
 
 
 private:
-	void initSpawner();
-
+	void initSpawner(std::vector<Spawner*> spawner);
+	void nextTick();
 };
 

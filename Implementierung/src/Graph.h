@@ -18,21 +18,21 @@ class Graph
 {
 public:
 	Graph();
-	~Graph();
+
+	std::vector<Spawner*> getSpawner();
+	std::vector<Edge*> getEdges();
+	std::vector<Vertex*> getVertices();
+	std::map<int, Vertex*> getVertexMap();
 
 private:
 	void filterSpawner();
-	void calculateRoutingPaths();
 	float distance_heuristic2(size_t start, size_t goal);
-
-	RoutingTable* getRoutingTable();
-	RoutingTable copyRoutingTable();
 
 	std::vector<Spawner*> _spawner;
 	std::vector<Edge*> _edges;
-	std:: vector<Vertex*> _vertices;
+	std::vector<Vertex*> _vertices;
 	std::map<int, Edge*> _edgeMap;
 	std::map<int, Vertex*> _vertexMap;
-	RoutingTable* _routingTable;
 };
+
 

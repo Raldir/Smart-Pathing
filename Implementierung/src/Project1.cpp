@@ -27,10 +27,8 @@ using namespace std;
 
 int main() {
 
-	testChristoph();
-	//testRami();
-	Graph* g = new Graph();
-	system("PAUSE");
+	//testChristoph();
+	testRami();
 
 
 	return 0;
@@ -122,114 +120,8 @@ private:
 
 void testRami()
 {
-  
-  // specify some types
-  typedef adjacency_list<listS, vecS, undirectedS, no_property,
-    property<edge_weight_t, cost> > mygraph_t;
-  typedef property_map<mygraph_t, edge_weight_t>::type WeightMap;
-  typedef mygraph_t::vertex_descriptor vertex;
-  typedef mygraph_t::edge_descriptor edge_descriptor;
-  typedef mygraph_t::vertex_iterator vertex_iterator;
-  typedef std::pair<int, int> edge;
-  
-  // specify data
-  enum nodes {
-    Troy, LakePlacid, Plattsburgh, Massena, Watertown, Utica,
-    Syracuse, Rochester, Buffalo, Ithaca, Binghamton, Woodstock,
-    NewYork, N
-  };
-  const char *name[] = {
-    "Troy", "Lake Placid", "Plattsburgh", "Massena",
-    "Watertown", "Utica", "Syracuse", "Rochester", "Buffalo",
-    "Ithaca", "Binghamton", "Woodstock", "New York"
-  };
-  location locations[] = { // lat/long
-    {42.73, 73.68}, {44.28, 73.99}, {44.70, 73.46},
-    {44.93, 74.89}, {43.97, 75.91}, {43.10, 75.23},
-    {43.04, 76.14}, {43.17, 77.61}, {42.89, 78.86},
-    {42.44, 76.50}, {42.10, 75.91}, {42.04, 74.11},
-    {40.67, 73.94}
-  };
-  edge edge_array[] = {
-    edge(Troy,Utica), edge(Troy,LakePlacid),
-    edge(Troy,Plattsburgh), edge(LakePlacid,Plattsburgh),
-    edge(Plattsburgh,Massena), edge(LakePlacid,Massena),
-    edge(Massena,Watertown), edge(Watertown,Utica),
-    edge(Watertown,Syracuse), edge(Utica,Syracuse),
-    edge(Syracuse,Rochester), edge(Rochester,Buffalo),
-    edge(Syracuse,Ithaca), edge(Ithaca,Binghamton),
-    edge(Ithaca,Rochester), edge(Binghamton,Troy),
-    edge(Binghamton,Woodstock), edge(Binghamton,NewYork),
-    edge(Syracuse,Binghamton), edge(Woodstock,Troy),
-    edge(Woodstock,NewYork)
-  };
-  unsigned int num_edges = sizeof(edge_array) / sizeof(edge);
-  cost weights[] = { // estimated travel time (mins)
-    96, 134, 143, 65, 115, 133, 117, 116, 74, 56,
-    84, 73, 69, 70, 116, 147, 173, 183, 74, 71, 124
-  };
-  
-  
-  // create graph
-  mygraph_t g(N);
-  WeightMap weightmap = get(edge_weight, g);
-  for(std::size_t j = 0; j < num_edges; ++j) {
-    edge_descriptor e; bool inserted;
-    tie(e, inserted) = add_edge(edge_array[j].first,
-                                edge_array[j].second, g);
-    weightmap[e] = weights[j];
-  }
-  
-  
-  // pick random start/goal
-  mt19937 gen(time(0));
-  vertex start = random_vertex(g, gen);
-  vertex goal = random_vertex(g, gen);
-  
-  
-  cout << "Start vertex: " << name[start] << endl;
-  cout << "Goal vertex: " << name[goal] << endl;
-  
-  ofstream dotfile;
-  dotfile.open("test-astar-cities.dot");
-  write_graphviz(dotfile, g,
-                 city_writer<const char **, location*>
-                  (name, locations, 73.46, 78.86, 40.67, 44.93,
-                   480, 400),
-                 time_writer<WeightMap>(weightmap));
-  
-  
-  vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
-  vector<cost> d(num_vertices(g));
-  try {
-    // call astar named parameter interface
-    astar_search
-      (g, start,
-       distance_heuristic<mygraph_t, cost, location*>
-        (locations, goal),
-       predecessor_map(&p[0]).distance_map(&d[0]).
-       visitor(astar_goal_visitor<vertex>(goal)));
-  
-  
-  } catch(found_goal fg) { // found a path to the goal
-    list<vertex> shortest_path;
-    for(vertex v = goal;; v = p[v]) {
-      shortest_path.push_front(v);
-      if(p[v] == v)
-        break;
-    }
-    cout << "Shortest path from " << name[start] << " to "
-         << name[goal] << ": ";
-    list<vertex>::iterator spi = shortest_path.begin();
-    cout << name[start];
-    for(++spi; spi != shortest_path.end(); ++spi)
-      cout << " -> " << name[*spi];
-    cout << endl << "Total travel time: " << d[goal] << endl;
-  }
-  
-  cout << "Didn't find a path from " << name[start] << "to"
-       << name[goal] << "!" << endl;
-  system("PAUSE");
+	Graph* g = new Graph();
+	system("PAUSE");
   
 }
 

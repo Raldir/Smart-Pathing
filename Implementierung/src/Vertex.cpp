@@ -172,6 +172,7 @@ Edge* Vertex::outgoingNeighbor(int destID) {
 			return p.second;
 		}
 	}
+	return NULL;
 }
 
 Edge* Vertex::incomingNeighbor(int destID) {
@@ -180,6 +181,7 @@ Edge* Vertex::incomingNeighbor(int destID) {
 			return p.second;
 		}
 	}
+	return NULL;
 }
 
 
@@ -236,5 +238,3 @@ std::pair<float, float> Vertex::getPosition()
 {
 	return std::make_pair(_X, _Y);
 }
-
-
