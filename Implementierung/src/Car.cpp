@@ -13,18 +13,21 @@ Car::~Car()
 
 void Car::Update(float nextCarPosition) {
 
+	float nextCriticalPosition = nextCarPosition - _CAR_MINIMUM_GAP;
+
 	//Just to be sure because overflow is only needed when you cross an intersection
 	if (overflow != 0) {
 		//Now we can safely calculate new overflow
 		overflow = 0;
 	}
 
+	//Calculate new position
 	float newPosition = currentPosition + _CAR_SPEED_PER_TICK;
 
-	if (newPosition >= (nextCarPosition - _CAR_MINIMUM_GAP)) {
+	if (newPosition >= nextCriticalPosition) {
 
 		//Drive to the max position
-		currentPosition = nextCarPosition - _CAR_MINIMUM_GAP;
+		currentPosition = nextCriticalPosition;
 
 		overflow = newPosition - currentPosition;
 	}
@@ -36,20 +39,33 @@ void Car::Update(float nextCarPosition) {
 	}
 }
 
-void Car::updateWithOverflowPosition(float nextCarPosition) {
+void Car::UpdateWithOverflow(float nextCarPosition) {
+
+	//Next critical position where car cannot move further
+	float nextCriticalPosition = nextCarPosition - _CAR_MINIMUM_GAP;
 
 	if (overflow > 0) {
-		if (overflow >= (nextCarPosition - _CAR_MINIMUM_GAP)) {
+		//Calculate new position
+		float newPosition = overflow + currentPosition;
+
+		if (newPosition >= nextCriticalPosition) {
 			//Drive to the max position
 			currentPosition = nextCarPosition - _CAR_MINIMUM_GAP;
+
+			//Calculate new overflow
+			overflow = newPosition - currentPosition;
 		}
 		else {
 			//If no obstacles are found
-			currentPosition = overflow;
+			currentPosition = newPosition;
 
 			overflow = 0;
 		}
 	}
+}
+
+bool Car::hasOverflow() {
+	return overflow > 0;
 }
 
 void Car::setPosition(float newPosition) {
