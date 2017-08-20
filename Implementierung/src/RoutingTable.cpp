@@ -30,17 +30,18 @@ void RoutingTable::replaceRoute(int originID, int destID, std::queue<int> route)
 }
 
 //Gibt Route zwischen origin und destination aus
-std::queue<int> RoutingTable::getRoute(int originID, int destID) {
+std::queue<int>  RoutingTable::getRoute(int originID, int destID) {
 
 	std::queue<int> queue;
 
 	RoutingMatrix::iterator iterOrigin = routingMatrix.find(originID);
-
 	if (iterOrigin != routingMatrix.end()) {
 		//Map where destinationID and queues are stored
 		std::map<int, std::queue<int>> destinationMap = iterOrigin->second;
-
-		queue = destinationMap.find(destID)->second;
+		std::map<int, std::queue<int>>::iterator iterDest = destinationMap.find(destID);
+		if (iterDest != destinationMap.end()) {
+			queue = destinationMap.find(destID)->second;
+		}
 	}
 	else {
 		std::cout << "No queue found in Routing Table from" << originID << " to " << destID << std::endl;
@@ -48,4 +49,14 @@ std::queue<int> RoutingTable::getRoute(int originID, int destID) {
 	}
 
 	return queue;
+}
+
+void RoutingTable::setCost(int originID, int destID, float cost)
+{
+	costMatrix[originID][destID] = cost;
+}
+
+float RoutingTable::getCost(int originID, int destID)
+{
+	return costMatrix[originID][destID];
 }

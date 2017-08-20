@@ -40,7 +40,7 @@ void Graph::filterSpawner() {
 		//Knoten nehmen
 		if ((*it)->getEdges().size() == 2) {
 			std::cout << "hello";
-			_spawner.push_back(*it);
+			_spawner.push_back(new Spawner((*it)->getID(),(*it)->getX(), (*it)->getY()));
 		}
 		}
 }
@@ -51,6 +51,16 @@ float Graph::distance_heuristic2(size_t start, size_t goal) {
 	std::pair<float, float> korEnd = _vertexMap[goal]->getPosition();
 	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +
 		pow((korStart.second - korEnd.second), 2.0f));
+}
+
+RoutingTable* Graph::getRoutingTable()
+{
+	return _routingTable;
+}
+
+RoutingTable Graph::copyRoutingTable()
+{
+	return *_routingTable;
 }
 
 
@@ -113,12 +123,15 @@ void Graph::calculateRoutingPaths(){
 			weightmap[e] = int((*it)->getLength());
 		}
 	}
-	for (std::vector<Vertex*>::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
+	for (std::vector<Spawner*>::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
 		int start = (*it2)->getID();
-		for (std::vector<Vertex*>::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
+		for (std::vector<Spawner*>::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
-			//if (!_routingTable->getRoute(goal, start).empty()) {
-			//continue;
+			int sumDistance = 0;
+			//Entscheidung: Berechne Hin u. Rückrouten seperat
+			//if (!(_routingTable->getRoute(goal, start).empty())) {
+			//	std::cout << "hello";
+			//	continue;
 			//}
 			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
 			std::vector<float> d(num_vertices(g));
@@ -145,11 +158,20 @@ void Graph::calculateRoutingPaths(){
 				std::list<vertex>::iterator spi = shortest_path.begin();
 				std::cout << _vertexMap[start]->getID();
 				std::queue<int> route;
+				int lastElement;
 				for (++spi; spi != shortest_path.end(); ++spi) {
 					std::cout << " -> " << _vertexMap[int(*spi)]->getID();
 					route.push(_vertexMap[int(*spi)]->getID());
+					if (!route.empty()) {
+						sumDistance += _vertexMap[(*spi)]->incomingNeighbor(lastElement)->getLength();
+					}
+					else {
+						lastElement = (*spi);
+					}
+					
 				}
 				_routingTable->insertRoute(start, goal, route);
+				_routingTable->setCost(start, goal, sumDistance);
 				if (!route.empty()) 
 				std::cout << route.front();
 				std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;

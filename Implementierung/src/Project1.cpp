@@ -318,17 +318,18 @@ void testChristoph() {
 
 	table.insertRoute(0,1,q);
 
-	std::queue<int> route = table.getRoute(0,1);
+	table.getRoute(0,1).empty();
+	std::queue<int> route2 = table.getRoute(1, 0);
 
 	carsPtr[0]->assignRoute(q);
 
 	//SUPER TRANSFER STUFF
-	edgePtr0->pushCar(carsPtr[0]);
-	std::cout << "Pushed car with ID: "<< edgePtr0->getFrontCar()->getID() << " on Edge 0" << std::endl;
+	//edgePtr0->pushCar(carsPtr[0]);
+	//std::cout << "Pushed car with ID: "<< edgePtr0->getFrontCar()->getID() << " on Edge 0" << std::endl;
 
-	vertexPtrs[0]->transferCar(0);
+	//vertexPtrs[0]->transferCar(0);
 
-	std::cout << "Car " << edgePtr->getFrontCar()->getID() << "is on Edge 1" << std::endl;
+	//std::cout << "Car " << edgePtr->getFrontCar()->getID() << "is on Edge 1" << std::endl;
 
 	/*edgePtr0->pushCar(carsPtr[1]);
 	std::cout << "Position of Car 1: " << carsPtr[1]->getCurrentPosition() << std::endl;

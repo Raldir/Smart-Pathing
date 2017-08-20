@@ -1,6 +1,7 @@
 #pragma once
 #include "Edge.h"
 #include "Vertex.h"
+#include "Spawner.h"
 #include "RoutingTable.h"
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -24,7 +25,10 @@ private:
 	void calculateRoutingPaths();
 	float distance_heuristic2(size_t start, size_t goal);
 
-	std::vector<Vertex*> _spawner;
+	RoutingTable* getRoutingTable();
+	RoutingTable copyRoutingTable();
+
+	std::vector<Spawner*> _spawner;
 	std::vector<Edge*> _edges;
 	std:: vector<Vertex*> _vertices;
 	std::map<int, Edge*> _edgeMap;

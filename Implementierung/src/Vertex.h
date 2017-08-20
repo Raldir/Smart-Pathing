@@ -47,6 +47,10 @@ public:
 
 	std::vector<Edge*> getEdges();
 
+	Edge* outgoingNeighbor(int destID);
+
+	Edge* incomingNeighbor(int destID);
+
 	Edge* getEdgeFromID(int edgeID);
 
 	void setIsEdgeFull(int, bool);
