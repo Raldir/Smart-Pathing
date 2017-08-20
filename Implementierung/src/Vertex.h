@@ -4,7 +4,8 @@
 #include <utility>
 #include <map>
 #include "main.h"
-#include "ObserverPattern.h"
+#include "Edge.h"
+#include "TrafficLight.h"
 
 class Edge;
 class Car;
@@ -16,11 +17,12 @@ public:
 	Vertex() {};
 
 	Vertex(int id, float x, float y);
+	Vertex(int id, float x, float y, TrafficLight tL);
 
-	void setTrafficLight(TrafficLight* tL);
+	void setTrafficLight(TrafficLight tL);
+	TrafficLight* getTrafficLight();
 
-	void InitialUpdate();
-	void ContinueUpdate(int edgeID);
+	void Update();
 
 	//TrafficLight* trafficLight;
 
@@ -51,7 +53,7 @@ public:
 
 	Edge* getEdgeFromID(int edgeID);
 
-	void setEdgeIsFull(int, bool);
+	void setIsEdgeFull(int, bool);
 
 	void printEdges();
 
@@ -64,7 +66,7 @@ public:
 
 private:
 
-	TrafficLight* trafficLight;
+	TrafficLight trafficLight;
 
 	/*
 		First int -> ID of edge

@@ -149,8 +149,8 @@ void testChristoph() {
 	}
 
 	Edge edge(10, 1, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
-	Edge edge2(1,10,2);
-	Edge edge0(1,5,0);
+	Edge edge2(100,10,2);
+	Edge edge0(100,5,0);
 
 	edge0.registerObserver(vertexPtrs[0],"end");
 
@@ -222,6 +222,12 @@ void testChristoph() {
 	//vertexPtrs[0]->transferCar(0);
 
 	//std::cout << "Car " << edgePtr->getFrontCar()->getID() << "is on Edge 1" << std::endl;
+
+	/*edgePtr0->pushCar(carsPtr[1]);
+	std::cout << "Position of Car 1: " << carsPtr[1]->getCurrentPosition() << std::endl;
+	edgePtr0->Update();
+	std::cout << "Position of Car 1: " << carsPtr[1]->getCurrentPosition() << std::endl;*/
+
 
 	system("PAUSE"); //From C
 }

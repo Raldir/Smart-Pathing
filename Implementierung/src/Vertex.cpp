@@ -9,45 +9,40 @@
 /**
 */
 Vertex::Vertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {
-
 }
 
-void Vertex::setTrafficLight(TrafficLight* tL) {
-	this->trafficLight = tL;
+
+Vertex::Vertex(int id, float x, float y, TrafficLight tL) : _X(x), _Y(y), _ID(id) {
+	trafficLight = tL;
+}
+
+void Vertex::setTrafficLight(TrafficLight tL) {
+	trafficLight = tL;
+}
+
+TrafficLight * Vertex::getTrafficLight()
+{
+	TrafficLight* ptr = &trafficLight;
+
+	return ptr;
 }
 
 //Initialize update wave for edges that have a red phased edge
-void Vertex::InitialUpdate() {
+void Vertex::Update() {
 
-	trafficLight->Update();
+	//Update trafficLight
+	trafficLight.Update();
 
-	std::pair<int, int> pair = trafficLight->getCurrentPhase();
-
-	for (auto p : trafficLight->getPossiblePhase()) {
+	//Für Ripple Update
+	//std::pair<int, int> pair = trafficLight.getCurrentPhase();
+	/*for (auto p : trafficLight.getPossiblePhases()) {
 
 		if (p != pair) {
 			//Update edges which have a red light (no green light)
 			getEdgeFromID(p.first)->Update();
 			getEdgeFromID(p.second)->Update();
 		}
-	}
-}
-
-//Update for edges that do have a green phase
-void Vertex::ContinueUpdate(int edgeID)
-{
-	std::pair<int,int> pair = trafficLight->getCurrentPhase();
-
-	//If the endvertex of our calling edge is not the start vertex of a potential green phase edge then this edge can be updated
-	if (getEdgeFromID(pair.first)->getVertices().first->getID() != getEdgeFromID(edgeID)->getVertices().second->getID()) {
-
-		getEdgeFromID(pair.first)->Update();
-	}
-
-	if (getEdgeFromID(pair.second)->getVertices().first->getID() != getEdgeFromID(edgeID)->getVertices().second->getID()) {
-
-		getEdgeFromID(pair.second)->Update();
-	}
+	}*/
 }
 
 /*
@@ -58,8 +53,8 @@ void Vertex::ContinueUpdate(int edgeID)
 	Takes stored vertex of car and searches for the edge connecting to vertex then
 	transfers car onto this edge
 */
-void Vertex::transferCar(int incomingEdgeID)
-{
+void Vertex::transferCar(int incomingEdgeID) {
+
 	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
 
 	Edge* nextEdge = NULL;
@@ -98,11 +93,9 @@ void Vertex::transferCar(int incomingEdgeID)
 
 //Hilfsfunktion falls sich was an der Struktur verändert
 Car* Vertex::takeCar(int incomingEdgeID) {
-	//Get cat in front
-	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
 
 	//Remove car from edge
-	getEdgeFromID(incomingEdgeID)->popCar();
+	Car* car = getEdgeFromID(incomingEdgeID)->popCar();
 
 	return car;
 }
@@ -205,7 +198,7 @@ Edge* Vertex::getEdgeFromID(int edgeID) {
 	return NULL;
 }
 
-void Vertex::setEdgeIsFull(int outgoingEdgeID, bool isFull)
+void Vertex::setIsEdgeFull(int outgoingEdgeID, bool isFull)
 {
 	isEdgeFullMap[outgoingEdgeID] = isFull;
 }

@@ -12,6 +12,18 @@ TrafficLight::TrafficLight() {
 	timer = rand() % phaseDuration;
 }
 
+TrafficLight::TrafficLight(std::vector<std::pair<int, int>> trafficLightMap, int phaseDur, int timerBeginPoint) {
+
+	possiblePhases = trafficLightMap;
+
+	if (!possiblePhases.empty()) {
+		phaseIt = possiblePhases.begin();
+	}
+
+	phaseDuration = phaseDur;
+	timer = timerBeginPoint;
+}
+
 bool TrafficLight::canCross(int incomingEdgeID) {
 
 	//If one of the edges is contained in the current pair then return true
@@ -56,7 +68,7 @@ std::pair<int, int> TrafficLight::getCurrentPhase()
 	return currentPhase;
 }
 
-std::vector<std::pair<int, int>> TrafficLight::getPossiblePhase()
+std::vector<std::pair<int, int>> TrafficLight::getPossiblePhases()
 {
 	return possiblePhases;
 }

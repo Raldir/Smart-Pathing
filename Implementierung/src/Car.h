@@ -19,7 +19,9 @@ public:
 	//Updates position of car for one tick on the edge.
 	void Update(float nextCarPosition);
 
-	void updateWithOverflowPosition(float nextCarPosition);
+	void UpdateWithOverflow(float nextCarPosition);
+
+	bool hasOverflow();
 
 	//Updates position based on overflow
 	//void updateWithOverflowPosition(float nextCarPosition);
@@ -62,6 +64,5 @@ private:
 	float overflow;
 
 	int _ID;
-
 };
 

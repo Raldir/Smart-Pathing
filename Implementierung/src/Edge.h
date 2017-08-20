@@ -22,6 +22,7 @@ public:
 	Edge(float length, int id, std::pair<Vertex*, Vertex*>);
 
 	void Update();
+	void UpdateOverflow();
 
 	float getLength();
 
@@ -29,13 +30,15 @@ public:
 	void addWeightTimetable(int timeStamp, int weight);
 	void removeWeightTimetable(int timeStamp, int weight);
 
+	int getWeightTimetable(int weight);
+
 	int calculateTimestamp(int time);
 	int calculateInterval(int crossingDistanceGraph);
 
 	//Pusht car auf queue
 	void pushCar(Car* car);
 
-	//Entfernt car von queue
+	//Entfernt car von queue und gibt sie zurück
 	Car* popCar();
 
 	//Gibt Auto an erster Stelle in Queue aus
@@ -51,10 +54,13 @@ public:
 	virtual void registerObserver(Vertex * obs, std::string indicator) override;
 	virtual void removeObserver(std::string indicator) override;
 
-	//Notifies attached Vertex that car has reached position 0
+	//Notifies attached Vertex that car has reached position 0 or that the edge is full
 	virtual void notifyVerticies() override;
 
 	virtual std::pair<Vertex*, Vertex*> getVertices() override;
+
+	//Indicates wheter there are cars still to be updated for the second update wave
+	bool hasOverflow();
 
 private:
 
@@ -81,4 +87,10 @@ private:
 
 	//Interval of timetable
 	int timetableInterval;
+
+	//Remembers which cars still have overflow in them
+	std::queue<Car*> overflowQueue;
+
+	bool hasOverflowCars;
+	float firstOverflowCarPosition;
 };
