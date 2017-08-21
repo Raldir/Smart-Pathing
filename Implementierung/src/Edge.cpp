@@ -214,7 +214,7 @@ void Edge::printCars() {
 	//Iterate through queue and printing cars
 	if (!q.empty()) {
 		do {
-			std::cout << "Print Car:" << q.front()->getID() << " on Position " << q.front()->getCurrentPosition() << std::endl;
+			std::cout << "EDGE " << _ID << ", car " << q.front()->getID() << " on Position " << q.front()->getCurrentPosition() << std::endl;
 			q.pop();
 		} while (!q.empty());
 	}

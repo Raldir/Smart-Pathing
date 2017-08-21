@@ -10,8 +10,12 @@ public:
 
 	Spawner(int id, float x, float y);
 
-	void SpawnCar(Car* car, RoutingTable routingTable);
+	void SpawnCar();
 
 private:
+	RoutingTable routingTable;
+
 	Vertex* nextCarGoal();
+
+	int _spawnRate;
 };

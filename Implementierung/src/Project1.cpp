@@ -130,15 +130,15 @@ void testChristoph() {
 
 	std::cout << "TEST COUT" << std::endl;
 
-	const int vertexAmount = 2;
+	const int vertexAmount = 3;
 
 	//Prints Edges of Vertex
-	Vertex vertices[2];
-	Vertex* vertexPtrs[2];
+	Vertex vertices[3];
+	Vertex* vertexPtrs[3];
 
 	for (int i = 0; i < vertexAmount; i++) {
 
-		Vertex vertex(i,0,0);
+		Vertex vertex(i, 0, 0);
 		std::cout << "Vertex mit ID: " << vertex.getID() << " erstellt." << std::endl;
 
 		vertices[i] = vertex;
@@ -149,27 +149,35 @@ void testChristoph() {
 	}
 
 	Edge edge(10, 1, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
-	Edge edge2(100,10,2);
-	Edge edge0(100,5,0);
+	Edge edge2(100, 10, 2);
+	Edge edge0(100, 5, 0);
+	Edge edge3(100, 15, 3);
 
-	edge0.registerObserver(vertexPtrs[0],"end");
+	edge0.registerObserver(vertexPtrs[0], "end");
+	edge.registerObserver(vertexPtrs[0], "start");
+	edge.registerObserver(vertexPtrs[1], "end");
+	edge2.registerObserver(vertexPtrs[1], "start");
+	edge2.registerObserver(vertexPtrs[2], "end");
+	edge3.registerObserver(vertexPtrs[2], "start");
 
-	Edge * edgePtr;
-	Edge * edgePtr2;
-	Edge * edgePtr0;
+	Edge* edgePtr[3];
 
 	//Assign Pointer to edge
-	edgePtr = &edge;
-	edgePtr2 = &edge2;
-	edgePtr0 = &edge0;
+	edgePtr[1] = &edge;
+	edgePtr[2] = &edge2;
+	edgePtr[3] = &edge0;
+	edgePtr[4] = &edge3;
 
-	vertexPtrs[0]->addIncomingEdges(edgePtr0);
-	vertexPtrs[0]->addOutgoingEdges(edgePtr);
-	vertexPtrs[1]->addIncomingEdges(edgePtr);
-	vertexPtrs[1]->addOutgoingEdges(edgePtr2);
+	vertexPtrs[0]->addIncomingEdges(edgePtr[0]);
+	vertexPtrs[0]->addOutgoingEdges(edgePtr[1]);
+	vertexPtrs[1]->addIncomingEdges(edgePtr[1]);
+	vertexPtrs[1]->addOutgoingEdges(edgePtr[2]);
+	vertexPtrs[2]->addIncomingEdges(edgePtr[2]);
+	vertexPtrs[2]->addOutgoingEdges(edgePtr[3]);
 
-	vertexPtrs[0]->printEdges();
-	vertexPtrs[1]->printEdges();
+	for (Vertex* v : vertexPtrs) {
+		v->printEdges();
+	}
 
 	const int carAmount = 4;
 
@@ -200,34 +208,38 @@ void testChristoph() {
 
 
 	//Prints Cars in Edge
-	edgePtr->printCars();
+	edgePtr[1]->printCars();
 
-	//ROUTING TABLES
-	RoutingTable table;
-
-	std::deque<int> d{ vertexPtrs[0]->getID(), vertexPtrs[1]->getID() };
+	std::deque<int> d{ vertexPtrs[0]->getID(), vertexPtrs[1]->getID(), vertexPtrs[2]->getID() };
 	std::queue<int> q(d);
 
-	table.insertRoute(0,1,q);
-
-	table.getRoute(0,1).empty();
-	std::queue<int> route2 = table.getRoute(1, 0);
-
 	carsPtr[0]->assignRoute(q);
+	carsPtr[1]->assignRoute(q);
 
 	//SUPER TRANSFER STUFF
-	//edgePtr0->pushCar(carsPtr[0]);
-	//std::cout << "Pushed car with ID: "<< edgePtr0->getFrontCar()->getID() << " on Edge 0" << std::endl;
-
-	//vertexPtrs[0]->transferCar(0);
-
-	//std::cout << "Car " << edgePtr->getFrontCar()->getID() << "is on Edge 1" << std::endl;
-
-	/*edgePtr0->pushCar(carsPtr[1]);
+	edgePtr[0]->pushCar(carsPtr[0]);
+	std::cout << "Pushed car with ID: " << edgePtr[0]->getFrontCar()->getID() << " on Edge 0" << std::endl;
+	edgePtr[0]->pushCar(carsPtr[1]);
 	std::cout << "Position of Car 1: " << carsPtr[1]->getCurrentPosition() << std::endl;
-	edgePtr0->Update();
-	std::cout << "Position of Car 1: " << carsPtr[1]->getCurrentPosition() << std::endl;*/
 
+	for (int i = 0; i < 2; i++) {
+
+		for (Vertex* v : vertexPtrs) {
+			v->Update();
+		}
+
+		std::cout << "Nach Update " << i << ":" << std::endl;
+		for (Edge* ed : edgePtr) {
+			ed->Update();
+			ed->printCars();
+		}
+
+		std::cout << "Nach OverflowUpdate " << i << ":" << std::endl;
+		for (Edge* ed : edgePtr) {
+			ed->UpdateOverflow();
+			ed->printCars();
+		}
+	}
 
 	system("PAUSE"); //From C
 }

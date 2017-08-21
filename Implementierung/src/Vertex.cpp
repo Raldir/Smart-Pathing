@@ -78,6 +78,8 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 			giveCar(nextEdge, car);
 
+			std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
+
 			//Removes the next point as destination
 			car->popCurrentVertex();
 		}
