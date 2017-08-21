@@ -1,6 +1,5 @@
 #include "Graph.h"
 #include <iostream>
-#include <algorithm>
 #include <vector>
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
@@ -71,5 +70,3 @@ float Graph::distance_heuristic2(size_t start, size_t goal) {
 	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +
 		pow((korStart.second - korEnd.second), 2.0f));
 }
-
-

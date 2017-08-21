@@ -1,8 +1,7 @@
 #pragma once
-#include <iostream>
-#include <vector>
 #include <queue>
 #include <map>
+#include <algorithm>
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
@@ -15,9 +14,7 @@
 #include "Graph.h"
 
 class Edge;
-class Graph;
 class Vertex;
-class Spawner;
 
 typedef std::map<int, std::map<int, std::queue<int>>> RoutingMatrix;
 typedef std::map<int, std::map<int, float>> CostMatrix;
