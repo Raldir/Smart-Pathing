@@ -30,7 +30,6 @@ int main() {
 	//testChristoph();
 	testRami();
 
-
 	return 0;
 }
 
@@ -41,7 +40,6 @@ void testRami()
 	system("PAUSE");
   
 }
-
 
 void testChristoph() {
 
@@ -82,8 +80,8 @@ void testChristoph() {
 	//Assign Pointer to edge
 	edgePtr[1] = &edge;
 	edgePtr[2] = &edge2;
-	edgePtr[3] = &edge0;
-	edgePtr[4] = &edge3;
+	edgePtr[0] = &edge0;
+	edgePtr[3] = &edge3;
 
 	vertexPtrs[0]->addIncomingEdges(edgePtr[0]);
 	vertexPtrs[0]->addOutgoingEdges(edgePtr[1]);
