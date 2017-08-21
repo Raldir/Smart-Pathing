@@ -1,10 +1,45 @@
 #include "RoutingTable.h"
-#include <algorithm>
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
 using namespace boost;
+
+template <class Graph, class CostType, class LocMap>
+class distance_heuristic : public astar_heuristic<Graph, CostType>
+{
+public:
+	typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+	distance_heuristic(LocMap l, Vertex goal)
+		: m_location(l), m_goal(goal) {}
+	CostType operator()(Vertex u)
+	{
+		CostType dx = m_location[m_goal]->getPosition().first - m_location[u]->getPosition().first;
+		CostType dy = m_location[m_goal]->getPosition().second - m_location[u]->getPosition().second;
+		return ::sqrt(dx * dx + dy * dy);
+	}
+private:
+	LocMap m_location;
+	Vertex m_goal;
+};
+
+struct found_goal {};// exception for termination
+
+template <class Vertex>
+class astar_goal_visitor : public boost::default_astar_visitor
+{
+public:
+	astar_goal_visitor(Vertex goal) : m_goal(goal) {}
+	template <class Graph>
+	void examine_vertex(Vertex u, Graph& g) {
+		if (u == m_goal)
+			throw found_goal();
+	}
+private:
+	Vertex m_goal;
+};
+
+
 
 RoutingTable::RoutingTable(Graph* graph) {
 
@@ -96,41 +131,6 @@ RoutingTable::RoutingTable(Graph* graph) {
 		}
 	}
 }
-
-template <class Graph, class CostType, class LocMap>
-class distance_heuristic : public astar_heuristic<Graph, CostType>
-{
-public:
-	typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-	distance_heuristic(LocMap l, Vertex goal)
-		: m_location(l), m_goal(goal) {}
-	CostType operator()(Vertex u)
-	{
-		CostType dx = m_location[m_goal]->getPosition().first - m_location[u]->getPosition().first;
-		CostType dy = m_location[m_goal]->getPosition().second - m_location[u]->getPosition().second;
-		return ::sqrt(dx * dx + dy * dy);
-	}
-private:
-	LocMap m_location;
-	Vertex m_goal;
-};
-
-struct found_goal {};// exception for termination
-
-template <class Vertex>
-class astar_goal_visitor : public boost::default_astar_visitor
-{
-public:
-	astar_goal_visitor(Vertex goal) : m_goal(goal) {}
-	template <class Graph>
-	void examine_vertex(Vertex u, Graph& g) {
-		if (u == m_goal)
-			throw found_goal();
-	}
-private:
-	Vertex m_goal;
-};
-
 
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {

@@ -1,8 +1,10 @@
 #pragma once
-
+#include "Car.h"
 #include "Vertex.h"
-#include "main.h"
-#include "RoutingTable.h"
+
+class Vertex;
+class main;
+class RoutingTable;
 
 class Spawner : public Vertex {
 
@@ -13,9 +15,11 @@ public:
 	void SpawnCar();
 
 private:
-	RoutingTable routingTable;
+	//RoutingTable routingTable;
 
 	Vertex* nextCarGoal();
+
+	//void spawnCar(Car* car, RoutingTable routingTable);
 
 	int _spawnRate;
 };

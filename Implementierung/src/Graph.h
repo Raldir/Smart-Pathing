@@ -1,8 +1,4 @@
 #pragma once
-#include "Edge.h"
-#include "Vertex.h"
-#include "Spawner.h"
-#include "RoutingTable.h"
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
@@ -12,6 +8,9 @@
 #include <list>
 #include <fstream>
 #include <math.h>    // for sqrt
+#include "Edge.h"
+#include "Vertex.h"
+#include "Spawner.h"
 
 
 class Graph

@@ -13,7 +13,6 @@ public:
 
 
 private:
-	void initSpawner(std::vector<Spawner*> spawner);
 	void nextTick();
 };
 

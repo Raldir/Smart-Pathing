@@ -9,6 +9,7 @@ TrafficLight::TrafficLight() {
 		phaseIt = possiblePhases.begin();
 	}
 
+	phaseDuration = 10;
 	timer = rand() % phaseDuration;
 }
 

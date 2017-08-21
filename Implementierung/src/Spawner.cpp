@@ -6,6 +6,12 @@ Spawner::Spawner(int id, float x, float y) : Vertex(id, x, y) {
 	_spawnRate = rand() % carDensity + 1;
 }
 
+
 void Spawner::SpawnCar() {
 
 }
+
+//void Spawner::spawnCar(Car * car, RoutingTable routingTable) {
+//
+//}
+
