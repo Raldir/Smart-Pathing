@@ -42,6 +42,9 @@ public:
 	//Assigns new queue to path (when path is recalculated) and deletes the old one
 	void assignRoute(std::queue<int> q);
 
+	void setCurrentTick(int tick);
+	int getCurrentTick();
+
 	//Gets ID of Car
 	int getID();
 
@@ -62,6 +65,9 @@ private:
 		Probably only needed for intersection crossing and second update
 	*/
 	float overflow;
+
+	//Tick des letzten Updates
+	int currentTick;
 
 	int _ID;
 };

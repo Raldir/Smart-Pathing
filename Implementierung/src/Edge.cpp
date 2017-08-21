@@ -10,9 +10,7 @@
 Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 
 	_carQueueCapacity = capacity;
-
 	_ID = id;
-
 	lastTickIsFull = false;
 }
 
@@ -20,7 +18,6 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 	//TODO Capacität nicht ganz korrekt, da auch bspw. für ein Auto ein Gap existieren muss damit es Kapazität 1 hat
 	_carQueueCapacity = int(length / _CAR_MINIMUM_GAP);
 	_ID = id;
-
 	lastTickIsFull = false;
 }
 
@@ -33,31 +30,29 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	lastTickIsFull = false;
 }
 
-void Edge::Update() {
+void Edge::Update(int currentTick) {
+
 	hasOverflowCars = false;
+
+	//Emtpy overflowQueue
+	overflowQueue = std::queue<Car*>();
 
 	//Copy carQueue
 	std::queue<Car*> copy = carQueue;
 
-	//Set the first critical as end of street
-	float nextCarPosition = _LENGTH;
+	//Set the first critical as end of street (with gap compensating because end of street theoretically has a gap behind it)
+	float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 
 	//Iterate through carQueue
 	while (!copy.empty()) {
 		Car* car = copy.front();
 
 		//Update car's position
-		car->Update(nextCarPosition);
-
-		//If this car has remaining overflow
-		if (car->hasOverflow()) {
-			//If the first relevant car Position has not been set yet
-			if (firstOverflowCarPosition == NULL) {
-				firstOverflowCarPosition = nextCarPosition;
-			}
-			//Push car on queue for further processing by second Update;
-			overflowQueue.push(car);
+		if (currentTick != car->getCurrentTick()) {
+			car->Update(nextCarPosition);
 		}
+
+		car->setCurrentTick(currentTick);
 
 		//After each updated car
 		//TODO Look whether or not overflow etc. is handled on other side
@@ -66,10 +61,29 @@ void Edge::Update() {
 		//Testing wheter or not car has transitioned
 		if (car->getCurrentVertexID() == endVertex->getID()) {
 			nextCarPosition = car->getCurrentPosition();
+
+			//If this car has remaining overflow and is still on this edge
+			if (car->hasOverflow()) {
+				//If the first relevant car Position has not been set yet
+				if (firstOverflowCarPosition == NULL) {
+
+					//Give end of street with gap correction or normal car position without correction
+					if (carQueue.front() == car) {
+						//End of street in front
+						firstOverflowCarPosition = nextCarPosition + _CAR_MINIMUM_GAP;
+					}
+					else {
+						//Normal car in front
+						firstOverflowCarPosition = nextCarPosition;
+					}
+				}
+				//Push car on queue for further processing by second Update;
+				overflowQueue.push(car);
+			}
 		}
 		//If it has the street end is the next crititcal position
 		else {
-			nextCarPosition = _LENGTH;
+			nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 		}
 		
 		//Reveal next car
@@ -78,21 +92,36 @@ void Edge::Update() {
 	//Ripple-Update
 	//startVertex->ContinueUpdate(_ID);
 
-	if (overflowQueue.size() > 0) {
+	if (!overflowQueue.empty()) {
 		hasOverflowCars = true;
+	}
+	else {
+		hasOverflowCars = false;
 	}
 }
 
 void Edge::UpdateOverflow() {
+	while (!overflowPushBuffer.empty()) {
+		overflowQueue.push(overflowPushBuffer.front());
+		overflowPushBuffer.pop();
+	}
 
 	if (hasOverflowCars) {
-		Car* car = overflowQueue.front();
+		//Copy overflowQueue
+		auto copy = overflowQueue;
 
+		//Empty overflow queue, so a new one can be built
+		overflowQueue = std::queue<Car*>();
+
+		//Get first car position for beginning of loop
 		float nextCarPosition = firstOverflowCarPosition;
 
+		//Set it to null so the first car to have overflow gets the correct critical position for the next iteration
+		firstOverflowCarPosition = NULL;
+
 		//Iterate through carQueue
-		while (!overflowQueue.empty()) {
-			Car* car = overflowQueue.front();
+		while (!copy.empty()) {
+			Car* car = copy.front();
 
 			//Update car's position
 			car->UpdateWithOverflow(nextCarPosition);
@@ -104,21 +133,39 @@ void Edge::UpdateOverflow() {
 			//Testing wheter or not car has transitioned
 			if (car->getCurrentVertexID() == endVertex->getID()) {
 				nextCarPosition = car->getCurrentPosition();
+
+				//If this car has remaining overflow and is still on this edge
+				if (car->hasOverflow()) {
+					
+					//If the first relevant car OverflowPosition has not been set yet
+					if (firstOverflowCarPosition == NULL) {
+
+						//Give end of street with gap correction or normal car position without correction
+						if (carQueue.front() == car) {
+							//End of street in front
+							firstOverflowCarPosition = nextCarPosition + _CAR_MINIMUM_GAP;
+						}
+						else {
+							//Normal car in front
+							firstOverflowCarPosition = nextCarPosition;
+						}
+					}
+					//Push car on queue for further processing by second Update;
+					overflowQueue.push(car);
+				}
 			}
-			//If it has the street end is the next crititcal position
 			else {
-				nextCarPosition = _LENGTH;
+				nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 			}
 
 			//Reveal next car
-			overflowQueue.pop();
+			copy.pop();
 		}
 	}
 
 	if (!overflowQueue.empty()) {
-		overflowQueue = std::queue<Car*>();
+		hasOverflowCars = true;
 	}
-	hasOverflowCars = false;
 }
 
 /*
@@ -182,7 +229,18 @@ void Edge::pushCar(Car* car) {
 	carQueue.push(car);
 
 	car->setPosition(0.0);
-	car->UpdateWithOverflow(carQueue.back()->getCurrentPosition());
+
+	if (car != carQueue.back())
+	{
+		car->UpdateWithOverflow(carQueue.back()->getCurrentPosition());
+	}
+	else {
+		car->UpdateWithOverflow(_LENGTH + _CAR_MINIMUM_GAP);
+	}
+
+	if (car->hasOverflow()) {
+		overflowPushBuffer.push(car);
+	}
 
 	if (isFull()) {
 		notifyVerticies();
@@ -204,17 +262,24 @@ Car * Edge::getFrontCar() {
 ///</summary>
 bool Edge::isFull() {
 
-	return carQueue.size() >= _carQueueCapacity && carQueue.back()->getCurrentPosition() > _CAR_MINIMUM_GAP;
+	if (!carQueue.empty()) {
+		return carQueue.back()->getCurrentPosition() > _CAR_MINIMUM_GAP;
+	}
+	else {
+		return false;
+	}
 }
 
 void Edge::printCars() {
 
 	std::queue<Car*> q = carQueue;
 
+	std::cout << "EDGE " << _ID << std::endl;
+
 	//Iterate through queue and printing cars
 	if (!q.empty()) {
 		do {
-			std::cout << "EDGE " << _ID << ", car " << q.front()->getID() << " on Position " << q.front()->getCurrentPosition() << std::endl;
+			std::cout << "Car " << q.front()->getID() << " on pos " << q.front()->getCurrentPosition() << std::endl;
 			q.pop();
 		} while (!q.empty());
 	}
@@ -258,17 +323,17 @@ void Edge::removeObserver(std::string indicator) {
 void Edge::notifyVerticies() {
 
 	//Wenn die Edge voll ist
-	if (isFull() != lastTickIsFull) {
+	if (isFull() != lastTickIsFull && startVertex != NULL) {
 		startVertex->setIsEdgeFull(_ID, isFull());
 
 		lastTickIsFull = isFull();
 
-		std::cout << "Toggled lastTickIsFull flag to " << lastTickIsFull << std::endl;
+		std::cout << "EDGE " << _ID << " toggled lastTickIsFull flag to " << lastTickIsFull << std::endl;
 	}
 
 	//If a car has reached the end of the street
 	if (getFrontCar()->getCurrentPosition() >= _LENGTH) {
-		std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car" << std::endl;
+		std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
 
 		endVertex->transferCar(_ID);
 	}

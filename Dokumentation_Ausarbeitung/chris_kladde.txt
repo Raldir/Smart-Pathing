@@ -2,8 +2,28 @@
 
 Implementation der Updates durch Edges:
 	--> Ansatz: Jeder Edge mit einer roten Ampel bekommt aufforderung zu Update.
-	Updated jede Edge hinter sich die grünes Licht hat, damit jedes Auto den berechneten Zustand des jetzigen ticks bekommt.
+	Updated jede Edge hinter sich die grünes Licht hat, damit jedes Auto den berechneten Zustand des jetzigen ticks bekommt. (VERWORFEN)
 	
+	--> Jede Edge wird geupdated und danach wird jede Edge max. n-mal mit UpdateOverflow geupdated
+	
+
+ID für Autos:
+
+	Paralellisierung von ID zuweisen nicht praktisch(?)
+	Nun wird vergleich der Pointer benutzt
+	
+	--> evtl. Lösung später (?)
+
+	
+	
+Update ticks:
+Update ticks werden von oben weitergereicht um synchornität zu gewährleisten
+
+
+ZUKUNFT:
+
+SIMULATION SECONDS PER TICK ---> interpretation von ticks durch reale zeitheiten --> übetragbarkeit auf realität
+
 Wie regeln mit dem overflow der sich ansammelt und in nächsten tick abarbeiten muss.
 
 Nun, beschlossen sequentiell zweite Updatewelle zu machen und dort den overflow zu handeln
@@ -15,6 +35,9 @@ Innerhalb von Prozess für sich erstes Update jede Edge
 
 3. overflow-handling interprozess nach allen interen updates.
 	--> wenn platz ist, übertragen, wenn nicht bleibt es.
+	
+	
+
 	
 	
 Unabhängiges Updaten des Graphen

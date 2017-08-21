@@ -80,6 +80,15 @@ void Car::assignRoute(std::queue<int> q) {
 	route = q;
 }
 
+void Car::setCurrentTick(int tick) {
+	currentTick = tick;
+}
+
+int Car::getCurrentTick()
+{
+	return currentTick;
+}
+
 void Car::popCurrentVertex() {
 	route.pop();
 }
@@ -94,14 +103,13 @@ int Car::getCurrentVertexID() {
 	}
 }
 
-int Car::getNextVertexID()
-{
+int Car::getNextVertexID() {
 	if (!route.empty()) {
-		auto routeCopy = route;
-		routeCopy.pop();
-		if (!route.empty()) {
-			return route.front();
-		}
+		auto copy = route;
+		copy.pop();
+		if (!copy.empty()) {
+			return copy.front();
+		} 
 		else {
 			return NULL;
 		}
