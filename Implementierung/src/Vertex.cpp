@@ -67,8 +67,10 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 	for (std::pair<int, Edge*> e : outgoingEdges) {
 
+		int i = e.first;
+		int o = car->getNextVertexID();
 		//Look if one of the edges has Vertex with matching ID from car
-		if (e.second->getVertices().second->getID() == car->getNextVertexID()) {
+		if (i == o) {
 			nextEdge = e.second;
 			nextEdgeFound = true;
 			break;
@@ -94,7 +96,7 @@ void Vertex::transferCar(int incomingEdgeID) {
 	}
 	else {
 		//TODO No next edge found?
-		std::cout << "No edge found leading to next vertex!" << std::endl;
+		std::cout << "No edge found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
 	}
 }
 
@@ -131,6 +133,7 @@ void Vertex::addIncomingEdges(Edge* edge) {
 //Adds Pointer of outgoing edge to Vector
 void Vertex::addOutgoingEdges(Edge* edge) {
 	outgoingEdges[edge->getID()] = edge;
+	isEdgeFullMap[edge->getID()] = true;
 }
 
 std::vector<Edge*> Vertex::getIncomingEdges()

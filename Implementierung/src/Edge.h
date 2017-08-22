@@ -21,7 +21,7 @@ public:
 
 	Edge(float length, int id, std::pair<Vertex*, Vertex*>);
 
-	void Update();
+	void Update(int currentTick);
 	void UpdateOverflow();
 
 	float getLength();
@@ -85,13 +85,18 @@ private:
 
 	//Zeitspanne
 	int timetableSpan;
-
 	//Interval of timetable
 	int timetableInterval;
 
 	//Remembers which cars still have overflow in them
 	std::queue<Car*> overflowQueue;
+	std::queue<Car*> overflowPushBuffer;
 
+	//Are there still cars with overflow to be calculated in the queue?
 	bool hasOverflowCars;
+	//Position of car in front of first car with overflow
 	float firstOverflowCarPosition;
+
+	//Tick after most recent updates
+	int currentTick;
 };

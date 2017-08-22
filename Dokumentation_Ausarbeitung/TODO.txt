@@ -1,0 +1,9 @@
+
+
+##### TODO LISTE
+
+//TODO hasOverflow überabeiten --> zeige ob nochmal geupdated werden muss, am besten unter berücksichtigung der ampel usw.
+
+Akutes TODO
+//TODO Sorge dafür, dass edges mit overflow die nicht mehr geupdatet werden können geupdatet werden.
+//TODO Bei Test Vertex übertragungsnachricht überprüfen.
