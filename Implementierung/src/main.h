@@ -1,5 +1,6 @@
 #pragma once
 
+int current_tick = 0;
 const float _CAR_SPEED = 10;
 //IRRELEVANT const float _CAR_LENGTH = 10;
 const float _CAR_MINIMUM_GAP = 10;

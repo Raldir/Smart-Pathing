@@ -10,16 +10,16 @@ public:
 
 	Spawner(int id, float x, float y);
 	void linkRoutingTable(RoutingTable* table);
-	void linkVertexPriorities(std::map<Spawner*, int> vertexPriorities);
+	void linkVertexPriorities(std::vector<std::pair<Spawner*, int>> vertexPriorities);
 	void randomizeSpawnRate();
-	void update();
+	void Update();
 
 private:
 
 	void spawnCar();
-	void Spawner::calculatePossibleGoals(int goal);
+	Spawner* Spawner::createPartlyRandomizedGoal();
 
-	std::map<Spawner*, int> _vertexPriorities;
+	std::vector<std::pair<Spawner*, int>> _vertexPriorities;
 	RoutingTable* _routingTable;
 	int _spawnRate;
 	int _stepsToNextSpawn;

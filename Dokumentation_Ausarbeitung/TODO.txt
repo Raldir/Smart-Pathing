@@ -7,3 +7,6 @@
 Akutes TODO
 //TODO Sorge dafür, dass edges mit overflow die nicht mehr geupdatet werden können geupdatet werden.
 //TODO Bei Test Vertex übertragungsnachricht überprüfen.
+
+
+Runden nach oben iin den TimeTables, sodass auto späteren Zeitpunkt als eigentlichen Blickiert(im intervall)

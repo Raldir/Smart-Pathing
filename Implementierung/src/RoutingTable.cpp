@@ -211,8 +211,9 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 	return v[0].first;
 }
 
-void RoutingTable::changeCosts(int startID, int destID, int currentTimeTableIndex) {
+void RoutingTable::addCosts(int startID, int destID, int currentTimeTableIndex) {
 	std::queue<int> tempqueue = routingMatrix[startID][destID];
+	//TODO mache queue so, dass man hier nicht poppen muss
 	tempqueue.pop();
 	_graph->addWeightToTimeTables(startID, destID, currentTimeTableIndex, tempqueue);
 }

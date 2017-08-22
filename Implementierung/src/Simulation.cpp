@@ -39,7 +39,7 @@ void Simulation::nextTick()
 		v->Update();
 	}
 	for (Edge* ed : _graph->getEdges()) {
-		ed->Update();
+		ed->Update(_currentTick);
 		//Methode zum Testen
 		ed->printCars();
 	}
@@ -60,9 +60,9 @@ void Simulation::nextTick()
 
 void Simulation::initSpawner() {
 	std::vector<Spawner*> spawner = _graph->getSpawner();
-	std::map<Spawner*, int> vertexPriorities;
+	std::vector<std::pair<Spawner*, int>> vertexPriorities;
 	for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
-		vertexPriorities[(*it2)] = rand() % VERTEX_PRIORITY_DIVERGENCE;
+		vertexPriorities.push_back(std::pair<Spawner*, int> ((*it2), rand() % VERTEX_PRIORITY_DIVERGENCE));
 	}
 	for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
 		(*it2)->linkRoutingTable(_routingTable);

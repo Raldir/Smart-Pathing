@@ -40,7 +40,7 @@ public:
 	int calculateBestGoal(int startID, int destID, int currentTimeTableIndex);
 
 	//ToDO Add  a method that only adds on a specific range
-	void changeCosts(int startID, int destID, int currentTimeTableIndex);
+	void addCosts(int startID, int destID, int currentTimeTableIndex);
 
 	//Get Route from origin to destination
 	std::queue<int>  getRoute(int originID, int destID);
