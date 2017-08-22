@@ -3,7 +3,25 @@
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
+
 using namespace boost;
+
+//using namespace boost::lambda;
+//
+//typedef float coord_t;
+//typedef tuple<coord_t, coord_t> point_t;
+//
+//coord_t RoutingTable::distance_sq(Vertex* v1, Vertex* v2) { // or boost::geometry::distance
+//	point_t a = make_tuple(v1->getX(), v1->getY());
+//	point_t b = make_tuple(v2->getX(), v2->getY());
+//		coord_t x = a.get<0>() - b.get<0>();
+//		coord_t y = a.get<1>() - b.get<1>();
+//		return x*x + y*y;
+//}
+
+bool RoutingTable::comp(const std::pair<int, float> &a, const std::pair<int, float> &b) {
+	return a.second < b.second;
+}
 
 template <class Graph, class CostType, class LocMap>
 class distance_heuristic : public astar_heuristic<Graph, CostType>
@@ -39,10 +57,18 @@ private:
 	Vertex m_goal;
 };
 
+void RoutingTable::setCost(int originID, int destID, float cost)
+{
+	costMatrix[originID][destID] = cost;
+}
 
+float RoutingTable::getCost(int originID, int destID)
+{
+	return costMatrix[originID][destID];
+}
 
-RoutingTable::RoutingTable(Graph* graph) {
-
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
+	_graph = graph;
 	std::vector<Edge*> _edges = graph->getEdges();
 	std::map<int, Vertex*> _vertexMap = graph->getVertexMap();
 	std::vector<Vertex*> _vertices = graph->getVertices();
@@ -73,14 +99,16 @@ RoutingTable::RoutingTable(Graph* graph) {
 	}
 	for (spawnerContainer::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
 		int start = (*it2)->getID();
+		std::map<int, float> distances;
 		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
+
+			if(start != goal)
+			distances[goal] =_vertexMap[start]->distanceTo(_vertexMap[goal]);
 			int sumDistance = 0;
-			//Entscheidung: Berechne Hin u. Rückrouten seperat
-			//if (!(_routingTable->getRoute(goal, start).empty())) {
-			//	std::cout << "hello";
-			//	continue;
-			//}
+
+			if (!(getRoute(goal, start).empty()))	continue;
+
 			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
 			std::vector<float> d(num_vertices(g));
 			try {
@@ -121,15 +149,25 @@ RoutingTable::RoutingTable(Graph* graph) {
 				}
 				insertRoute(start, goal, route);
 				setCost(start, goal, sumDistance);
-				if (!route.empty())
-					std::cout << route.front();
-				std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
 				continue;
 			}
 			std::cout << "Didn't find a path from " << _vertexMap[start]->getID() << "to"
 				<< _vertexMap[goal]->getID() << "!" << std::endl;
 		}
+		size_t m = numberNearestNeighbors;
+		//Erstelle liste mit abständen und mache partial sort
+		std::vector<std::pair<int, float>> v{ distances.begin(), distances.end() };
+		if (int(v.size()) < numberNearestNeighbors) {
+			m = v.size();
+		}
+		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
+		for (std::vector<std::pair<int, float>> ::iterator it = v.begin(); it != v.begin() + m; it++) {
+			k_nn[start].push_back(_vertexMap[(*it).first]->getID());
+			std::cout << _vertexMap[(*it).first]->getID() << ">" ;
+		}
+		std::cout << std::endl;
 	}
+
 }
 
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
@@ -140,7 +178,7 @@ void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 	//Pushes queue on symmetrical pair
 	routingMatrix[destID][originID] = route;
 
-	std::cout << "Added queue from " << originID << " to " << destID << " and reverse." << std::endl;
+	std::cout << "Added queue from " << originID << " to " << destID << std::endl;
 }
 
 void RoutingTable::removeRoute(int originID, int destID)
@@ -159,6 +197,26 @@ void RoutingTable::replaceRoute(int originID, int destID, std::queue<int> route)
 	insertRoute(originID, destID, route);
 
 }
+
+//TODO BIG REFACTORING
+int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTableIndex)
+{
+	std::map<int, float> costs;
+	for (int goalID : k_nn[destID]) {
+		int timeTableValue = _graph->getSumWeightFromTimeTables(startID, destID, currentTimeTableIndex, routingMatrix[goalID][destID]);
+		costs[goalID] = costMatrix[startID][goalID] + timeTableValue;
+	}
+	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
+	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
+	return v[0].first;
+}
+
+void RoutingTable::changeCosts(int startID, int destID, int currentTimeTableIndex) {
+	std::queue<int> tempqueue = routingMatrix[startID][destID];
+	tempqueue.pop();
+	_graph->addWeightToTimeTables(startID, destID, currentTimeTableIndex, tempqueue);
+}
+
 
 //Gibt Route zwischen origin und destination aus
 std::queue<int>  RoutingTable::getRoute(int originID, int destID) {
@@ -180,14 +238,4 @@ std::queue<int>  RoutingTable::getRoute(int originID, int destID) {
 	}
 
 	return queue;
-}
-
-void RoutingTable::setCost(int originID, int destID, float cost)
-{
-	costMatrix[originID][destID] = cost;
-}
-
-float RoutingTable::getCost(int originID, int destID)
-{
-	return costMatrix[originID][destID];
 }

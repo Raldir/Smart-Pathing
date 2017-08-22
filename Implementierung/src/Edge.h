@@ -41,6 +41,7 @@ public:
 	//Entfernt car von queue und gibt sie zurück
 	Car* popCar();
 
+	int numberOfCars();
 	//Gibt Auto an erster Stelle in Queue aus
 	Car* getFrontCar();
 

@@ -27,6 +27,11 @@ TrafficLight* Vertex::getTrafficLight()
 	return ptr;
 }
 
+float Vertex::distanceTo(Vertex * v)
+{
+	return sqrt(pow(_X - v->getX(), 2.0f) + pow(_Y - v->getY(), 2.0f));
+}
+
 //Initialize update wave for edges that have a red phased edge
 void Vertex::Update() {
 
@@ -154,6 +159,7 @@ std::vector<Edge*> Vertex::getIncomingEdges()
 
 	return v;
 }
+
 
 std::vector<Edge*> Vertex::getOutgoingEdges()
 {

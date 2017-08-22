@@ -10,20 +10,12 @@
 #include "EdgeFileReader.h"
 #include "RoutingTable.h"
 #include "Graph.h"
-
-#include <boost/graph/astar_search.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/random.hpp>
-#include <boost/random.hpp>
-#include <boost/graph/graphviz.hpp>
 #include <time.h>
 #include <list>
 #include <fstream>
 #include <math.h>    // for sqrt
 
 
-using namespace boost;
-using namespace std;
 
 int main() {
 
@@ -37,6 +29,7 @@ int main() {
 void testRami()
 {
 	Graph* g = new Graph();
+	RoutingTable* table = new RoutingTable(g, 7);
 	system("PAUSE");
 
 }
@@ -126,7 +119,7 @@ void testChristoph() {
 	std::deque<int> d{ vertexPtrs[0]->getID(), vertexPtrs[1]->getID(), vertexPtrs[2]->getID() };
 
 	//ROUTING TABLES
-	RoutingTable table(new Graph());
+	RoutingTable table(new Graph(), 7);
 
 	std::queue<int> q(d);
 
