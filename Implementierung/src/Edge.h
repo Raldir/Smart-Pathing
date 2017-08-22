@@ -87,10 +87,6 @@ private:
 	//Interval of timetable
 	int timetableInterval;
 
-	//Remembers which cars still have overflow in them
-	std::queue<Car*> overflowQueue;
-	std::queue<Car*> overflowPushBuffer;
-
 	//Are there still cars with overflow to be calculated in the queue?
 	bool hasOverflowCars;
 	//Position of car in front of first car with overflow

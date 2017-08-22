@@ -28,7 +28,7 @@ using namespace std;
 int main() {
 
 	testChristoph();
-	testRami();
+	//testRami();
 
 	return 0;
 }
@@ -38,7 +38,7 @@ void testRami()
 {
 	Graph* g = new Graph();
 	system("PAUSE");
-  
+
 }
 
 void testChristoph() {
@@ -60,7 +60,7 @@ void testChristoph() {
 
 	for (int i = 0; i < vertexAmount; i++) {
 
-		Vertex vertex(i, 0, 0, tL);
+		Vertex vertex(i + 1, 0, 0, tL);
 		std::cout << "Vertex mit ID: " << vertex.getID() << " erstellt." << std::endl;
 
 		vertices[i] = vertex;
@@ -144,11 +144,12 @@ void testChristoph() {
 
 	int k = 0;
 
-	for (int i = 1; i < 30; i++) {
+	for (int i = 1; i < 50; i++) {
 
-		std::cout << "CYCLE " << i << std::endl;
+		bool hasOverflow = true;
 
-		if (!edgePtr[0]->isFull()) {
+		std::cout << "############## CYCLE " << i << std::endl;
+		if (!edgePtr[0]->isFull() && carsPtr[k] != NULL) {
 			edgePtr[0]->pushCar(carsPtr[k]);
 			std::cout << "Pushed car with ID: " << edgePtr[0]->getFrontCar()->getID() << " on Edge 0" << std::endl;
 			k++;
@@ -160,14 +161,21 @@ void testChristoph() {
 
 		std::cout << "Nach Update:" << std::endl;
 		for (Edge* ed : edgePtr) {
+			//std::cout << "EDGE " << ed->getID() << std::endl;
 			ed->Update(i);
 			ed->printCars();
 		}
 
-		std::cout << "Nach OverflowUpdate:" << std::endl;
-		for (Edge* ed : edgePtr) {
-			ed->UpdateOverflow();
-			ed->printCars();
+		int j = 0;
+
+		while (j < 4) {
+			std::cout << "Nach OverflowUpdate:" << std::endl;
+			for (Edge* ed : edgePtr) {
+				//std::cout << "EDGE " << ed->getID() << std::endl;
+				ed->UpdateOverflow();
+				ed->printCars();
+			}
+			j++;
 		}
 	}
 

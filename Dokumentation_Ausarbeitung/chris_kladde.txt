@@ -20,6 +20,14 @@ Update ticks:
 Update ticks werden von oben weitergereicht um synchornität zu gewährleisten
 
 
+Benachrichtigung der Edge ihre Füllung:
+	Erstmal über Beobachtermuster --> informiert bei änderung des zustandes
+	
+	Alternativ --> abfrage durch vertex
+	
+An Kreuzungen:
+	Wollen Autos aus zwei incomingEdges in die gleiche OutgoingEdge abbiegen, so ist das Ergebnis abhängig von der Updatereihenfolge.
+
 ZUKUNFT:
 
 SIMULATION SECONDS PER TICK ---> interpretation von ticks durch reale zeitheiten --> übetragbarkeit auf realität

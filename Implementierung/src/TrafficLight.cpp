@@ -5,10 +5,6 @@
 #include "TrafficLight.h"
 
 TrafficLight::TrafficLight() {
-	if (!possiblePhases.empty()) {
-		phaseIt = possiblePhases.begin();
-	}
-
 	phaseDuration = 10;
 	timer = rand() % phaseDuration;
 }
@@ -17,9 +13,8 @@ TrafficLight::TrafficLight(std::vector<std::pair<int, int>> trafficLightMap, int
 
 	possiblePhases = trafficLightMap;
 
-	if (!possiblePhases.empty()) {
-		phaseIt = possiblePhases.begin();
-	}
+	phaseIt = possiblePhases.begin();
+	currentPhase = *phaseIt;
 
 	phaseDuration = phaseDur;
 	timer = timerBeginPoint;
@@ -34,6 +29,7 @@ bool TrafficLight::canCross(int incomingEdgeID) {
 	return false;
 }
 
+/*
 void TrafficLight::setConnection(std::pair<int, int> connection)
 {
 	possiblePhases.push_back(connection);
@@ -41,7 +37,7 @@ void TrafficLight::setConnection(std::pair<int, int> connection)
 
 void TrafficLight::setConnections(std::vector<std::pair<int, int>> connections) {
 	possiblePhases = connections;
-}
+}*/
 
 void TrafficLight::Update() {
 
@@ -56,11 +52,13 @@ void TrafficLight::Update() {
 }
 
 void TrafficLight::togglePhase() {
-	
-	//Increment iterator on vector of possible phases
+	auto oldPhaseIt = phaseIt;
 	phaseIt++;
-	
-	//Set current phase to the pair the iterator is pointing to
+
+	if (*phaseIt == possiblePhases.at(possiblePhases.size() - 1)) {
+		phaseIt = possiblePhases.begin();
+	}
+
 	currentPhase = *phaseIt;
 }
 
