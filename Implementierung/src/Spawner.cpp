@@ -28,9 +28,12 @@ void Spawner::randomizeSpawnRate()
 void Spawner::spawnCar() {
 
 	//TODO Einbauen dass Car sich current tick merkt;
-	Car* car = new Car();
 	Spawner* initDestination = createPartlyRandomizedGoal();
 	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), current_timeTable_tick);
+	if (outgoingNeighbor(bestVertexID)->isFull()) {
+		return;
+	}
+	Car* car = new Car();
 	car->assignRoute(_routingTable->getRoute(_ID, bestVertexID));
 	_routingTable->addCosts(_ID, bestVertexID, current_timeTable_tick);
 }
