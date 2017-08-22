@@ -17,8 +17,8 @@ public:
 
 	bool canCross(int incomingEdgeID);
 
-	void setConnection(std::pair<int, int> connection);
-	void setConnections(std::vector<std::pair<int, int>> connections);
+	//void setConnection(std::pair<int, int> connection);
+	//void setConnections(std::vector<std::pair<int, int>> connections);
 
 	void Update();
 

@@ -20,7 +20,7 @@ void Vertex::setTrafficLight(TrafficLight tL) {
 	trafficLight = tL;
 }
 
-TrafficLight * Vertex::getTrafficLight()
+TrafficLight* Vertex::getTrafficLight()
 {
 	TrafficLight* ptr = &trafficLight;
 
@@ -67,10 +67,18 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 	for (std::pair<int, Edge*> e : outgoingEdges) {
 
-		int i = e.first;
-		int o = car->getNextVertexID();
+		int endVertexID;
+
+		if (e.second->getVertices().second != NULL) { 
+			endVertexID = e.second->getVertices().second->getID(); 
+		}
+		else {
+			break;
+		}
+		int nextVertex = car->getNextVertexID();
+
 		//Look if one of the edges has Vertex with matching ID from car
-		if (i == o) {
+		if (endVertexID == nextVertex) {
 			nextEdge = e.second;
 			nextEdgeFound = true;
 			break;
@@ -79,13 +87,14 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 	//If there is an edge the car can transported to
 	if (nextEdgeFound) {
-		if (canTransit(nextEdge->getID())) {
+		if (!nextEdge->isFull()) {
 
 			Car* car = takeCar(incomingEdgeID);
 
 			giveCar(nextEdge, car);
-
 			std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
+
+
 
 			//Removes the next point as destination
 			car->popCurrentVertex();
@@ -96,7 +105,7 @@ void Vertex::transferCar(int incomingEdgeID) {
 	}
 	else {
 		//TODO No next edge found?
-		std::cout << "No edge found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
+		std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
 	}
 }
 
@@ -114,11 +123,15 @@ void Vertex::giveCar(Edge* outgoingEdge, Car* car)
 	outgoingEdge->pushCar(car);
 }
 
-bool Vertex::canTransit(int outgoingEdgeID) {
+void Vertex::destroyCar(Car* car) {
+	delete car;
+}
+
+bool Vertex::canTransit(int incomingEdgeID, int outgoingEdgeID) {
 	//TODO Implement when Traffic Light is ready
 
-	return isEdgeFullMap[outgoingEdgeID];
-	//return !(getEdgeFromID(outgoingEdgeID)->isFull());
+	//return !isEdgeFullMap[outgoingEdgeID];
+	return trafficLight.canCross(incomingEdgeID) &&!(getEdgeFromID(outgoingEdgeID)->isFull());
 }
 
 /*

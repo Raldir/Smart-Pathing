@@ -38,8 +38,10 @@ public:
 	Car* takeCar(int incomingEdgeID);
 	void giveCar(Edge* edge, Car* car);
 
+	void destroyCar(Car* car);
+
 	//Checks wheter TrafficLight allow transit and wheter or not the next edge is full
-	bool canTransit(int outgoingEdgeID);
+	bool canTransit(int incomingEdgeID, int outgoingEdgeID);
 
 	void addIncomingEdges(Edge *edge);
 	void addOutgoingEdges(Edge *edge);
