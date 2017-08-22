@@ -12,12 +12,16 @@
 #include <fstream>
 #include <math.h>  
 #include "Graph.h"
+#include <boost/lambda/lambda.hpp>  // _1
+#include <boost/lambda/bind.hpp>    // bind()
+#include <boost/tuple/tuple_io.hpp>
 
 class Edge;
 class Vertex;
 
 typedef std::map<int, std::map<int, std::queue<int>>> RoutingMatrix;
 typedef std::map<int, std::map<int, float>> CostMatrix;
+typedef std::map<int, std::vector<int>> KNearestNeighborMatrix;
 
 
 class RoutingTable {
@@ -25,13 +29,18 @@ class RoutingTable {
 public:
 	//TODO Mulitple Routenfindungsalgorithmen implementieren
 
-	RoutingTable(Graph* g);
+	RoutingTable(Graph* g, int numberNearestNeighbors);
 
 
 	void insertRoute(int originID, int destID, std::queue<int> route);
 	void removeRoute(int originID, int destID);
 	
 	void replaceRoute(int originID, int destID, std::queue<int> route);
+
+	int calculateBestGoal(int startID, int destID, int currentTimeTableIndex);
+
+	//ToDO Add  a method that only adds on a specific range
+	void changeCosts(int startID, int destID, int currentTimeTableIndex);
 
 	//Get Route from origin to destination
 	std::queue<int>  getRoute(int originID, int destID);
@@ -40,6 +49,8 @@ public:
 	float getCost(int originID, int destID);
 
 private:
+	static bool comp(const std::pair<int, float> &a, const std::pair<int, float> &b);
+
 	int dimension;
 
 	//Routing Table "Matrix", die die Routen enthält
@@ -49,4 +60,6 @@ private:
 	*/
 	RoutingMatrix routingMatrix;
 	CostMatrix costMatrix;
+	KNearestNeighborMatrix k_nn;
+	Graph* _graph;
 };

@@ -15,6 +15,9 @@ const int _SIMULATION_SECONDS_PER_TICK = 5;
 
 const float _CAR_SPEED_PER_TICK = _SIMULATION_SECONDS_PER_TICK * _CAR_SPEED;
 
-const int carDensity = 10;
+const int BASE_SPAWN_RATE = 10;
 
+const int VERTEX_PRIORITY_DIVERGENCE = 5;
 
+//TODO Ändere zu: Average_EDGELENGTH / VALUE
+const int _CAR_RELEVANCE = 10;

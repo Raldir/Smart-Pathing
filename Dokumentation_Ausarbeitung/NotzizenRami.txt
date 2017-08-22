@@ -1,2 +1,10 @@
 Spawnedges wurden statisch gewählt, jene, von denen nur 1 Straße abgeht. Später möglicherweise dynamischer, durch berechnung der Edges mit
 minimaler Anzahl an Straßen und diese als Referenz nehmen mit Threshhold
+
+Die Auswahl des Zielknoten eines autos wird in der theorie so angenommen ,dass ein Auto ein Ziel hat (welches bei uns durch eine Wahrscheinlichkeitsfunktion
+beschrieben wird) und von dort aus die nächsten n SpawnKnoten wählt um die Route wieder zu verlasen und berechnet, welcher der Spawnpunkte die niedrigste
+Kosten hat.
+In der Praxis wählen wir einen Knoten mit eiiner bestimmen Wahrscheinlichkeitsfunktion. Von dem wählen wir die nächsten n nachbarn. Macht für die Praxis
+keinen unterschied da man i nder Praxis auch einen Knoten aus dem Radius wählen müsste und von dortm öglichst nahe Knoten zum kostenvergleich suchen würde.
+
+Die CostMatrix ist ausschließlich dafür da, die initialkosten zu berechnen, ist also nichts weiteres als die Distanzen zwischen beginn und Ziel

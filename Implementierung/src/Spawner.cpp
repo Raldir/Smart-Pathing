@@ -3,15 +3,45 @@
 
 
 Spawner::Spawner(int id, float x, float y) : Vertex(id, x, y) {
-	_spawnRate = rand() % carDensity + 1;
+	_spawnRate = rand() % BASE_SPAWN_RATE ;
+	_stepsToNextSpawn = _spawnRate;
+}
+
+void Spawner::linkRoutingTable(RoutingTable * table)
+{
+	_routingTable = table;
+}
+
+void Spawner::linkVertexPriorities(std::map<Spawner*, int> vertexPriorities)
+{
+	_vertexPriorities = vertexPriorities;
+}
+
+void Spawner::randomizeSpawnRate()
+{
+	_spawnRate = rand() % BASE_SPAWN_RATE;
 }
 
 
-void Spawner::SpawnCar() {
+
+void Spawner::spawnCar() {
+
+	Car* car = new Car();
+}
+
+
+void Spawner::calculatePossibleGoals(int goal) {
 
 }
 
-//void Spawner::spawnCar(Car * car, RoutingTable routingTable) {
-//
-//}
+void Spawner::update() {
+	if (_stepsToNextSpawn == 0) {
+		//std::pair<float, float> goal = std::pair<float, float>()
+		//spawnCar();
+		_stepsToNextSpawn = _spawnRate;
+	}
+	else {
+		_stepsToNextSpawn--;
+	}
+}
 

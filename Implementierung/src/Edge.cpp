@@ -177,6 +177,11 @@ Car * Edge::popCar() {
 	}
 }
 
+int Edge::numberOfCars()
+{
+	return carQueue.size();
+}
+
 void Edge::pushCar(Car* car) {
 
 	carQueue.push(car);

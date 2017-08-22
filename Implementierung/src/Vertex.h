@@ -22,6 +22,8 @@ public:
 	void setTrafficLight(TrafficLight tL);
 	TrafficLight* getTrafficLight();
 
+	float distanceTo(Vertex* v);
+
 	void Update();
 
 	//TrafficLight* trafficLight;
