@@ -1,12 +1,15 @@
 #pragma once
 
-const float _CAR_SPEED = 10;
+const int _CAR_SPEED = 10;
 //IRRELEVANT const float _CAR_LENGTH = 10;
-const float _CAR_MINIMUM_GAP = 10;
+const int _CAR_MINIMUM_GAP = 10;
+
+//TODO Bessere Methodik finden
+const int _TIMETABLE_SPAN = 10000;
 
 //TRAFFIC LIGHT
 /*
-#define _TRAFFIC_LIGHT_PERIOD^^^^
+#define _TRAFFIC_LIGHT_PERIOD
 #define _TRAFFIC_LIGHT_DURATION
 */
 

@@ -28,6 +28,23 @@ Benachrichtigung der Edge ihre Füllung:
 An Kreuzungen:
 	Wollen Autos aus zwei incomingEdges in die gleiche OutgoingEdge abbiegen, so ist das Ergebnis abhängig von der Updatereihenfolge.
 
+	
+TIMETABLE:
+	Jede Edge hat einen Timetable --> interval ist länge der straße
+	
+	Gewichte bei erstellen des Autos zugewiesen
+	
+	Bei Routenfindung werden potentielle Zielspawnerknoten in der nähe des echten Ziels gesucht.
+	Zu jedem dieser Knoten werden die Kosten berechnet (Start-Zielspawnerknoten)
+	
+	TODO Auto merkt sich wie lange es lebt/ wann es angefangen hat
+	TODO Auto merkt sich Route
+	
+	Bei entfernen des Gewichts auf Edge braucht man:
+		50g Autoerzeugungzeitpunkt / vergangen
+			Distanz vom Startpunkt --> Inkrementieren bei jedem Update
+			Remove that filth at the correct timestamp
+	
 ZUKUNFT:
 
 SIMULATION SECONDS PER TICK ---> interpretation von ticks durch reale zeitheiten --> übetragbarkeit auf realität

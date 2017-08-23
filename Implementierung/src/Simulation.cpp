@@ -39,7 +39,8 @@ void Simulation::nextTick()
 		v->Update();
 	}
 	for (Edge* ed : _graph->getEdges()) {
-		ed->Update();
+		//ed->Update();
+		ed->Update(_currentTick);
 		//Methode zum Testen
 		ed->printCars();
 	}

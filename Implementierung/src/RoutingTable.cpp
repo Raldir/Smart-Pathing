@@ -19,6 +19,22 @@ using namespace boost;
 //		return x*x + y*y;
 //}
 
+std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
+{
+	std::queue<int> revQueue;
+
+	if (queue.empty()) {
+		return queue;
+	}
+
+	int vertex = queue.front();
+	queue.pop();
+
+	revQueue = reverseQueue(queue);
+	revQueue.push(vertex);
+	return revQueue;
+}
+
 bool RoutingTable::comp(const std::pair<int, float> &a, const std::pair<int, float> &b) {
 	return a.second < b.second;
 }
@@ -103,8 +119,8 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
 
-			if(start != goal)
-			distances[goal] =_vertexMap[start]->distanceTo(_vertexMap[goal]);
+			if (start != goal)
+				distances[goal] = _vertexMap[start]->distanceTo(_vertexMap[goal]);
 			int sumDistance = 0;
 
 			if (!(getRoute(goal, start).empty()))	continue;
@@ -114,11 +130,11 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 			try {
 				// call astar named parameter interface
 				astar_search
-					(g, start,
-						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-						(_vertexMap, goal),
-						predecessor_map(&p[0]).distance_map(&d[0]).
-						visitor(astar_goal_visitor<vertex>(goal)));
+				(g, start,
+					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+					(_vertexMap, goal),
+					predecessor_map(&p[0]).distance_map(&d[0]).
+					visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -163,20 +179,19 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
 		for (std::vector<std::pair<int, float>> ::iterator it = v.begin(); it != v.begin() + m; it++) {
 			k_nn[start].push_back(_vertexMap[(*it).first]->getID());
-			std::cout << _vertexMap[(*it).first]->getID() << ">" ;
+			std::cout << _vertexMap[(*it).first]->getID() << ">";
 		}
 		std::cout << std::endl;
 	}
-
 }
 
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
 	//Pushes originID into first map and int queue pair into the second
 	routingMatrix[originID][destID] = route;
-	
+
 	//Pushes queue on symmetrical pair
-	routingMatrix[destID][originID] = route;
+	routingMatrix[destID][originID] = reverseQueue(route);
 
 	std::cout << "Added queue from " << originID << " to " << destID << std::endl;
 }

@@ -27,6 +27,8 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	endVertex = nodes.second;
 	_ID = id;
 
+	calculateTimetableSpan(_TIMETABLE_SPAN);
+
 	lastTickIsFull = false;
 }
 
@@ -111,6 +113,8 @@ void Edge::UpdateOverflow() {
 			//If it has the street end is the next crititcal position
 			else {
 				nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
+
+				//removeWeightTimetable();
 			}
 
 			//Reveal next car
@@ -148,8 +152,12 @@ int Edge::calculateTimestamp(int timeStamp) {
 	return (timeStamp / timetableInterval) * timetableInterval;
 }
 
-int Edge::calculateInterval(int crossingDistanceGraph) {
-	return crossingDistanceGraph;
+int Edge::calculateInterval(int interval) {
+	return interval;
+}
+
+int Edge::calculateTimetableSpan(int i) {
+	return i;
 }
 
 /*
@@ -287,7 +295,7 @@ void Edge::notifyVerticies() {
 	}*/
 
 	//If a car has reached the end of the street
-	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() > _LENGTH) {
+	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH) {
 		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
 
 		endVertex->transferCar(_ID);

@@ -19,6 +19,8 @@
 
 int main() {
 
+
+
 	testChristoph();
 	//testRami();
 
@@ -171,6 +173,25 @@ void testChristoph() {
 			j++;
 		}
 	}
+
+	//TESTING reverseQueue
+	/*std::queue<int> abc;
+
+	for (int k = 0; k < 20; k++) {
+		abc.push(k);
+	}
+
+	auto p = RoutingTable::reverseQueue(abc);
+
+	while (!abc.empty()) {
+		std::cout << abc.front() << std::endl;
+		abc.pop();
+	}
+
+	while (!p.empty()) {
+		std::cout << p.front() << std::endl;
+		p.pop();
+	}*/
 
 	system("PAUSE"); //From C
 }

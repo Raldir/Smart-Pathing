@@ -48,7 +48,10 @@ public:
 	void setCost(int originID, int destID, float cost);
 	float getCost(int originID, int destID);
 
+
 private:
+	std::queue<int> reverseQueue(std::queue<int> queue);
+
 	static bool comp(const std::pair<int, float> &a, const std::pair<int, float> &b);
 
 	int dimension;

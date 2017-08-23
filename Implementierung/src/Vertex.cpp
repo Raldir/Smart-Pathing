@@ -62,39 +62,18 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
 
-	Edge* nextEdge = NULL;
-	bool nextEdgeFound = false;
+	Edge* nextEdge;
 
-	for (std::pair<int, Edge*> e : outgoingEdges) {
-
-		int endVertexID;
-
-		if (e.second->getVertices().second != NULL) { 
-			endVertexID = e.second->getVertices().second->getID(); 
-		}
-		else {
-			break;
-		}
-		int nextVertex = car->getNextVertexID();
-
-		//Look if one of the edges has Vertex with matching ID from car
-		if (endVertexID == nextVertex) {
-			nextEdge = e.second;
-			nextEdgeFound = true;
-			break;
-		}
-	}
+	nextEdge = outgoingNeighbor(car->getNextVertexID());
 
 	//If there is an edge the car can transported to
-	if (nextEdgeFound) {
+	if (nextEdge != NULL) {
 		if (!nextEdge->isFull()) {
 
 			Car* car = takeCar(incomingEdgeID);
 
 			giveCar(nextEdge, car);
 			std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
-
-
 
 			//Removes the next point as destination
 			car->popCurrentVertex();
