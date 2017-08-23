@@ -3,6 +3,7 @@
 #include <vector>
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
+#include "main.h"
 
 
 
@@ -104,11 +105,21 @@ void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableI
 	while (tempqueue.size() > 0) {
 		int tempgoal = tempqueue.front();
 		totaldistance += distance(origin, tempgoal, route);
-		_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(currentTimeTableIndex
-			+ (totaldistance / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
+
+		//VON CHRISTOPH
+		/*_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(currentTimeTableIndex
+			+ (totaldistance / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);*/
+		std::pair<int, int> timetableValuePair = calculateTimetableValues(currentTimeTableIndex, totaldistance);
+		_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(timetableValuePair.first, timetableValuePair.second);
+		
 		origin = tempqueue.front();
 		tempqueue.pop();
 	}
+}
+
+//Calculate values to enter into add and remove function for timetables
+std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
+	return std::make_pair(intitialTimetableIndex + (totalDist/ _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
 }
 
 int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {

@@ -18,6 +18,7 @@ private:
 	RoutingTable* _routingTable;
 	Graph* _graph;
 	int _currentTick;
+
 	void nextTick();
 	void initSpawner();
 };

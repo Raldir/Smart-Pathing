@@ -6,6 +6,8 @@ typedef std::vector<Edge*> edgeContainer;
 
 Simulation::Simulation()
 {
+	_currentTick = 0;
+
 	_graph = new Graph();
 	_routingTable = new RoutingTable(_graph, 6);
 	initSpawner();
@@ -35,11 +37,13 @@ void Simulation::writeResultsCurrentTick()
 
 void Simulation::nextTick()
 {
+	//VON CHRISTOPH
+	_currentTick++;
+
 	for (Vertex* v : _graph->getVertices()) {
 		v->Update();
 	}
 	for (Edge* ed : _graph->getEdges()) {
-		//ed->Update();
 		ed->Update(_currentTick);
 		//Methode zum Testen
 		ed->printCars();
@@ -55,15 +59,16 @@ void Simulation::nextTick()
 		}
 	}
 	for (Spawner* v : _graph->getSpawner()) {
-		v->Update();
+		//VON CHRISTOPH --> gibt tick an update weiter
+		v->Update(_currentTick);
 	}
 }
 
 void Simulation::initSpawner() {
 	std::vector<Spawner*> spawner = _graph->getSpawner();
-	std::map<Spawner*, int> vertexPriorities;
+	std::vector<std::pair<Spawner*, int>> vertexPriorities;
 	for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
-		vertexPriorities[(*it2)] = rand() % VERTEX_PRIORITY_DIVERGENCE;
+		vertexPriorities.push_back(std::pair<Spawner*, int> ((*it2), rand() % VERTEX_PRIORITY_DIVERGENCE));
 	}
 	for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
 		(*it2)->linkRoutingTable(_routingTable);

@@ -12,6 +12,9 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 	_carQueueCapacity = capacity;
 	_ID = id;
 	lastTickIsFull = false;
+
+	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableInterval = _LENGTH;
 }
 
 Edge::Edge(float length, int id) : _LENGTH(length) {
@@ -19,6 +22,9 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 	_carQueueCapacity = int(length / _CAR_MINIMUM_GAP) + 1;
 	_ID = id;
 	lastTickIsFull = false;
+
+	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableInterval = _LENGTH;
 }
 
 Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(length) {
@@ -27,7 +33,8 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	endVertex = nodes.second;
 	_ID = id;
 
-	calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableInterval = _LENGTH;
 
 	lastTickIsFull = false;
 }
@@ -58,7 +65,7 @@ void Edge::Update(int currentTick) {
 		notifyVerticies();
 
 		//Testing wheter or not car has transitioned
-		if (car->getCurrentVertexID() == endVertex->getID()) {
+		if (car->getCurrentVertexID() == endVertex->getID() && !car->isMarkedAsDeleted()) {
 			nextCarPosition = car->getCurrentPosition();
 
 			//If this car has remaining overflow and is still on this edge
@@ -71,11 +78,16 @@ void Edge::Update(int currentTick) {
 			nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 		}
 
+		//Delete car
+		if (car->isMarkedAsDeleted()) {
+			delete car;
+		}
+
 		//Reveal next car
 		copy.pop();
-	}
-	//Ripple-Update
-	//startVertex->ContinueUpdate(_ID);
+}
+//Ripple-Update
+//startVertex->ContinueUpdate(_ID);
 }
 
 void Edge::UpdateOverflow() {
@@ -113,8 +125,6 @@ void Edge::UpdateOverflow() {
 			//If it has the street end is the next crititcal position
 			else {
 				nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
-
-				//removeWeightTimetable();
 			}
 
 			//Reveal next car

@@ -68,7 +68,8 @@ public:
 
 	std::pair<float, float> getPosition();
 
-private:
+
+protected:
 
 	TrafficLight trafficLight;
 
