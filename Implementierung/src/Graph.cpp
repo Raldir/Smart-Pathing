@@ -105,7 +105,7 @@ void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableI
 		int tempgoal = tempqueue.front();
 		totaldistance += distance(origin, tempgoal, route);
 		_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(currentTimeTableIndex
-			+ (totaldistance / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
+			+ (totaldistance / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE / totaldistance);
 		origin = tempqueue.front();
 		tempqueue.pop();
 	}
