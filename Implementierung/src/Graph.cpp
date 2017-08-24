@@ -10,6 +10,7 @@
 using namespace boost;
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
+typedef std::vector<Edge*> edgeContainer;
 
 
 Graph::Graph()
@@ -82,6 +83,7 @@ void Graph::initGraphProperties() {
 	}
 	_maxX = maxX;
 	_maxY = maxY;
+	createTrafficLights();
 }
 
 float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
@@ -115,6 +117,24 @@ void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableI
 	}
 }
 
+void Graph::createTrafficLights() {
+	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+		edgeContainer inEdges = (*it)->getIncomingEdges();
+		std::vector<std::pair<int, int>> tLMap;
+		//for (edgeContainer::iterator it2 = inEdges.begin(); it2 != inEdges.end(); it2++) {
+		if(inEdges.size() > 1){
+			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[1]->getID()));
+		}
+		if (inEdges.size() > 3) {
+			tLMap.push_back(std::make_pair(inEdges[2]->getID(), inEdges[3]->getID()));
+		}
+		else continue ;
+		int start = rand() % TRAFFICLIGHT_DURATION;
+		TrafficLight tl(tLMap, TRAFFICLIGHT_DURATION, start);
+		(*it)->setTrafficLight(tl);
+		std::cout << "hello";
+	}
+}
 //Calculate values to enter into add and remove function for timetables
 std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
 	return std::make_pair(intitialTimetableIndex + (totalDist/ _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);

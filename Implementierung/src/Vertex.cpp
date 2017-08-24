@@ -38,7 +38,8 @@ float Vertex::distanceTo(Vertex * v)
 void Vertex::Update() {
 
 	//Update trafficLight
-	trafficLight.Update();
+	std::cout<<"breakpoint";
+	//trafficLight.Update();
 
 	//Für Ripple Update
 	//std::pair<int, int> pair = trafficLight.getCurrentPhase();

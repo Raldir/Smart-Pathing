@@ -178,7 +178,7 @@ int Edge::calculateTimetableSpan(int i) {
 ///Removes first car from queue
 ///</summary>
 Car * Edge::popCar() {
-
+	std::cout << "DELETED CAR";
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
 		Car* carPtr = carQueue.front();
@@ -252,7 +252,8 @@ void Edge::printCars() {
 	//Iterate through queue and printing cars
 	if (!q.empty()) {
 		do {
-			std::cout << "Car " << q.front()->getID() << " on pos " << q.front()->getCurrentPosition() << std::endl;
+			//std::cout << "Car " << q.front()->getID() << " on pos " << q.front()->getCurrentPosition() << std::endl;
+			std::cout << "Car on pos " << q.front()->getCurrentPosition() << std::endl;
 			q.pop();
 		} while (!q.empty());
 	}

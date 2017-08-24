@@ -15,12 +15,14 @@
 #include <fstream>
 #include <math.h>    // for sqrt
 
+#include "Simulation.h"
+
 
 
 int main() {
 
-	testChristoph();
-	//testRami();
+	//testChristoph();
+	testRami();
 
 	return 0;
 }
@@ -28,9 +30,10 @@ int main() {
 
 void testRami()
 {
-	Graph* g = new Graph();
-	RoutingTable* table = new RoutingTable(g, 7);
-	system("PAUSE");
+	Simulation* s = new Simulation();
+	//Graph* g = new Graph();
+	//RoutingTable* table = new RoutingTable(g, 7);
+	//system("PAUSE");
 
 }
 
@@ -106,10 +109,10 @@ void testChristoph() {
 	for (int i = 0; i < carAmount; i++) {
 
 		std::cout << "Counter: " << i << std::endl;
-		std::cout << "Made car with ID " << carStorage[i].getID() << std::endl;
+		//std::cout << "Made car with ID " << carStorage[i].getID() << std::endl;
 
-		carsPtr[i] = new Car(i);
-		std::cout << "Car: " << carsPtr[i]->getID() << " ready." << std::endl;
+		carsPtr[i] = new Car();
+		//std::cout << "Car: " << carsPtr[i]->getID() << " ready." << std::endl;
 
 	}
 
@@ -136,13 +139,17 @@ void testChristoph() {
 	int k = 0;
 
 	for (int i = 1; i < 50; i++) {
-
+		if (carsPtr[k]->getRoute().size() > 4) {
+			k++;
+			continue;
+		}
 		bool hasOverflow = true;
 
 		std::cout << "############## CYCLE " << i << std::endl;
 		if (!edgePtr[0]->isFull() && carsPtr[k] != NULL) {
 			edgePtr[0]->pushCar(carsPtr[k]);
-			std::cout << "Pushed car with ID: " << edgePtr[0]->getFrontCar()->getID() << " on Edge 0" << std::endl;
+			std::cout << "Pushed car on Edge 0" << std::endl;
+			//std::cout << "Pushed car with ID: " << edgePtr[0]->getFrontCar()->getID() << " on Edge 0" << std::endl;
 			k++;
 		}
 

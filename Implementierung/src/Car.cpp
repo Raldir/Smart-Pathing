@@ -111,12 +111,18 @@ void Car::popCurrentVertex() {
 
 int Car::getCurrentVertexID() {
 
-	if (!route.empty()) {
+	if (!route.empty()&& route.size() < 4) {
+		std::cout << "size" << route.size();
 		return route.front();
 	}
 	else {
+		std::cout << "empty";
 		return NULL;
 	}
+}
+
+std::queue<int> Car::getRoute() {
+	return route;
 }
 
 int Car::getNextVertexID() {
@@ -136,6 +142,7 @@ int Car::getNextVertexID() {
 }
 
 int Car::getDestination() {
+	std::cout << &route;
 	return route.back();
 }
 

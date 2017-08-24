@@ -42,6 +42,8 @@ public:
 	//Assigns new queue to path (when path is recalculated) and deletes the old one
 	void assignRoute(std::queue<int> q);
 
+	std::queue<int> getRoute();
+
 	void addDistanceTravelled(float edgeLength);
 	float getDistanceTravelled();
 

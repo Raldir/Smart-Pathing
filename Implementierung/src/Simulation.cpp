@@ -3,6 +3,8 @@
 #include <fstream>
 
 typedef std::vector<Edge*> edgeContainer;
+typedef std::vector<Spawner*> spawnerContainer;
+typedef std::vector<Vertex*> vertexContainer;
 
 Simulation::Simulation()
 {
@@ -11,6 +13,7 @@ Simulation::Simulation()
 	_graph = new Graph();
 	_routingTable = new RoutingTable(_graph, 6);
 	initSpawner();
+	std::cout << "Init completed";
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
 		nextTick();
 		writeResultsCurrentTick();
@@ -39,15 +42,19 @@ void Simulation::nextTick()
 {
 	//VON CHRISTOPH
 	_currentTick++;
-
-	for (Vertex* v : _graph->getVertices()) {
-		v->Update();
+	int timeStamp = _currentTick %_TIMETABLE_SPAN;
+	std::cout << "begin update" << '\n';
+	vertexContainer vertices = _graph->getVertices();
+	for(vertexContainer::iterator it2 = vertices.begin(); it2 != vertices.end(); it2++){
+		(*it2)->Update();
 	}
+	std::cout<< "Vertex update completed" << '\n';
 	for (Edge* ed : _graph->getEdges()) {
 		ed->Update(_currentTick);
 		//Methode zum Testen
 		ed->printCars();
 	}
+	std::cout << "Edge update Phase 1 completed" << '\n';
 	std::vector<Edge*> remainingEdges(_graph->getEdges());
 	for (int i = 0; i < _graph->getEdges().size(); i++) {
 		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end(); it2++) {
@@ -58,9 +65,10 @@ void Simulation::nextTick()
 			}
 		}
 	}
+	std::cout << "Edge update Phase 2 completed" << '\n';
 	for (Spawner* v : _graph->getSpawner()) {
 		//VON CHRISTOPH --> gibt tick an update weiter
-		v->Update(_currentTick);
+		v->Update(timeStamp);
 	}
 }
 

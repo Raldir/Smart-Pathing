@@ -7,8 +7,6 @@
 Spawner::Spawner(int id, float x, float y) : Vertex(id, x, y) {
 	_spawnRate = rand() % BASE_SPAWN_RATE ;
 	_stepsToNextSpawn = _spawnRate;
-
-	_currentTick = 0;
 }
 
 void Spawner::linkRoutingTable(RoutingTable * table)
@@ -26,17 +24,17 @@ void Spawner::randomizeSpawnRate()
 	_spawnRate = rand() % BASE_SPAWN_RATE;
 }
 
-void Spawner::spawnCar() {
+void Spawner::spawnCar(int currentTick) {
 
 	//TODO Einbauen dass Car sich current tick merkt;
 	Spawner* initDestination = createPartlyRandomizedGoal();
-	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), _currentTick);
+	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), currentTick);
 	if (outgoingNeighbor(bestVertexID)->isFull()) {
 		return;
 	}
-	Car* car = new Car(_currentTick);
+	Car* car = new Car(currentTick);
 	car->assignRoute(_routingTable->getRoute(_ID, bestVertexID));
-	_routingTable->addCosts(_ID, bestVertexID, _currentTick);
+	_routingTable->addCosts(_ID, bestVertexID, currentTick);
 	
 }
 
@@ -60,11 +58,8 @@ Spawner* Spawner::createPartlyRandomizedGoal() {
 }
 
 void Spawner::Update(int cT) {
-	_currentTick = cT;
-
 	if (_stepsToNextSpawn == 0) {
-		//std::pair<float, float> goal = std::pair<float, float>()
-		spawnCar();
+		spawnCar(cT);
 		_stepsToNextSpawn = _spawnRate;
 	}
 	else {
