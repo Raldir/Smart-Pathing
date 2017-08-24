@@ -73,7 +73,6 @@ void testChristoph() {
 	edge.registerObserver(vertexPtrs[1], "end");
 	edge2.registerObserver(vertexPtrs[1], "start");
 	edge2.registerObserver(vertexPtrs[2], "end");
-	edge3.registerObserver(vertexPtrs[2], "start");
 
 	Edge* edgePtr[4];
 
@@ -88,7 +87,6 @@ void testChristoph() {
 	vertexPtrs[1]->addIncomingEdges(edgePtr[1]);
 	vertexPtrs[1]->addOutgoingEdges(edgePtr[2]);
 	vertexPtrs[2]->addIncomingEdges(edgePtr[2]);
-	vertexPtrs[2]->addOutgoingEdges(edgePtr[3]);
 
 	for (Vertex* v : vertexPtrs) {
 		v->printEdges();
@@ -99,18 +97,18 @@ void testChristoph() {
 	Car* carsPtr[30];
 	Car carStorage[30];
 
-	for (int c = 0; c < carAmount; c++) {
-		Car car(c);
+	/*for (int c = 0; c < carAmount; c++) {
+		Car car = new Car(c);
 
 		carStorage[c] = car;
-	}
+	}*/
 
 	for (int i = 0; i < carAmount; i++) {
 
 		std::cout << "Counter: " << i << std::endl;
 		std::cout << "Made car with ID " << carStorage[i].getID() << std::endl;
 
-		carsPtr[i] = &carStorage[i];
+		carsPtr[i] = new Car(i);
 		std::cout << "Car: " << carsPtr[i]->getID() << " ready." << std::endl;
 
 	}
@@ -171,6 +169,25 @@ void testChristoph() {
 			j++;
 		}
 	}
+
+	//TESTING reverseQueue
+	/*std::queue<int> abc;
+
+	for (int k = 0; k < 20; k++) {
+		abc.push(k);
+	}
+
+	auto p = RoutingTable::reverseQueue(abc);
+
+	while (!abc.empty()) {
+		std::cout << abc.front() << std::endl;
+		abc.pop();
+	}
+
+	while (!p.empty()) {
+		std::cout << p.front() << std::endl;
+		p.pop();
+	}*/
 
 	system("PAUSE"); //From C
 }

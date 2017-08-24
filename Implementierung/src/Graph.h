@@ -24,6 +24,9 @@ public:
 	std::map<int, Vertex*> getVertexMap();
 	float distance(int vertex1, int vertex2, std::queue<int> route);
 	void addWeightToTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
+
+	static std::pair<int,int> calculateTimetableValues(int intitialTimetableIndex, float toaldistance);
+	
 	int getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
 	float getMaxX();
 	float getMaxY();

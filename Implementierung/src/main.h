@@ -1,14 +1,21 @@
 #pragma once
 
+<<<<<<< HEAD
 
 int current_timeTable_tick = 0;
+=======
+//extern int current_tick;
+>>>>>>> de27ebe4b24a38627aece35b522aa17dc276f8da
 const float _CAR_SPEED = 10;
 //IRRELEVANT const float _CAR_LENGTH = 10;
-const float _CAR_MINIMUM_GAP = 10;
+const int _CAR_MINIMUM_GAP = 10;
+
+//TODO Bessere Methodik finden
+const int _TIMETABLE_SPAN = 10000;
 
 //TRAFFIC LIGHT
 /*
-#define _TRAFFIC_LIGHT_PERIOD^^^^
+#define _TRAFFIC_LIGHT_PERIOD
 #define _TRAFFIC_LIGHT_DURATION
 */
 

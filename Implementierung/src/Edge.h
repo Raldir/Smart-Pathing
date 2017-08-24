@@ -35,6 +35,8 @@ public:
 	int calculateTimestamp(int time);
 	int calculateInterval(int crossingDistanceGraph);
 
+	int calculateTimetableSpan(int i);
+
 	//Pusht car auf queue
 	void pushCar(Car* car);
 

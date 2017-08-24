@@ -26,27 +26,38 @@ public:
 	//Updates position based on overflow
 	//void updateWithOverflowPosition(float nextCarPosition);
 
+	//Set position of car
 	void setPosition(float newPosition);
-
 	float getCurrentPosition();
 
 	//Pops current Vertex so the next point on the path is available
 	void popCurrentVertex();
-
 	//Gets the vertex the car is headed for
 	int getCurrentVertexID();
-
 	//Gets the vertex the car wants to transition to on intersection
 	int getNextVertexID();
+
+	int getDestination();
 
 	//Assigns new queue to path (when path is recalculated) and deletes the old one
 	void assignRoute(std::queue<int> q);
 
+	void addDistanceTravelled(float edgeLength);
+	float getDistanceTravelled();
+
+	//Moment car was born
+	int getSpawnTick();
+
+	//Get and set currentTick
 	void setCurrentTick(int tick);
 	int getCurrentTick();
 
 	//Gets ID of Car
 	int getID();
+
+	void markAsDeleted();
+
+	bool isMarkedAsDeleted();
 
 private:
 	/*
@@ -57,7 +68,6 @@ private:
 
 	//Current Position on edge
 	float currentPosition;
-
 	/*
 		When reaching the maximum allow position on the edge the leftover
 		distance is stored in the overflow variable to use
@@ -66,9 +76,15 @@ private:
 	*/
 	float overflow;
 
+	float distanceTravelled;
+
+	//Tick when car was spawned
+	int spawnTick;
 	//Tick des letzten Updates
 	int currentTick;
 
 	int _ID;
+
+	bool toBeDeleted;
 };
 

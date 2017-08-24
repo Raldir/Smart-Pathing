@@ -11,9 +11,11 @@ public:
 	void linkRoutingTable(RoutingTable* table);
 	void linkVertexPriorities(std::vector<std::pair<Spawner*, int>> vertexPriorities);
 	void randomizeSpawnRate();
-	void Update();
+	void Update(int currentTick);
 
 private:
+
+	int _currentTick;
 
 	void spawnCar();
 	Spawner* Spawner::createPartlyRandomizedGoal();

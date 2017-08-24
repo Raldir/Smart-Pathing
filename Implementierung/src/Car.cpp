@@ -2,8 +2,11 @@
 #include <utility>
 #include "Car.h"
 
-Car::Car(int id) {
-	_ID = id;
+Car::Car(int cT) {
+	currentTick = cT;
+	spawnTick = cT;
+
+	toBeDeleted = false;
 }
 
 Car::~Car()
@@ -22,13 +25,13 @@ void Car::Update(float nextCarPosition) {
 	}
 
 	//Calculate new position
+	float oldPosition = currentPosition;
 	float newPosition = currentPosition + _CAR_SPEED_PER_TICK;
 
 	if (newPosition >= nextCriticalPosition) {
 
 		//Drive to the max position
 		currentPosition = nextCriticalPosition;
-
 		overflow = newPosition - currentPosition;
 	}
 	else {
@@ -80,6 +83,19 @@ void Car::assignRoute(std::queue<int> q) {
 	route = q;
 }
 
+void Car::addDistanceTravelled(float edgeLength) {
+	distanceTravelled += edgeLength;
+}
+
+float Car::getDistanceTravelled() {
+	return distanceTravelled;
+}
+
+int Car::getSpawnTick()
+{
+	return spawnTick;
+}
+
 void Car::setCurrentTick(int tick) {
 	currentTick = tick;
 }
@@ -119,6 +135,18 @@ int Car::getNextVertexID() {
 	}
 }
 
+int Car::getDestination() {
+	return route.back();
+}
+
 int Car::getID() {
 	return _ID;
 };
+
+void Car::markAsDeleted() {
+	toBeDeleted = true;
+}
+
+bool Car::isMarkedAsDeleted() {
+	return toBeDeleted;
+}

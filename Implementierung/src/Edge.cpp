@@ -12,6 +12,9 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 	_carQueueCapacity = capacity;
 	_ID = id;
 	lastTickIsFull = false;
+
+	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableInterval = _LENGTH;
 }
 
 Edge::Edge(float length, int id) : _LENGTH(length) {
@@ -19,6 +22,9 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 	_carQueueCapacity = int(length / _CAR_MINIMUM_GAP) + 1;
 	_ID = id;
 	lastTickIsFull = false;
+
+	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableInterval = _LENGTH;
 }
 
 Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(length) {
@@ -26,6 +32,9 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	startVertex = nodes.first;
 	endVertex = nodes.second;
 	_ID = id;
+
+	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
+	timetableInterval = _LENGTH;
 
 	lastTickIsFull = false;
 }
@@ -56,7 +65,7 @@ void Edge::Update(int currentTick) {
 		notifyVerticies();
 
 		//Testing wheter or not car has transitioned
-		if (car->getCurrentVertexID() == endVertex->getID()) {
+		if (car->getCurrentVertexID() == endVertex->getID() && !car->isMarkedAsDeleted()) {
 			nextCarPosition = car->getCurrentPosition();
 
 			//If this car has remaining overflow and is still on this edge
@@ -69,11 +78,16 @@ void Edge::Update(int currentTick) {
 			nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 		}
 
+		//Delete car
+		if (car->isMarkedAsDeleted()) {
+			delete car;
+		}
+
 		//Reveal next car
 		copy.pop();
-	}
-	//Ripple-Update
-	//startVertex->ContinueUpdate(_ID);
+}
+//Ripple-Update
+//startVertex->ContinueUpdate(_ID);
 }
 
 void Edge::UpdateOverflow() {
@@ -148,8 +162,12 @@ int Edge::calculateTimestamp(int timeStamp) {
 	return (timeStamp / timetableInterval) * timetableInterval;
 }
 
-int Edge::calculateInterval(int crossingDistanceGraph) {
-	return crossingDistanceGraph;
+int Edge::calculateInterval(int interval) {
+	return interval;
+}
+
+int Edge::calculateTimetableSpan(int i) {
+	return i;
 }
 
 /*
@@ -287,7 +305,7 @@ void Edge::notifyVerticies() {
 	}*/
 
 	//If a car has reached the end of the street
-	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() > _LENGTH) {
+	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH) {
 		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
 
 		endVertex->transferCar(_ID);

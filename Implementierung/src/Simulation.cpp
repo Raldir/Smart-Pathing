@@ -6,6 +6,8 @@ typedef std::vector<Edge*> edgeContainer;
 
 Simulation::Simulation()
 {
+	_currentTick = 0;
+
 	_graph = new Graph();
 	_routingTable = new RoutingTable(_graph, 6);
 	initSpawner();
@@ -35,6 +37,9 @@ void Simulation::writeResultsCurrentTick()
 
 void Simulation::nextTick()
 {
+	//VON CHRISTOPH
+	_currentTick++;
+
 	for (Vertex* v : _graph->getVertices()) {
 		v->Update();
 	}
@@ -54,7 +59,8 @@ void Simulation::nextTick()
 		}
 	}
 	for (Spawner* v : _graph->getSpawner()) {
-		v->Update();
+		//VON CHRISTOPH --> gibt tick an update weiter
+		v->Update(_currentTick);
 	}
 }
 

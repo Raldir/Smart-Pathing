@@ -5,6 +5,8 @@
 #include "Car.h"
 #include "Edge.h"
 #include "TrafficLight.h"
+#include "Graph.h"
+#include "main.h"
 
 /**
 */
@@ -62,58 +64,56 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
 
-	Edge* nextEdge = NULL;
-	bool nextEdgeFound = false;
+	Edge* nextEdge;
 
-	for (std::pair<int, Edge*> e : outgoingEdges) {
+	//Checks wheter or not this is the destination of this car
+	if (_ID != car->getDestination()) {
+		nextEdge = outgoingNeighbor(car->getNextVertexID());
 
-		int endVertexID;
+		//If there is an edge the car can transported to
+		if (nextEdge != NULL) {
+			if (!nextEdge->isFull()) {
 
-		if (e.second->getVertices().second != NULL) { 
-			endVertexID = e.second->getVertices().second->getID(); 
+				//Haben car schon, brauchen keinen neuen Pointer
+				takeCar(incomingEdgeID);
+
+				giveCar(nextEdge, car);
+				std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
+
+				//Removes the next point as destination
+				car->popCurrentVertex();
+			}
+			else {
+				//DO NOTHING AS NOTHING WAS CHANGED
+			}
 		}
 		else {
-			break;
+			//TODO No next edge found?
+			std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
 		}
-		int nextVertex = car->getNextVertexID();
-
-		//Look if one of the edges has Vertex with matching ID from car
-		if (endVertexID == nextVertex) {
-			nextEdge = e.second;
-			nextEdgeFound = true;
-			break;
-		}
-	}
-
-	//If there is an edge the car can transported to
-	if (nextEdgeFound) {
-		if (!nextEdge->isFull()) {
-
-			Car* car = takeCar(incomingEdgeID);
-
-			giveCar(nextEdge, car);
-			std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
-
-
-
-			//Removes the next point as destination
-			car->popCurrentVertex();
-		}
-		else {
-			//DO NOTHING AS NOTHING WAS CHANGED
-		}
-	}
+	} 
+	//If this is the destination -> take car from edge and destroy it
 	else {
-		//TODO No next edge found?
-		std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
+		car->markAsDeleted();
 	}
 }
 
-//Hilfsfunktion falls sich was an der Struktur verändert
+//Nimmt car aus edge heraus und entfernt weight
 Car* Vertex::takeCar(int incomingEdgeID) {
 
+	//Get edge pointer
+	Edge* e = getEdgeFromID(incomingEdgeID);
 	//Remove car from edge
-	Car* car = getEdgeFromID(incomingEdgeID)->popCar();
+	Car* car = e->popCar();
+
+	//Add travelled distance to car inner variable
+	car->addDistanceTravelled(e->getLength());
+
+	//VON CHRISTOPH
+	//Correct timestamp to remove weight from timetable 
+	std::pair<int, int> timetableValues = Graph::calculateTimetableValues(car->getSpawnTick(), car->getDistanceTravelled());
+	//Remove weight from timetable set at the moment of birth of car
+	e->removeWeightTimetable(timetableValues.first, timetableValues.second);
 
 	return car;
 }
