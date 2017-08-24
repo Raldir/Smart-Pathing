@@ -39,7 +39,10 @@ void Vertex::Update() {
 
 	//Update trafficLight
 	std::cout<<"breakpoint";
-	//trafficLight.Update();
+	trafficLight.Update();
+	//for (auto const& value : trafficLight.getPossiblePhases()) {
+	//	std::cout << value.first + " " + value.second;
+	//}
 
 	//Für Ripple Update
 	//std::pair<int, int> pair = trafficLight.getCurrentPhase();
