@@ -14,7 +14,8 @@ Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
 	lastTickIsFull = false;
 
 	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
-	timetableInterval = _LENGTH;
+	timetableInterval = _LENGTH / _CAR_SPEED;
+	if (timetableInterval < 1) timetableInterval = 1;
 }
 
 Edge::Edge(float length, int id) : _LENGTH(length) {
@@ -24,7 +25,8 @@ Edge::Edge(float length, int id) : _LENGTH(length) {
 	lastTickIsFull = false;
 
 	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
-	timetableInterval = _LENGTH;
+	timetableInterval = _LENGTH / _CAR_SPEED;
+	if (timetableInterval < 1) timetableInterval = 1;
 }
 
 Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(length) {
@@ -34,7 +36,8 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	_ID = id;
 
 	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
-	timetableInterval = _LENGTH;
+	timetableInterval = _LENGTH / _CAR_SPEED;
+	if (timetableInterval < 1) timetableInterval = 1;
 
 	lastTickIsFull = false;
 }

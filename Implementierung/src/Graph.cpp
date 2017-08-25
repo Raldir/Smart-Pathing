@@ -87,10 +87,13 @@ void Graph::initGraphProperties() {
 }
 
 float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
+	std::cout << "Start" << vertex1 <<" Goal"<< vertex2<< '\n';
 	float distance = 0;
 	int origin = vertex1;
-	route.pop();
+	//route.pop();
+	std::cout << "RouteTop" << route.front() << '\n';
 	while (route.size() > 0) {
+		std::cout << _vertexMap[origin]->outgoingNeighbor(route.front())->getID();
 		distance +=_vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
 		origin = route.front();
 		if (route.front() == vertex2)  break;
@@ -153,15 +156,18 @@ std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, f
 }
 
 int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {
+	std::cout << "Start" << startID << " Goal" << destID << '\n';
 	std::map<int, float> costs;
 	std::queue<int> tempqueue = route;
 	int origin = startID;
-	//tempqueue.pop();
+	tempqueue.pop();
 	int timeTableValues = 0;
 	float totaldistance = 0;
 	while (tempqueue.size() > 0) {
 		int tempgoal = tempqueue.front();
-		totaldistance += distance(origin, tempgoal, route);
+		std::cout << "currentRoute" << route.front() << '\n';
+		totaldistance += distance(origin, tempgoal, tempqueue);
+		std::cout << "distance" << totaldistance << '\n';
 		timeTableValues += _vertexMap[origin]->outgoingNeighbor(tempgoal)->
 			getWeightTimetable(currentTimeTableIndex
 				+ (totaldistance / _CAR_SPEED_PER_TICK));

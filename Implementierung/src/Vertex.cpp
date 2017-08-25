@@ -38,9 +38,9 @@ float Vertex::distanceTo(Vertex * v)
 void Vertex::Update() {
 
 	//Update trafficLight
-	std::cout<<"breakpoint";
+	//std::cout<<"breakpoint";
 	for (auto const& value : trafficLight.getPossiblePhases()) {
-		std::cout << value.first << " " << value.second << '\n';
+		//std::cout << value.first << " " << value.second << '\n';
 	}
 	trafficLight.Update();
 
@@ -190,7 +190,10 @@ std::vector<Edge*> Vertex::getEdges()
 
 Edge* Vertex::outgoingNeighbor(int destID) {
 	for (std::pair<int, Edge*> p : outgoingEdges) {
+		std::cout << "Current Edge:" << p.second->getVertices().first->getID() <<" " << p.second->getVertices().second->getID() << '\n';
+		std::cout << "GleichheitstesT: " <<p.second->getVertices().second->getID() << " " << destID <<'\n';
 		if (p.second->getVertices().second->getID() == destID) {
+			std::cout << "return";
 			return p.second;
 		}
 	}

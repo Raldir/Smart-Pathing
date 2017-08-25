@@ -176,10 +176,11 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 		if (int(v.size()) < numberNearestNeighbors) {
 			m = v.size();
 		}
+		k_nn[start].push_back(start);
 		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
 		for (std::vector<std::pair<int, float>> ::iterator it = v.begin(); it != v.begin() + m; it++) {
-			k_nn[start].push_back(_vertexMap[(*it).first]->getID());
-			std::cout << _vertexMap[(*it).first]->getID() << ">";
+			k_nn[start].push_back((*it).first);
+			std::cout << (*it).first << ">";
 		}
 		std::cout << std::endl;
 	}
@@ -217,9 +218,9 @@ void RoutingTable::replaceRoute(int originID, int destID, std::queue<int> route)
 int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTableIndex)
 {
 	std::map<int, float> costs;
-	for (int goalID : k_nn[destID]) {
-		int timeTableValue = _graph->getSumWeightFromTimeTables(startID, destID, currentTimeTableIndex, routingMatrix[goalID][destID]);
-		costs[goalID] = costMatrix[startID][goalID] + timeTableValue;
+	for (int goalID : k_nn[startID]) {
+		int timeTableValue = _graph->getSumWeightFromTimeTables(goalID, destID, currentTimeTableIndex, routingMatrix[goalID][destID]);
+		costs[goalID] = costMatrix[goalID][destID] + timeTableValue;
 	}
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);

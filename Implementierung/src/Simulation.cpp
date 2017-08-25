@@ -11,7 +11,7 @@ Simulation::Simulation()
 	_currentTick = 0;
 
 	_graph = new Graph();
-	_routingTable = new RoutingTable(_graph, 6);
+	_routingTable = new RoutingTable(_graph, 3);
 	initSpawner();
 	std::cout << "Init completed";
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
@@ -52,24 +52,29 @@ void Simulation::nextTick()
 	for (Edge* ed : _graph->getEdges()) {
 		ed->Update(_currentTick);
 		//Methode zum Testen
-		ed->printCars();
+		//ed->printCars();
 	}
 	std::cout << "Edge update Phase 1 completed" << '\n';
-	std::vector<Edge*> remainingEdges(_graph->getEdges());
+	std::vector<Edge*> remainingEdges = _graph->getEdges();
 	for (int i = 0; i < _graph->getEdges().size(); i++) {
-		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end(); it2++) {
+		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end();) {
 			(*it2)->UpdateOverflow();
-			(*it2)->printCars();
+			//(*it2)->printCars();
 			if (!(*it2)->hasOverflow()) {
-				remainingEdges.erase(it2);
+				it2 = remainingEdges.erase(it2);
 			}
+			else it2++;
 		}
 	}
 	std::cout << "Edge update Phase 2 completed" << '\n';
-	for (Spawner* v : _graph->getSpawner()) {
+	spawnerContainer spawners = _graph->getSpawner();
+	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
+		std::cout << "hello";
 		//VON CHRISTOPH --> gibt tick an update weiter
-		v->Update(timeStamp);
+		(*it2)->Update(timeStamp);
 	}
+	std::cout << "Tick " << _currentTick << "finished" << '\n';
+
 }
 
 void Simulation::initSpawner() {

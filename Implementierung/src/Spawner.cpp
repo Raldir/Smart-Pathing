@@ -28,6 +28,7 @@ void Spawner::spawnCar(int currentTick) {
 
 	//TODO Einbauen dass Car sich current tick merkt;
 	Spawner* initDestination = createPartlyRandomizedGoal();
+	std::cout << "Init Destination:" << initDestination->getID()<<'\n';
 	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), currentTick);
 	if (outgoingNeighbor(bestVertexID)->isFull()) {
 		return;
@@ -44,6 +45,7 @@ Spawner* Spawner::createPartlyRandomizedGoal() {
 	for (std::vector<std::pair<Spawner*, int>>::iterator it2 = _vertexPriorities.begin(); it2 != _vertexPriorities.end(); it2++) {
 		sumElements += (*it2).second;
 	}
+	std::cout << "sumElements:" << sumElements<<'\n';
 	int random = rand() % sumElements;
 	int paircount = 0;
 	int currentCount = 0;
@@ -54,6 +56,7 @@ Spawner* Spawner::createPartlyRandomizedGoal() {
 		}
 		currentCount++;
 	}
+	if (_vertexPriorities[paircount].first->getID() == _ID) return createPartlyRandomizedGoal();
 	return _vertexPriorities[paircount].first;
 }
 

@@ -29,7 +29,7 @@ std::vector<Edge*> calculateEdges(vector<Vertex*> vertices, string path)
 		}
 		float length = sqrt(pow((coordinates1.first - coordinates2.first), 2.0f) 
 			+ pow((coordinates1.second - coordinates2.second), 2.0f));
-		//cout << id;
+		//cout << length << " " ;
 		edges.push_back(new Edge(length, id, std::pair<Vertex*, Vertex*>(startv, endv)));
 		id++;
 		//cout << id;
