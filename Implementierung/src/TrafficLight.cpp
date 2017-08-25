@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include "TrafficLight.h"
+#include <iterator>   
 
 TrafficLight::TrafficLight() {
 	phaseDuration = 10;
@@ -12,9 +13,10 @@ TrafficLight::TrafficLight() {
 TrafficLight::TrafficLight(std::vector<std::pair<int, int>> trafficLightMap, int phaseDur, int timerBeginPoint) {
 
 	possiblePhases = trafficLightMap;
-
-	phaseIt = possiblePhases.begin();
-	currentPhase = *phaseIt;
+	//std::copy(trafficLightMap.begin(), trafficLightMap.end(), std::back_inserter(possiblePhases));
+	currPhaseN = 0;
+	//phaseIt = possiblePhases.begin();
+	currentPhase = possiblePhases[currPhaseN];
 
 	phaseDuration = phaseDur;
 	timer = timerBeginPoint;
@@ -52,14 +54,18 @@ void TrafficLight::Update() {
 }
 
 void TrafficLight::togglePhase() {
-	auto oldPhaseIt = phaseIt;
-	phaseIt++;
-
-	if (*phaseIt == possiblePhases.at(possiblePhases.size() - 1)) {
-		phaseIt = possiblePhases.begin();
+	/*auto oldPhaseIt = phaseIt;*/
+	auto oldPhaseIt = currPhaseN;
+	//std::advance(phaseIt, 1);
+	std::cout << " " << possiblePhases.size() << possiblePhases[0].first;
+	//phaseIt++;
+	currPhaseN++;
+	/*if (phaseIt != possiblePhases.end()) {*/
+	if (currPhaseN >= possiblePhases.size() - 1){
+		currPhaseN = 0;
 	}
 
-	currentPhase = *phaseIt;
+	//currentPhase = *phaseIt;
 }
 
 std::pair<int, int> TrafficLight::getCurrentPhase()
@@ -70,4 +76,6 @@ std::pair<int, int> TrafficLight::getCurrentPhase()
 std::vector<std::pair<int, int>> TrafficLight::getPossiblePhases()
 {
 	return possiblePhases;
+	//std::vector<std::pair<int, int>> g{ std::begin(possiblePhases), std::end(possiblePhases) };
+	//return g;
 }

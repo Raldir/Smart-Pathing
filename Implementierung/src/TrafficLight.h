@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "main.h"
+#include <list>
 
 class Vertex;
 
@@ -32,6 +33,7 @@ private:
 
 	std::vector<std::pair<int,int>> possiblePhases;
 	std::vector<std::pair<int,int>>::iterator phaseIt;
+	int currPhaseN;
 
 	std::pair<int, int> currentPhase;
 

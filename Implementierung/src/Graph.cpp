@@ -122,8 +122,8 @@ void Graph::createTrafficLights() {
 		edgeContainer inEdges = (*it)->getIncomingEdges();
 		std::vector<std::pair<int, int>> tLMap;
 		//for (edgeContainer::iterator it2 = inEdges.begin(); it2 != inEdges.end(); it2++) {
-		if(inEdges.size() == 2){
-			std::cout << inEdges[0]->getID();
+		if(inEdges.size() > 1){
+			//std::cout << inEdges[0]->getID() << "\n";
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[1]->getID()));
 		}
 		if (inEdges.size() == 4 ) {
@@ -132,13 +132,17 @@ void Graph::createTrafficLights() {
 		if (inEdges.size() == 3) {
 			tLMap.push_back(std::make_pair(inEdges[2]->getID(), inEdges[2]->getID()));
 		}
-		else {
+		else if (inEdges.size() == 1){
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[0]->getID()));
 		}
-		for (std::vector<std::pair<int, int>> ::iterator it = tLMap.begin(); it != tLMap.end(); ++it) {
-			std::cout << (*it).first << " " << (*it).second << "\n";
-		}
+		//for (std::vector<std::pair<int, int>> ::iterator it = tLMap.begin(); it != tLMap.end(); ++it) {
+		//	std::cout << (*it).first << " " << (*it).second << "\n";
+		//}
+
+		//nicht "wirklich" zufällig, soll aber reicehn (Bei jeder durchführung wird gleiche generierungsufnktion
+		//für zufallzahl genommen
 		int start = rand() % TRAFFICLIGHT_DURATION;
+		std::cout << "rand:" << start;
 		TrafficLight tl(tLMap, TRAFFICLIGHT_DURATION, start);
 		(*it)->setTrafficLight(tl);
 	}
