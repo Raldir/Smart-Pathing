@@ -30,9 +30,9 @@ void Simulation::writeResultsCurrentTick()
 {
 	std::ofstream results;
 	edgeContainer edges = _graph->getEdges();
-	results.open(_currentTick + ".txt");
+	results.open("../Output/" + std::to_string(_currentTick) +  ".txt");
 	for (edgeContainer::iterator it2 = edges.begin(); it2 != edges.end(); it2++) {
-		results << (*it2)->numberOfCars() << '\n';
+		results << (*it2)->getID() << " " << (*it2)->numberOfCars() << '\n';
 	}
 	results.close();
 }
@@ -69,7 +69,7 @@ void Simulation::nextTick()
 	std::cout << "Edge update Phase 2 completed" << '\n';
 	spawnerContainer spawners = _graph->getSpawner();
 	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
-		std::cout << "hello";
+		//std::cout << "hello";
 		//VON CHRISTOPH --> gibt tick an update weiter
 		(*it2)->Update(timeStamp);
 	}

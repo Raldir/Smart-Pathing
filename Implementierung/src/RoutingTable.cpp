@@ -119,7 +119,7 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			int goal = (*it)->getID();
 
-			if (start != goal)
+				//Speicher alle Abstände von Knoten zum Startknoten
 				distances[goal] = _vertexMap[start]->distanceTo(_vertexMap[goal]);
 			int sumDistance = 0;
 
@@ -177,7 +177,6 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 		if (int(v.size()) < numberNearestNeighbors) {
 			m = v.size();
 		}
-		k_nn[start].push_back(start);
 		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
 		for (std::vector<std::pair<int, float>> ::iterator it = v.begin(); it != v.begin() + m; it++) {
 			k_nn[start].push_back((*it).first);
@@ -220,19 +219,26 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 {
 	std::map<int, float> costs;
 	for (int goalID : k_nn[destID]) {
+		if (goalID == startID) {
+			//std::cout << "Would take same";
+			continue;
+		}
+		//std::cout << "CurrentGoalvertex " << goalID << std::endl;
 		int timeTableValue = _graph->getSumWeightFromTimeTables(startID, goalID, currentTimeTableIndex, routingMatrix[startID][goalID]);
 		costs[goalID] = costMatrix[startID][goalID] + timeTableValue;
+		//std::cout << "calculated for one goalVertex" <<std::endl;
 	}
+	//std::cout << "afterAll ";
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
-	std::cout << "afterAll " << v[0].first;
+	std::cout << "Best Goal for Car: " << v[0].first <<std::endl;
 	return v[0].first;
 }
 
 void RoutingTable::addCosts(int startID, int destID, int currentTimeTableIndex) {
 	std::queue<int> tempqueue = routingMatrix[startID][destID];
 	//TODO mache queue so, dass man hier nicht poppen muss
-	tempqueue.pop();
+	//tempqueue.pop();
 	_graph->addWeightToTimeTables(startID, destID, currentTimeTableIndex, tempqueue);
 }
 

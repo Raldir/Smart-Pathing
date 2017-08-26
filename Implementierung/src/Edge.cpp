@@ -46,47 +46,49 @@ void Edge::Update(int currentTick) {
 	hasOverflowCars = false;
 
 	//Copy carQueue
-	std::queue<Car*> copy = carQueue;
+	std::deque<Car*> copy = carQueue;
 
 	//Set the first critical as end of street (with gap compensating because end of street theoretically has a gap behind it)
 	float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 
 	//Iterate through carQueue
-	while (!copy.empty()) {
-		Car* car = copy.front();
+		for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();it2++) {
+			Car* car = *(it2);
 
-		//Update car's position
-		if (currentTick != car->getCurrentTick()) {
-			car->Update(nextCarPosition);
-		}
-		//std::cout << "Car " << car->getID() << " on pos " << car->getCurrentPosition() << std::endl;
-
-		car->setCurrentTick(currentTick);
-
-		//After each updated car looks whether or not edge is empty or a car needs to be transfered
-		notifyVerticies();
-
-		//Testing wheter or not car has transitioned
-		if (car->getCurrentVertexID() == endVertex->getID() && !car->isMarkedAsDeleted()) {
-			nextCarPosition = car->getCurrentPosition();
-
-			//If this car has remaining overflow and is still on this edge
-			if (hasOverflowCars == false && car->hasOverflow()) {
-				hasOverflowCars = true;
+			//Update car's position
+			if (currentTick != car->getCurrentTick()) {
+				car->Update(nextCarPosition);
 			}
-		}
-		//If it has the street end is the next crititcal position
-		else {
-			nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
-		}
+			//std::cout << "Car " << car->getID() << " on pos " << car->getCurrentPosition() << std::endl;
 
-		//Delete car
-		if (car->isMarkedAsDeleted()) {
-			delete car;
-		}
+			car->setCurrentTick(currentTick);
 
-		//Reveal next car
-		copy.pop();
+			//After each updated car looks whether or not edge is empty or a car needs to be transfered
+			notifyVerticies();
+
+			//Testing wheter or not car has transitioned
+			if (car->getCurrentVertexID() == endVertex->getID() && !car->isMarkedAsDeleted()) {
+				//std::cout << "Can be TRANSITIONED " << car->hasOverflow() << std::endl;
+				nextCarPosition = car->getCurrentPosition();
+
+				//If this car has remaining overflow and is still on this edge
+				if (hasOverflowCars == false && car->hasOverflow()) {
+					hasOverflowCars = true;
+				}
+			}
+			//If it has the street end is the next crititcal position
+			else {
+				nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
+			}
+
+			//Delete car
+			//if (car->isMarkedAsDeleted()) {
+			//	it2 = carQueue.erase(it2);
+			//	delete car;
+			//}
+			//else it2++;
+
+			//Reveal next car
 }
 //Ripple-Update
 //startVertex->ContinueUpdate(_ID);
@@ -99,14 +101,15 @@ void Edge::UpdateOverflow() {
 		//Reset this flag
 		hasOverflowCars = false;
 
-		std::queue<Car*> copy = carQueue;
+		std::deque<Car*> copy = carQueue;
 
 		//Get first car position for beginning of loop
 		float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 
 		//Iterate through carQueue
-		while (!copy.empty()) {
-			Car* car = copy.front();
+		//while (!copy.empty()) {
+		for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();it2++) {
+			Car* car = *(it2);
 
 			//Update car's position
 			car->UpdateWithOverflow(nextCarPosition);
@@ -130,7 +133,7 @@ void Edge::UpdateOverflow() {
 			}
 
 			//Reveal next car
-			copy.pop();
+			//copy.pop();
 		}
 	}
 }
@@ -183,10 +186,11 @@ Car * Edge::popCar() {
 	std::cout << "DELETED CAR";
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
-		Car* carPtr = carQueue.front();
+		Car* carPtr = *carQueue.begin();
+		carQueue.erase(carQueue.begin());
 
 		//Remove car from queue
-		carQueue.pop();
+		//carQueue.pop();
 
 		return carPtr;
 	}
@@ -213,7 +217,7 @@ void Edge::pushCar(Car* car) {
 	}
 
 	car->setPosition(0.0);
-	carQueue.push(car);
+	carQueue.push_back(car);
 
 	car->UpdateWithOverflow(backPosition);
 
@@ -238,7 +242,7 @@ Car * Edge::getFrontCar() {
 bool Edge::isFull() {
 
 	if (!carQueue.empty()) {
-		std::cout << "check is full";
+		//std::cout << "check is full";
 		return carQueue.back()->getCurrentPosition() <= _CAR_MINIMUM_GAP || carQueue.size() >= _carQueueCapacity;
 	}
 	else {
@@ -248,18 +252,19 @@ bool Edge::isFull() {
 
 void Edge::printCars() {
 
-	std::queue<Car*> q = carQueue;
+	std::deque<Car*> q = carQueue;
 
 	std::cout << "EDGE " << _ID << std::endl;
 
 	//Iterate through queue and printing cars
-	if (!q.empty()) {
-		do {
-			//std::cout << "Car " << q.front()->getID() << " on pos " << q.front()->getCurrentPosition() << std::endl;
-			std::cout << "Car on pos " << q.front()->getCurrentPosition() << std::endl;
-			q.pop();
-		} while (!q.empty());
-	}
+	//Wofür hier eine DoWhile?!?
+	//if (!q.empty()) {
+	//	do {
+	//		//std::cout << "Car " << q.front()->getID() << " on pos " << q.front()->getCurrentPosition() << std::endl;
+	//		//std::cout << "Car on pos " << q.front()->getCurrentPosition() << std::endl;
+	//		q.pop();
+	//	} while (!q.empty());
+	//}
 }
 
 float Edge::getLength() {

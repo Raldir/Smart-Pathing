@@ -5,7 +5,7 @@
 #include "main.h"
 
 Spawner::Spawner(int id, float x, float y) : Vertex(id, x, y) {
-	_spawnRate = rand() % BASE_SPAWN_RATE ;
+	randomizeSpawnRate();
 	_stepsToNextSpawn = _spawnRate;
 }
 
@@ -34,11 +34,13 @@ void Spawner::spawnCar(int currentTick) {
 	Edge* edge = this->Vertex::outgoingNeighbor(route.front());
 	std::cout << this->getOutgoingEdges().size();
 	if (edge->isFull()) {
+		std::cout << "Edge is Full, no new car"<<std::endl;
 		return;
 	}
 	std::cout<<"Create Car" << std::endl;
 	Car* car = new Car(currentTick);
-	car->assignRoute(_routingTable->getRoute(_ID, bestVertexID));
+	car->assignRoute(route);
+	this->giveCar(edge, car);
 	_routingTable->addCosts(_ID, bestVertexID, currentTick);
 	
 }

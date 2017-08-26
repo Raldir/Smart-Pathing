@@ -28,7 +28,10 @@ bool TrafficLight::canCross(int incomingEdgeID) {
 	if (currentPhase.first == incomingEdgeID || currentPhase.second == incomingEdgeID) {
 		return true;
 	}
-	return false;
+	else {
+		std::cout << "CANNOT CROSS";
+		return false;
+	}
 }
 
 /*
@@ -57,7 +60,7 @@ void TrafficLight::togglePhase() {
 	/*auto oldPhaseIt = phaseIt;*/
 	auto oldPhaseIt = currPhaseN;
 	//std::advance(phaseIt, 1);
-	std::cout << " " << possiblePhases.size() << possiblePhases[0].first;
+	//std::cout << " " << possiblePhases.size() << possiblePhases[0].first;
 	//phaseIt++;
 	currPhaseN++;
 	/*if (phaseIt != possiblePhases.end()) {*/

@@ -57,7 +57,6 @@ std::vector<Vertex*> Graph::getVertices()
 void Graph::initGraphProperties() {
 	int maxX = INT_MIN;
 	int maxY = INT_MIN;
-	std::cout << "hello";
 	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
 		//TODO Wert nicht statisch setzen sondern dynamisch bestimmen. Veilleicht später die n wenigsten verbundenen Knoten nehmen
 		if ((*it)->getEdges().size() == 2) {
@@ -92,13 +91,13 @@ void Graph::initGraphProperties() {
 }
 
 float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
-	std::cout <<"Start" << vertex1 <<" Goal"<< vertex2<< '\n';
+	//std::cout <<"Start" << vertex1 <<" Goal"<< vertex2<< '\n';
 	float distance = 0;
 	int origin = vertex1;
 	//route.pop();
-	std::cout << "RouteTop" << route.front() << '\n';
+	//std::cout << "OutgoingNeighbor:" << route.front() << '\n';
 	while (route.size() > 0) {
-		std::cout << _vertexMap[origin]->outgoingNeighbor(route.front())->getID();
+		//std::cout<<" EdgetoNextNeighbor: "<< _vertexMap[origin]->outgoingNeighbor(route.front())->getID()<<std::endl;
 		distance +=_vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
 		origin = route.front();
 		if (route.front() == vertex2)  break;
@@ -172,16 +171,16 @@ int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTa
 	float totaldistance = 0;
 	while (tempqueue.size() > 0) {
 		int tempgoal = tempqueue.front();
-		std::cout << "currentRoute" << route.front() << '\n';
+		//std::cout << "CurrentnextVertex:" << route.front() << '\n';
 		totaldistance += distance(origin, tempgoal, tempqueue);
 		//std::cout << "distance" << totaldistance << '\n';
 		timeTableValues += _vertexMap[origin]->outgoingNeighbor(tempgoal)->
 			getWeightTimetable(currentTimeTableIndex
 				+ (totaldistance / _CAR_SPEED_PER_TICK));
 			origin = tempqueue.front();
-			std::cout << "reached end";
+			//std::cout << "reached end" << std::endl;
 			if (tempqueue.front() == route.back()) return timeTableValues;
-			std::cout << "reached end2";
+			//std::cout << "nextIteration for getSumWeight"<< std::endl;
 			tempqueue.pop();
 	}
 	return timeTableValues;

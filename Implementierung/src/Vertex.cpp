@@ -74,11 +74,10 @@ void Vertex::transferCar(int incomingEdgeID) {
 	//Checks wheter or not this is the destination of this car
 	if (_ID != car->getDestination()) {
 		nextEdge = outgoingNeighbor(car->getNextVertexID());
-
 		//If there is an edge the car can transported to
 		if (nextEdge != NULL) {
 			if (!nextEdge->isFull()) {
-
+				std::cout << "CALLED" << std::endl;
 				//Haben car schon, brauchen keinen neuen Pointer
 				takeCar(incomingEdgeID);
 

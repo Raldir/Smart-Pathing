@@ -77,7 +77,7 @@ private:
 	int _carQueueCapacity;
 
 	//Queue in der die Autos gespeichert werden.
-	std::queue<Car*> carQueue;
+	std::deque<Car*> carQueue;
 
 	//Indicates if the edge was full last tick
 	bool lastTickIsFull;
