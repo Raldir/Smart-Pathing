@@ -145,21 +145,21 @@ bool Vertex::canTransit(int incomingEdgeID, int outgoingEdgeID) {
 
 //Adds pointer of incoming edge to Vector
 void Vertex::addIncomingEdges(Edge* edge) {
-	incomingEdges[edge->getID()] = edge;
+	incomingEdges.push_back(edge);
 }
 
 //Adds Pointer of outgoing edge to Vector
 void Vertex::addOutgoingEdges(Edge* edge) {
-	outgoingEdges[edge->getID()] = edge;
-	isEdgeFullMap[edge->getID()] = true;
+	outgoingEdges.push_back(edge);
+	//isEdgeFullMap[edge->getID()] = true;
 }
 
 std::vector<Edge*> Vertex::getIncomingEdges()
 {
 	std::vector<Edge*> v;
 
-	for (std::pair<int, Edge*> e : incomingEdges) {
-		v.push_back(e.second);
+	for (Edge* e : incomingEdges) {
+		v.push_back(e);
 	}
 
 	return v;
@@ -170,8 +170,8 @@ std::vector<Edge*> Vertex::getOutgoingEdges()
 {
 	std::vector<Edge*> v;
 
-	for (std::pair<int, Edge*> e : outgoingEdges) {
-		v.push_back(e.second);
+	for (Edge* e : outgoingEdges) {
+		v.push_back(e);
 	}
 
 	return v;
@@ -189,21 +189,21 @@ std::vector<Edge*> Vertex::getEdges()
 }
 
 Edge* Vertex::outgoingNeighbor(int destID) {
-	for (std::pair<int, Edge*> p : outgoingEdges) {
-		std::cout << "Current Edge:" << p.second->getVertices().first->getID() <<" " << p.second->getVertices().second->getID() << '\n';
-		std::cout << "GleichheitstesT: " <<p.second->getVertices().second->getID() << " " << destID <<'\n';
-		if (p.second->getVertices().second->getID() == destID) {
-			std::cout << "return";
-			return p.second;
+	for (Edge* p : outgoingEdges) {
+		//std::cout << "Current Edge:" << p->getVertices().first->getID() <<" " << p->getVertices().second->getID() << '\n';
+		//std::cout << "GleichheitstesT: " <<p->getVertices().second->getID() << " " << destID <<'\n';
+		if (p->getVertices().second->getID() == destID) {
+			//std::cout << "return";
+			return p;
 		}
 	}
 	return NULL;
 }
 
 Edge* Vertex::incomingNeighbor(int destID) {
-	for (std::pair<int, Edge*> p : incomingEdges) {
-		if (p.second->getVertices().first->getID() == destID) {
-			return p.second;
+	for (Edge* p : incomingEdges) {
+		if (p->getVertices().first->getID() == destID) {
+			return p;
 		}
 	}
 	return NULL;
@@ -213,16 +213,16 @@ Edge* Vertex::incomingNeighbor(int destID) {
 Edge* Vertex::getEdgeFromID(int edgeID) {
 
 	//Searches through the pairs in the map and matches the IDs
-	for (std::pair<int, Edge*> p : incomingEdges) {
-		if (p.first == edgeID) {
-			return p.second;
+	for (Edge* p : incomingEdges) {
+		if (p->getID() == edgeID) {
+			return p;
 		}
 	}
 
 	//Searches through the pairs in the map and matches the IDs
-	for (std::pair<int, Edge*> p : incomingEdges) {
-		if (p.first == edgeID) {
-			return p.second;
+	for (Edge* p : incomingEdges) {
+		if (p->getID() == edgeID) {
+			return p;
 		}
 	}
 
@@ -237,13 +237,13 @@ void Vertex::setIsEdgeFull(int outgoingEdgeID, bool isFull)
 
 void Vertex::printEdges() {
 	std::cout << "Vertex:" << _ID << " ";
-	for (std::pair<int, Edge*> e : incomingEdges) {
-		std::cout << "Incoming Edge: " << e.second->getID() << std::endl;
+	for ( Edge* e : incomingEdges) {
+		std::cout << "Incoming Edge: " << e->getID() << std::endl;
 	}
 
-	for (std::pair<int, Edge*> e : outgoingEdges) {
+	for (Edge* e : outgoingEdges) {
 		std::cout << "Vertex:" << _ID << " ";
-		std::cout << "Outgoing Edge: " << e.second->getID() << std::endl;
+		std::cout << "Outgoing Edge: " << e->getID() << std::endl;
 	}
 }
 

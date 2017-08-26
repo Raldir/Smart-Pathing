@@ -83,8 +83,8 @@ protected:
 		int -> ID of edge
 		Edge* -> pointer to the actual edge
 	*/
-	std::map<int, Edge*> incomingEdges;
-	std::map<int, Edge*> outgoingEdges;
+	std::vector<Edge*> incomingEdges;
+	std::vector<Edge*> outgoingEdges;
 
 	float _X;
 	float _Y;

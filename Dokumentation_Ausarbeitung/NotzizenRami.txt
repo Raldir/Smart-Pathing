@@ -8,3 +8,14 @@ In der Praxis wählen wir einen Knoten mit eiiner bestimmen Wahrscheinlichkeitsfu
 keinen unterschied da man i nder Praxis auch einen Knoten aus dem Radius wählen müsste und von dortm öglichst nahe Knoten zum kostenvergleich suchen würde.
 
 Die CostMatrix ist ausschließlich dafür da, die initialkosten zu berechnen, ist also nichts weiteres als die Distanzen zwischen beginn und Ziel
+
+
+VERBESSERUNGEN
+
+STATT CIRCLEBEZIEHUNG VERTEX EDGE; KANN MAN bsp MAP IM VERTEX ERSTELLEN, mit EDGE ID UND ZIELVERTEX ID
+
+FÜGE ECEPTIONS HINZU FÜR METHODEN DIE WAS RETURNEN WAS FEHLSCHLAGEN KANN!
+
+VERBINDE irgendwie spawner mit den vertecies besser, momentan sind das autonome objekte.
+
+Vielleicht sollte, ein Pointer verwendet werden um die Edges von Vertex zu Spawner zu kopieren.

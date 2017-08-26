@@ -158,6 +158,7 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 						lastElement = (*spi);
 					}
 					else {
+						route.push(_vertexMap[start]->getID());
 						lastElement = (*spi);
 					}
 					route.push(_vertexMap[int(*spi)]->getID());
@@ -218,12 +219,13 @@ void RoutingTable::replaceRoute(int originID, int destID, std::queue<int> route)
 int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTableIndex)
 {
 	std::map<int, float> costs;
-	for (int goalID : k_nn[startID]) {
-		int timeTableValue = _graph->getSumWeightFromTimeTables(goalID, destID, currentTimeTableIndex, routingMatrix[goalID][destID]);
-		costs[goalID] = costMatrix[goalID][destID] + timeTableValue;
+	for (int goalID : k_nn[destID]) {
+		int timeTableValue = _graph->getSumWeightFromTimeTables(startID, goalID, currentTimeTableIndex, routingMatrix[startID][goalID]);
+		costs[goalID] = costMatrix[startID][goalID] + timeTableValue;
 	}
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
+	std::cout << "afterAll " << v[0].first;
 	return v[0].first;
 }
 

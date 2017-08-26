@@ -38,7 +38,6 @@ Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(le
 	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
 	timetableInterval = _LENGTH / _CAR_SPEED;
 	if (timetableInterval < 1) timetableInterval = 1;
-
 	lastTickIsFull = false;
 }
 
@@ -239,6 +238,7 @@ Car * Edge::getFrontCar() {
 bool Edge::isFull() {
 
 	if (!carQueue.empty()) {
+		std::cout << "check is full";
 		return carQueue.back()->getCurrentPosition() <= _CAR_MINIMUM_GAP || carQueue.size() >= _carQueueCapacity;
 	}
 	else {

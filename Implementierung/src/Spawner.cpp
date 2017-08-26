@@ -28,11 +28,15 @@ void Spawner::spawnCar(int currentTick) {
 
 	//TODO Einbauen dass Car sich current tick merkt;
 	Spawner* initDestination = createPartlyRandomizedGoal();
-	std::cout << "Init Destination:" << initDestination->getID()<<'\n';
 	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), currentTick);
-	if (outgoingNeighbor(bestVertexID)->isFull()) {
+	std::queue<int> route =_routingTable->getRoute(_ID, bestVertexID);
+	route.pop();
+	Edge* edge = this->Vertex::outgoingNeighbor(route.front());
+	std::cout << this->getOutgoingEdges().size();
+	if (edge->isFull()) {
 		return;
 	}
+	std::cout<<"Create Car" << std::endl;
 	Car* car = new Car(currentTick);
 	car->assignRoute(_routingTable->getRoute(_ID, bestVertexID));
 	_routingTable->addCosts(_ID, bestVertexID, currentTick);
@@ -68,5 +72,15 @@ void Spawner::Update(int cT) {
 	else {
 		_stepsToNextSpawn--;
 	}
+}
+
+void Spawner::setIncomingEdges(std::vector<Edge*> edges)
+{
+	incomingEdges = edges;
+}
+
+void Spawner::setOutigoingEdges(std::vector<Edge*> edges)
+{
+	outgoingEdges = edges;
 }
 
