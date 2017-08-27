@@ -317,7 +317,6 @@ void Edge::notifyVerticies() {
 	//If a car has reached the end of the street
 	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH) {
 		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
-
 		endVertex->transferCar(_ID);
 	}
 }

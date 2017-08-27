@@ -14,7 +14,6 @@
 #include <list>
 #include <fstream>
 #include <math.h>    // for sqrt
-
 #include "Simulation.h"
 
 
