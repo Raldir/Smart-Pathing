@@ -33,7 +33,7 @@ void testRami()
 	Simulation* s = new Simulation();
 	//Graph* g = new Graph();
 	//RoutingTable* table = new RoutingTable(g, 7);
-	//system("PAUSE");
+	system("PAUSE");
 
 }
 

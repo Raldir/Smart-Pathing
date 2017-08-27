@@ -34,10 +34,10 @@ void Spawner::spawnCar(int currentTick) {
 	Edge* edge = this->Vertex::outgoingNeighbor(route.front());
 	std::cout << this->getOutgoingEdges().size();
 	if (edge->isFull()) {
-		std::cout << "Edge is Full, no new car"<<std::endl;
+		std::cout << "Edge is Full, no new car, created on Spawner " << this->getID() <<"and " <<  edge->getID()<<std::endl;
 		return;
 	}
-	std::cout<<"Create Car" << std::endl;
+	std::cout<<"Create Car on Spawner " << this->getID() <<"and " << edge->getID()<< std::endl;
 	Car* car = new Car(currentTick);
 	car->assignRoute(route);
 	this->giveCar(edge, car);
@@ -51,7 +51,7 @@ Spawner* Spawner::createPartlyRandomizedGoal() {
 	for (std::vector<std::pair<Spawner*, int>>::iterator it2 = _vertexPriorities.begin(); it2 != _vertexPriorities.end(); it2++) {
 		sumElements += (*it2).second;
 	}
-	std::cout << "sumElements:" << sumElements<<'\n';
+	//std::cout << "sumElements:" << sumElements<<'\n';
 	int random = rand() % sumElements;
 	int paircount = 0;
 	int currentCount = 0;

@@ -52,7 +52,7 @@ void Edge::Update(int currentTick) {
 	float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 
 	//Iterate through carQueue
-		for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();it2++) {
+		for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();) {
 			Car* car = *(it2);
 
 			//Update car's position
@@ -82,11 +82,11 @@ void Edge::Update(int currentTick) {
 			}
 
 			//Delete car
-			//if (car->isMarkedAsDeleted()) {
-			//	it2 = carQueue.erase(it2);
-			//	delete car;
-			//}
-			//else it2++;
+			if (car->isMarkedAsDeleted()) {
+				it2 = carQueue.erase(it2);
+				delete car;
+			}
+			else it2++;
 
 			//Reveal next car
 }
@@ -184,14 +184,15 @@ int Edge::calculateTimetableSpan(int i) {
 ///</summary>
 Car * Edge::popCar() {
 	std::cout << "DELETED CAR";
+	std::cout << "CarQueue Size " << carQueue.size()<<std::endl;
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
 		Car* carPtr = *carQueue.begin();
-		carQueue.erase(carQueue.begin());
+		carQueue.pop_front();
 
 		//Remove car from queue
 		//carQueue.pop();
-
+		std::cout << "CarQueue Size After " << carQueue.size()<<std::endl;
 		return carPtr;
 	}
 	else {
@@ -242,7 +243,7 @@ Car * Edge::getFrontCar() {
 bool Edge::isFull() {
 
 	if (!carQueue.empty()) {
-		//std::cout << "check is full";
+		std::cout << carQueue.front()->getCurrentVertexID()<<std::endl;
 		return carQueue.back()->getCurrentPosition() <= _CAR_MINIMUM_GAP || carQueue.size() >= _carQueueCapacity;
 	}
 	else {

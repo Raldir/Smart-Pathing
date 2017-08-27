@@ -162,7 +162,7 @@ std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, f
 }
 
 int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {
-	std::cout << " New Goal : Start" << startID << " Goal" << destID << " " << route.front() <<'\n';
+	//std::cout << " New Goal : Start" << startID << " Goal" << destID << " " << route.front() <<'\n';
 	std::map<int, float> costs;
 	std::queue<int> tempqueue = route;
 	int origin = startID;

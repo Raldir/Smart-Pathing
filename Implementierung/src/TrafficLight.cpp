@@ -25,11 +25,12 @@ TrafficLight::TrafficLight(std::vector<std::pair<int, int>> trafficLightMap, int
 bool TrafficLight::canCross(int incomingEdgeID) {
 
 	//If one of the edges is contained in the current pair then return true
+	//std::cout << "Green: " <<currentPhase.first << " " << currentPhase.second << std::endl;
 	if (currentPhase.first == incomingEdgeID || currentPhase.second == incomingEdgeID) {
 		return true;
 	}
 	else {
-		std::cout << "CANNOT CROSS";
+		//std::cout << "CANNOT CROSS"<<std::endl;
 		return false;
 	}
 }
