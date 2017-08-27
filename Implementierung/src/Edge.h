@@ -62,6 +62,8 @@ public:
 
 	virtual std::pair<Vertex*, Vertex*> getVertices() override;
 
+	int getEdgeCapacity();
+
 	//Indicates wheter there are cars still to be updated for the second update wave
 	bool hasOverflow();
 

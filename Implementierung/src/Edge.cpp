@@ -177,6 +177,9 @@ int Edge::calculateTimetableSpan(int i) {
 	return i;
 }
 
+int Edge::getEdgeCapacity() {
+	return _carQueueCapacity;
+}
 /*
 ###### QUEUE
 */
