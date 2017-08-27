@@ -21,7 +21,7 @@ void Spawner::linkVertexPriorities(std::vector<std::pair<Spawner*, int>> vertexP
 
 void Spawner::randomizeSpawnRate()
 {
-	_spawnRate = rand() % BASE_SPAWN_RATE;
+	_spawnRate = rand() % BASE_SPAWN_RATE + 1;
 }
 
 void Spawner::spawnCar(int currentTick) {
@@ -32,9 +32,9 @@ void Spawner::spawnCar(int currentTick) {
 	std::queue<int> route =_routingTable->getRoute(_ID, bestVertexID);
 	route.pop();
 	Edge* edge = this->Vertex::outgoingNeighbor(route.front());
-	std::cout << this->getOutgoingEdges().size();
+	//std::cout << this->getOutgoingEdges().size();
 	if (edge->isFull()) {
-		std::cout << "Edge is Full, no new car, created on Spawner " << this->getID() <<"and " <<  edge->getID()<<std::endl;
+		std::cout << "Edge is Full, no new car, created on Spawner " << this->getID() <<"and Edge" <<  edge->getID()<<std::endl;
 		return;
 	}
 	std::cout<<"Create Car on Spawner " << this->getID() <<"and " << edge->getID()<< std::endl;
