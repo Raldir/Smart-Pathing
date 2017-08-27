@@ -74,13 +74,13 @@ void Vertex::transferCar(int incomingEdgeID) {
 	//Checks wheter or not this is the destination of this car
 	if (_ID != car->getDestination()) {
 		nextEdge = outgoingNeighbor(car->getNextVertexID());
-		std::cout << "PUT CAR ON" << this->getID() << " " << car->getNextVertexID() << std::endl;
+		//std::cout << "PUT CAR ON" << this->getID() << " " << car->getNextVertexID() << std::endl;
 		//If there is an edge the car can transported to
 		if (nextEdge != NULL) {
 			if (!nextEdge->isFull()) {
-				std::cout << "CALLED" << std::endl;
+				std::cout << "CALLED on IncomingEdgeID " <<incomingEdgeID << std::endl;
 				//Haben car schon, brauchen keinen neuen Pointer
-				car = takeCar(incomingEdgeID);
+				takeCar(incomingEdgeID);
 				car->popCurrentVertex();
 				giveCar(nextEdge, car);
 				std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
@@ -109,7 +109,7 @@ Car* Vertex::takeCar(int incomingEdgeID) {
 	Edge* e = getEdgeFromID(incomingEdgeID);
 	//Remove car from edge
 	Car* car = e->popCar();
-	std::cout << "TOOK OUT CAR" << std::endl;
+	std::cout << "TOOK OUT CAR of EDGE " <<incomingEdgeID<< std::endl;
 	//Add travelled distance to car inner variable
 	car->addDistanceTravelled(e->getLength());
 

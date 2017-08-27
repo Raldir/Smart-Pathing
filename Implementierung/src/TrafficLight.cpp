@@ -14,9 +14,9 @@ TrafficLight::TrafficLight(std::vector<std::pair<int, int>> trafficLightMap, int
 
 	possiblePhases = trafficLightMap;
 	//std::copy(trafficLightMap.begin(), trafficLightMap.end(), std::back_inserter(possiblePhases));
-	currPhaseN = 0;
+	currentPhaseCounter = rand() % possiblePhases.size();
 	//phaseIt = possiblePhases.begin();
-	currentPhase = possiblePhases[currPhaseN];
+	currentPhase = possiblePhases[currentPhaseCounter];
 
 	phaseDuration = phaseDur;
 	timer = timerBeginPoint;
@@ -58,16 +58,13 @@ void TrafficLight::Update() {
 }
 
 void TrafficLight::togglePhase() {
-	/*auto oldPhaseIt = phaseIt;*/
-	auto oldPhaseIt = currPhaseN;
-	//std::advance(phaseIt, 1);
-	//std::cout << " " << possiblePhases.size() << possiblePhases[0].first;
-	//phaseIt++;
-	currPhaseN++;
-	/*if (phaseIt != possiblePhases.end()) {*/
-	if (currPhaseN >= possiblePhases.size() - 1){
-		currPhaseN = 0;
+	currentPhaseCounter++;
+
+	if (currentPhaseCounter >= possiblePhases.size()) {
+		currentPhaseCounter = 0;
 	}
+
+	currentPhase = possiblePhases[currentPhaseCounter];
 
 	//currentPhase = *phaseIt;
 }

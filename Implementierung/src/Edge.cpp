@@ -83,7 +83,9 @@ void Edge::Update(int currentTick) {
 
 			//Delete car
 			if (car->isMarkedAsDeleted()) {
-				it2 = carQueue.erase(it2);
+				std::cout << "DELETE CAR!" << std::endl;
+				it2 = copy.erase(it2);
+				carQueue.erase(std::remove(carQueue.begin(), carQueue.end(), car));
 				delete car;
 			}
 			else it2++;
@@ -243,7 +245,7 @@ Car * Edge::getFrontCar() {
 bool Edge::isFull() {
 
 	if (!carQueue.empty()) {
-		std::cout << carQueue.front()->getCurrentVertexID()<<std::endl;
+		//std::cout <<"Current VertexID of Front in Car: " <<carQueue.front()->getCurrentVertexID()<<std::endl;
 		return carQueue.back()->getCurrentPosition() <= _CAR_MINIMUM_GAP || carQueue.size() >= _carQueueCapacity;
 	}
 	else {

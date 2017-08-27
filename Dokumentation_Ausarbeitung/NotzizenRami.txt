@@ -23,3 +23,5 @@ Vielleicht sollte, ein Pointer verwendet werden um die Edges von Vertex zu Spawn
 
 Das Übergeben des Autos an den Vertex sollte beim paralllelen durchlaufen nicht über ne referenz geschehen, bzw, wenn prozess wechselt,
  muss richtiges objekt übergebenw erden
+
+Float Rundungserror problematisch späteR??!?!?!? bei addDistanceTraveled ist rundunfsfehler

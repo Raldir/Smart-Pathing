@@ -32,10 +32,9 @@ private:
 	void togglePhase();
 
 	std::vector<std::pair<int,int>> possiblePhases;
-	std::vector<std::pair<int,int>>::iterator phaseIt;
-	int currPhaseN;
-
 	std::pair<int, int> currentPhase;
+
+	int currentPhaseCounter;
 
 	//Misst die Zeit die seit dem letzten Phasenwechsel vergangen ist
 	int timer;
