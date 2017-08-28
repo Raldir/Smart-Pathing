@@ -83,7 +83,7 @@ void Edge::Update(int currentTick) {
 
 			//Delete car
 			if (car->isMarkedAsDeleted()) {
-				std::cout << "DELETE CAR!" << std::endl;
+				std::cout << "VERTEX " << endVertex->getID() << ", EDGE " << _ID << ", DELETE CAR!" << std::endl;
 				it2 = copy.erase(it2);
 				carQueue.erase(std::remove(carQueue.begin(), carQueue.end(), car));
 				delete car;
@@ -319,10 +319,15 @@ void Edge::notifyVerticies() {
 		std::cout << "EDGE " << _ID << " toggled lastTickIsFull flag to " << lastTickIsFull << std::endl;
 	}*/
 
-	//If a car has reached the end of the street
-	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH) {
+	//If a car has reached the end of the street with a small margin
+	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH * 0.98) {
+		
+		std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
 		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
 		endVertex->transferCar(_ID);
+	}
+	else {
+		std::cout << "Edge " << _ID << " to vertex " << endVertex->getID() << ", transfer not possible!" << std::endl;
 	}
 }
 
