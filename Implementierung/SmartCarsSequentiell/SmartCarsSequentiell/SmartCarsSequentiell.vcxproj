@@ -143,6 +143,9 @@
     <ClCompile Include="..\..\src\Vertex.cpp" />
     <ClCompile Include="..\..\src\VertexFileReader.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\SmartCars\Implementierung\src\main.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

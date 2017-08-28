@@ -29,4 +29,7 @@
     <ClInclude Include="..\..\src\Graph.h" />
     <ClInclude Include="..\..\src\Simulation.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\SmartCars\Implementierung\src\main.config" />
+  </ItemGroup>
 </Project>

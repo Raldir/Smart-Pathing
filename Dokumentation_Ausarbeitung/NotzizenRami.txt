@@ -25,3 +25,12 @@ Das Übergeben des Autos an den Vertex sollte beim paralllelen durchlaufen nicht 
  muss richtiges objekt übergebenw erden
 
 Float Rundungserror problematisch späteR??!?!?!? bei addDistanceTraveled ist rundunfsfehler
+
+Adde eine Config file, also xml, und die main.h ließt dann die Werte aus der config file aus.
+
+Nutzung von Librarys im Python script::
+
+networkx (muss man explizit einbinden)
+mathplotlib (nicht in pip eingebunden, geht auch ohne muss aber vielel ibs installieren! mit pip)
+open cv (muss man explizit einbinden)
+numpy
