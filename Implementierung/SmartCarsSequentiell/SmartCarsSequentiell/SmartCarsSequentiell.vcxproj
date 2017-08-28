@@ -81,7 +81,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Dienstprogramme\boost_1_64_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,6 +123,7 @@
     <ClInclude Include="..\..\src\ObserverPattern.h" />
     <ClInclude Include="..\..\src\Project1.h" />
     <ClInclude Include="..\..\src\RoutingTable.h" />
+    <ClInclude Include="..\..\src\Simulation.h" />
     <ClInclude Include="..\..\src\Spawner.h" />
     <ClInclude Include="..\..\src\TrafficLight.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
@@ -135,10 +137,14 @@
     <ClCompile Include="..\..\src\ObserverPattern.cpp" />
     <ClCompile Include="..\..\src\Project1.cpp" />
     <ClCompile Include="..\..\src\RoutingTable.cpp" />
+    <ClCompile Include="..\..\src\Simulation.cpp" />
     <ClCompile Include="..\..\src\Spawner.cpp" />
     <ClCompile Include="..\..\src\TrafficLight.cpp" />
     <ClCompile Include="..\..\src\Vertex.cpp" />
     <ClCompile Include="..\..\src\VertexFileReader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\SmartCars\Implementierung\src\main.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

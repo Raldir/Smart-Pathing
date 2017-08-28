@@ -12,6 +12,7 @@
     <ClCompile Include="..\..\src\EdgeFileReader.cpp" />
     <ClCompile Include="..\..\src\VertexFileReader.cpp" />
     <ClCompile Include="..\..\src\Graph.cpp" />
+    <ClCompile Include="..\..\src\Simulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Car.h" />
@@ -26,5 +27,9 @@
     <ClInclude Include="..\..\src\EdgeFileReader.h" />
     <ClInclude Include="..\..\src\VertexFileReader.h" />
     <ClInclude Include="..\..\src\Graph.h" />
+    <ClInclude Include="..\..\src\Simulation.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\SmartCars\Implementierung\src\main.config" />
   </ItemGroup>
 </Project>
