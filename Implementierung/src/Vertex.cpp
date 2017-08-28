@@ -38,23 +38,7 @@ float Vertex::distanceTo(Vertex * v)
 void Vertex::Update() {
 
 	//Update trafficLight
-	//std::cout<<"breakpoint";
-	for (auto const& value : trafficLight.getPossiblePhases()) {
-		//std::cout << value.first << " " << value.second << '\n';
-	}
 	trafficLight.Update();
-
-
-	//Für Ripple Update
-	//std::pair<int, int> pair = trafficLight.getCurrentPhase();
-	/*for (auto p : trafficLight.getPossiblePhases()) {
-
-		if (p != pair) {
-			//Update edges which have a red light (no green light)
-			getEdgeFromID(p.first)->Update();
-			getEdgeFromID(p.second)->Update();
-		}
-	}*/
 }
 
 /*
@@ -82,17 +66,18 @@ void Vertex::transferCar(int incomingEdgeID) {
 				//Haben car schon, brauchen keinen neuen Pointer
 				takeCar(incomingEdgeID);
 				car->popCurrentVertex();
+
+				//TODO PARALLEL
 				giveCar(nextEdge, car);
+
+
 				std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
 
 				//Removes the next point as destination
 			}
-			else {
-				//DO NOTHING AS NOTHING WAS CHANGED
-			}
 		}
+		//No edge found
 		else {
-			//TODO No next edge found?
 			std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
 		}
 	} 
@@ -124,11 +109,8 @@ Car* Vertex::takeCar(int incomingEdgeID) {
 
 void Vertex::giveCar(Edge* outgoingEdge, Car* car)
 {
+	//TODO PARALLEL
 	outgoingEdge->pushCar(car);
-}
-
-void Vertex::destroyCar(Car* car) {
-	delete car;
 }
 
 bool Vertex::canTransit(int incomingEdgeID, int outgoingEdgeID) {
@@ -227,11 +209,6 @@ Edge* Vertex::getEdgeFromID(int edgeID) {
 
 	std::cout << "No Edge with matching id has been found" << std::endl;
 	return NULL;
-}
-
-void Vertex::setIsEdgeFull(int outgoingEdgeID, bool isFull)
-{
-	isEdgeFullMap[outgoingEdgeID] = isFull;
 }
 
 void Vertex::printEdges() {

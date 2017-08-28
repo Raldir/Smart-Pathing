@@ -36,8 +36,9 @@ void testRami()
 
 }
 
-void testChristoph() {
 
+void testChristoph() {
+/*
 	std::cout << "TEST COUT" << std::endl;
 
 	const int vertexAmount = 3;
@@ -103,7 +104,7 @@ void testChristoph() {
 		Car car = new Car(c);
 
 		carStorage[c] = car;
-	}*/
+	}
 
 	for (int i = 0; i < carAmount; i++) {
 
@@ -193,8 +194,9 @@ void testChristoph() {
 	while (!p.empty()) {
 		std::cout << p.front() << std::endl;
 		p.pop();
-	}*/
+	}
 
-	system("PAUSE"); //From C
+	system("PAUSE"); //From C */
 }
+
 

@@ -34,7 +34,6 @@ public:
 
 	int calculateTimestamp(int time);
 	int calculateInterval(int crossingDistanceGraph);
-
 	int calculateTimetableSpan(int i);
 
 	//Pusht car auf queue
@@ -58,7 +57,7 @@ public:
 	virtual void removeObserver(std::string indicator) override;
 
 	//Notifies attached Vertex that car has reached position 0 or that the edge is full
-	virtual void notifyVerticies() override;
+	virtual void notifyVertex() override;
 
 	virtual std::pair<Vertex*, Vertex*> getVertices() override;
 
@@ -80,9 +79,6 @@ private:
 
 	//Queue in der die Autos gespeichert werden.
 	std::deque<Car*> carQueue;
-
-	//Indicates if the edge was full last tick
-	bool lastTickIsFull;
 
 	//Timetable in dem die Gewichte für jeden Zeitabschnitt gespeichert werden.
 	std::map <int,int> timetable;

@@ -20,7 +20,7 @@ public:
 	virtual void removeObserver(std::string indicator) {};
 
 	//Notifies attached Vertex that car has reached position 0
-	virtual void notifyVerticies() = 0;
+	virtual void notifyVertex() = 0;
 
 	virtual std::pair<Vertex*, Vertex*> getVertices() = 0;
 

@@ -38,8 +38,6 @@ public:
 	Car* takeCar(int incomingEdgeID);
 	void giveCar(Edge* edge, Car* car);
 
-	void destroyCar(Car* car);
-
 	//Checks wheter TrafficLight allow transit and wheter or not the next edge is full
 	bool canTransit(int incomingEdgeID, int outgoingEdgeID);
 
@@ -57,8 +55,6 @@ public:
 
 	Edge* getEdgeFromID(int edgeID);
 
-	void setIsEdgeFull(int, bool);
-
 	void printEdges();
 
 	float getX();
@@ -72,12 +68,6 @@ public:
 protected:
 
 	TrafficLight trafficLight;
-
-	/*
-		First int -> ID of edge
-		Second bool -> is full or not
-	*/
-	std::map<int, bool> isEdgeFullMap;
 
 	/*
 		int -> ID of edge

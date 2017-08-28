@@ -7,68 +7,102 @@
 #include "Edge.h"
 #include "Main.h"
 
-Edge::Edge(float length, int capacity, int id) : _LENGTH(length) {
-
-	_carQueueCapacity = capacity;
-	_ID = id;
-	lastTickIsFull = false;
+Edge::Edge(float length, int capacity, int id) : _LENGTH(length), _carQueueCapacity(capacity), _ID(id) {
 
 	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
 	timetableInterval = _LENGTH / _CAR_SPEED;
 	if (timetableInterval < 1) timetableInterval = 1;
 }
 
-Edge::Edge(float length, int id) : _LENGTH(length) {
-	//TODO Capacität nicht ganz korrekt, da auch bspw. für ein Auto ein Gap existieren muss damit es Kapazität 1 hat
-	_carQueueCapacity = int(length / _CAR_MINIMUM_GAP) + 1;
-	_ID = id;
-	lastTickIsFull = false;
+Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : Edge(length, int(length / _CAR_MINIMUM_GAP) + 1, id) {
 
-	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
-	timetableInterval = _LENGTH / _CAR_SPEED;
-	if (timetableInterval < 1) timetableInterval = 1;
-}
-
-Edge::Edge(float length, int id, std::pair<Vertex*, Vertex*> nodes) : _LENGTH(length) {
-	_carQueueCapacity = int(length / _CAR_MINIMUM_GAP) + 1;
 	startVertex = nodes.first;
 	endVertex = nodes.second;
-	_ID = id;
-
-	timetableSpan = calculateTimetableSpan(_TIMETABLE_SPAN);
-	timetableInterval = _LENGTH / _CAR_SPEED;
-	if (timetableInterval < 1) timetableInterval = 1;
-	lastTickIsFull = false;
 }
 
 void Edge::Update(int currentTick) {
 
+	//Reset this flag to prevent this edge from being updated unnecessarily
 	hasOverflowCars = false;
-
-	//Copy carQueue
-	std::deque<Car*> copy = carQueue;
 
 	//Set the first critical as end of street (with gap compensating because end of street theoretically has a gap behind it)
 	float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
 
+	//Get a copy of the queue to work on
+	std::deque<Car*> copy = carQueue;
+
 	//Iterate through carQueue
+	for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();) {
+		Car* car = *(it2);
+
+		//When car has already been updated by another edge, don't update it in the first Update phase
+		if (currentTick != car->getCurrentTick()) {
+			car->Update(nextCarPosition);
+		}
+		//std::cout << "Car " << car->getID() << " on pos " << car->getCurrentPosition() << std::endl;
+
+		//After update, refresh tick counter of car
+		car->setCurrentTick(currentTick);
+
+		//Calls upon end vertex to transfer car when certain conditions are met
+		notifyVertex();
+
+		//Testing wheter or not car has transitioned and is not marked as to be deleted
+		if (car->getCurrentVertexID() == endVertex->getID() && !car->isMarkedAsDeleted()) {
+			//std::cout << "Can be TRANSITIONED " << car->hasOverflow() << std::endl;
+			nextCarPosition = car->getCurrentPosition();
+
+			//If this car has remaining overflow
+			if (!hasOverflowCars && car->hasOverflow()) {
+				hasOverflowCars = true;
+			}
+		}
+		//If car has transferred the street end is the next crititcal position
+		else {
+			nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
+		}
+
+		//Delete car
+		if (car->isMarkedAsDeleted()) {
+			std::cout << "VERTEX " << endVertex->getID() << ", EDGE " << _ID << ", DELETE CAR!" << std::endl;
+			it2 = copy.erase(it2);
+			carQueue.erase(std::remove(carQueue.begin(), carQueue.end(), car));
+			delete car;
+		}
+		//Put iterator on next car in queue
+		else it2++;
+	}
+	//Ripple-Update
+	//startVertex->ContinueUpdate(_ID);
+}
+
+void Edge::UpdateOverflow() {
+
+	//Redundant check
+	if (hasOverflowCars) {
+
+		//Reset this flag
+		hasOverflowCars = false;
+
+		//Get first car position for beginning of loop
+		float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
+
+		//Get a copy of the queue to work on
+		std::deque<Car*> copy = carQueue;
+
+		//Iterate through carQueue
+		//while (!copy.empty()) {
 		for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();) {
 			Car* car = *(it2);
 
 			//Update car's position
-			if (currentTick != car->getCurrentTick()) {
-				car->Update(nextCarPosition);
-			}
-			//std::cout << "Car " << car->getID() << " on pos " << car->getCurrentPosition() << std::endl;
+			car->UpdateWithOverflow(nextCarPosition);
 
-			car->setCurrentTick(currentTick);
+			//Checks wheter or not a transfer can take place or car is to be deleted
+			notifyVertex();
 
-			//After each updated car looks whether or not edge is empty or a car needs to be transfered
-			notifyVerticies();
-
-			//Testing wheter or not car has transitioned
+			//If car is still on edge
 			if (car->getCurrentVertexID() == endVertex->getID() && !car->isMarkedAsDeleted()) {
-				//std::cout << "Can be TRANSITIONED " << car->hasOverflow() << std::endl;
 				nextCarPosition = car->getCurrentPosition();
 
 				//If this car has remaining overflow and is still on this edge
@@ -88,54 +122,8 @@ void Edge::Update(int currentTick) {
 				carQueue.erase(std::remove(carQueue.begin(), carQueue.end(), car));
 				delete car;
 			}
+			//Put iterator on next car in queue
 			else it2++;
-
-			//Reveal next car
-}
-//Ripple-Update
-//startVertex->ContinueUpdate(_ID);
-}
-
-void Edge::UpdateOverflow() {
-
-	if (hasOverflowCars) {
-
-		//Reset this flag
-		hasOverflowCars = false;
-
-		std::deque<Car*> copy = carQueue;
-
-		//Get first car position for beginning of loop
-		float nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
-
-		//Iterate through carQueue
-		//while (!copy.empty()) {
-		for (std::deque<Car*>::iterator it2 = copy.begin(); it2 != copy.end();it2++) {
-			Car* car = *(it2);
-
-			//Update car's position
-			car->UpdateWithOverflow(nextCarPosition);
-
-			//After each updated car
-			//TODO Look wheter or not overflow etc. is handled on other side
-			notifyVerticies();
-
-			//If car is still on edge
-			if (car->getCurrentVertexID() == endVertex->getID()) {
-				nextCarPosition = car->getCurrentPosition();
-
-				//If this car has remaining overflow and is still on this edge
-				if (hasOverflowCars == false && car->hasOverflow()) {
-					hasOverflowCars = true;
-				}
-			}
-			//If it has the street end is the next crititcal position
-			else {
-				nextCarPosition = _LENGTH + _CAR_MINIMUM_GAP;
-			}
-
-			//Reveal next car
-			//copy.pop();
 		}
 	}
 }
@@ -157,6 +145,10 @@ void Edge::addWeightTimetable(int timeStamp, int weight) {
 
 void Edge::removeWeightTimetable(int timeStamp, int weight) {
 	addWeightTimetable(timeStamp, weight * -1);
+
+	if (timetable[calculateTimestamp(timeStamp)] == 0) {
+		timetable.erase(calculateTimestamp(timeStamp));
+	}
 }
 
 int Edge::getWeightTimetable(int timeStamp) {
@@ -189,7 +181,7 @@ int Edge::getEdgeCapacity() {
 ///</summary>
 Car * Edge::popCar() {
 	std::cout << "DELETED CAR";
-	std::cout << "CarQueue Size " << carQueue.size()<<std::endl;
+	std::cout << "CarQueue Size " << carQueue.size() << std::endl;
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
 		Car* carPtr = *carQueue.begin();
@@ -197,7 +189,7 @@ Car * Edge::popCar() {
 
 		//Remove car from queue
 		//carQueue.pop();
-		std::cout << "CarQueue Size After " << carQueue.size()<<std::endl;
+		std::cout << "CarQueue Size After " << carQueue.size() << std::endl;
 		return carPtr;
 	}
 	else {
@@ -212,8 +204,10 @@ int Edge::numberOfCars()
 
 void Edge::pushCar(Car* car) {
 
+	//Get position of current last car in edge
 	float backPosition;
 
+	//Get correct position for update
 	if (!carQueue.empty() && car != carQueue.front())
 	{
 		backPosition = carQueue.back()->getCurrentPosition();
@@ -308,7 +302,7 @@ void Edge::removeObserver(std::string indicator) {
 ///<summary>
 ///Notifies obversers
 ///</summary>
-void Edge::notifyVerticies() {
+void Edge::notifyVertex() {
 
 	//Wenn die Edge voll ist
 	/*if (isFull() != lastTickIsFull && startVertex != NULL) {
@@ -321,7 +315,7 @@ void Edge::notifyVerticies() {
 
 	//If a car has reached the end of the street with a small margin
 	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH * 0.98) {
-		
+
 		std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
 		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
 		endVertex->transferCar(_ID);
