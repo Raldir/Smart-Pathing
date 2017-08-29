@@ -80,32 +80,3 @@ for file in files:
     #                width=6)
     nx.draw_networkx_edge_labels(G, pos, edge_labels = edgelabels,  font_size = 3)
     plt.savefig('Visualisation/visofSteps/' + path  + '.png', dpi = 500)
-
-filesImage = glob.glob('Visualisation/visofSteps/*.png')
-Images = {}
-for file in filesImage :
-    #print(str(file))
-    index = os.path.basename(open(str(file), 'r').name).split('.',1)[0]
-    strIndex = str(index)
-    Images[strIndex] = Image.open(str(file))
-
-height, width, layers =  numpy.array(Images['1']).shape
-
-video = cv2.VideoWriter('demo0.avi', # Filename
-                        -1, # Negative 1 denotes manual codec selection. You can make this automatic by defining the "fourcc codec" with "cv2.VideoWriter_fourcc"
-                        10, # 10 frames per second is chosen as a demo, 30FPS and 60FPS is more typical for a YouTube video
-                        (width,height) # The width and height come from the stats of image1
-                        )
-for i in range(1,len(filesImage) + 1):
-    for j in range (0, 5) :
-        video.write(cv2.cvtColor(numpy.array(Images[str(i)]), cv2.COLOR_RGB2BGR))
-        if(i % 10 == 0):
-            video.release()
-            cv2.destroyAllWindows()
-            video = cv2.VideoWriter('demo' + str(i) + '.avi', # Filename
-                        -1, # Negative 1 denotes manual codec selection. You can make this automatic by defining the "fourcc codec" with "cv2.VideoWriter_fourcc"
-                        10, # 10 frames per second is chosen as a demo, 30FPS and 60FPS is more typical for a YouTube video
-                        (width,height) # The width and height come from the stats of image1
-                        )
-
-video.release()
