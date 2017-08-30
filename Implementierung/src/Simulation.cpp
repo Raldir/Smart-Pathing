@@ -74,7 +74,6 @@ void Simulation::nextTick()
 		(*it2)->Update(timeStamp);
 	}
 	std::cout << "Tick " << _currentTick << "finished" << '\n';
-
 }
 
 void Simulation::initSpawner() {

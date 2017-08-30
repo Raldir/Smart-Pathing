@@ -1,6 +1,6 @@
 #pragma once
 
-const float _CAR_SPEED = 0.05;
+const float _CAR_SPEED = 0.01;
 //IRRELEVANT const float _CAR_LENGTH = 10;
 const float _CAR_MINIMUM_GAP = 0.2;
 
@@ -14,13 +14,13 @@ const int _TIMETABLE_SPAN = 1000;
 */
 const int TRAFFICLIGHT_DURATION = 10;
 
-const int _SIMULATION_TICKS = 70;
+const int _SIMULATION_TICKS = 400;
 
 const int _SIMULATION_SECONDS_PER_TICK = 5;
 
 const float _CAR_SPEED_PER_TICK = _SIMULATION_SECONDS_PER_TICK * _CAR_SPEED;
 
-const int BASE_SPAWN_RATE = 2;
+const int BASE_SPAWN_RATE = 1;
 
 const int VERTEX_PRIORITY_DIVERGENCE = 5;
 

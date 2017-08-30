@@ -15,8 +15,8 @@ typedef std::vector<Edge*> edgeContainer;
 
 Graph::Graph()
 {
-	_vertices = readVertexFile("nodes");
-	_edges = calculateEdges(_vertices, "edges");
+	_vertices = readVertexFile("../../dev/OutputMap/nodes");
+	_edges = calculateEdges(_vertices, "../../dev/OutputMap/edges");
 	connectVertices(_edges);
 	initGraphProperties();
 	_vertexMap = vertexMap(_vertices);
