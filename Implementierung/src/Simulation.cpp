@@ -30,7 +30,7 @@ void Simulation::writeResultsCurrentTick()
 {
 	std::ofstream results;
 	edgeContainer edges = _graph->getEdges();
-	results.open("../Output/" + std::to_string(_currentTick) +  ".txt");
+	results.open("../../Output/" + std::to_string(_currentTick) +  ".txt");
 	for (edgeContainer::iterator it2 = edges.begin(); it2 != edges.end(); it2++) {
 		results << (*it2)->getID() << " " << (*it2)->numberOfCars() << " " << (*it2)->getEdgeCapacity()<< '\n';
 	}
