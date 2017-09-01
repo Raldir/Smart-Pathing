@@ -6,7 +6,7 @@ from PIL import Image
 import numpy
 import os
 
-files = glob.glob('SmartCarsSequentiell/Output/*.txt')
+files = glob.glob('Output/*.txt')
 for file in files:
     G = nx.DiGraph()
     path = os.path.basename(open(str(file), 'r').name).split('.',1)[0]
