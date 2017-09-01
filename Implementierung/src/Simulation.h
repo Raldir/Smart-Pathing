@@ -4,10 +4,10 @@
 #include "main.h"
 #include "RoutingTable.h"
 
-
 class Simulation
 {
 public:
+
 	Simulation();
 	~Simulation();
 	void writeResultsCurrentTick();
