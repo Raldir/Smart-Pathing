@@ -30,12 +30,11 @@ public:
 	int getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
 	float getMaxX();
 	float getMaxY();
+	float distance_heuristicOverID(size_t start, size_t goal);
 
 private:
 	void initGraphProperties();
-	float distance_heuristic2(size_t start, size_t goal);
 	void createTrafficLights();
-
 	float _maxX;
 	float _maxY;
 	std::vector<Spawner*> _spawner;

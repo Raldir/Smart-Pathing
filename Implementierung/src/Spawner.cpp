@@ -29,6 +29,10 @@ void Spawner::spawnCar(int currentTick) {
 	//TODO Einbauen dass Car sich current tick merkt;
 	Spawner* initDestination = createPartlyRandomizedGoal();
 	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), currentTick);
+	if (bestVertexID == -1) {
+		std::cout << "No path to current goal" << std::endl;
+		return;
+	}
 	std::queue<int> route =_routingTable->getRoute(_ID, bestVertexID);
 	route.pop();
 	Edge* edge = this->Vertex::outgoingNeighbor(route.front());

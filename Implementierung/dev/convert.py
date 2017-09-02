@@ -28,6 +28,7 @@ def twopointWays(i, size, file, nodes, edge):
 
 def read_osm(filename_or_stream, only_roads=True):
     "TODO Nomalisiere Koordinaten der Nodes"
+    "TODO Speichere Relevanz der Straße"
     osm = OSM(filename_or_stream)
     nodes = []
     for key, edge in osm.ways.items():
@@ -35,7 +36,11 @@ def read_osm(filename_or_stream, only_roads=True):
             continue
             #nodes  = nodes + twopointWays(0, len(edge.nds), f, [], edge)
             #print(i)
-        if edge.tags.get('highway') != 'residential':
+            #Füge alle Straßentypen ein die beachtet werden, können hier abgelesen werden: http://wiki.openstreetmap.org/wiki/Key:highway
+            #edge.tags.get('highway') != 'crossing'\ and edge.tags.get('highway') != 'roundabout' and edge.tags.get('highway') != 'unclassified' 
+        if edge.tags.get('highway') != 'residential' and edge.tags.get('highway') != 'crossing' and edge.tags.get('highway') != 'motorway'\
+        and edge.tags.get('highway') != 'primary' and edge.tags.get('highway') != 'secondary' and edge.tags.get('highway') != 'tertiary'\
+        and edge.tags.get('highway') != 'trunk' and edge.tags.get('highway') != 'trunk_link' and edge.tags.get('highway') != 'motorway_link':
             continue
         for i in range(0, len(edge.nds)):
             if i == 0 or i == len(edge.nds) - 1:
@@ -46,14 +51,16 @@ def read_osm(filename_or_stream, only_roads=True):
         if node.id in nodes:
             nodesFiltered = nodesFiltered + [node]
     mappedID = mapVertices(nodesFiltered)
-    f = open('edges', 'w')
+    f = open('dev/OutputMap/edges', 'w')
     print(type(osm.ways))
     for key, edge in osm.ways.items():
         if 'highway' not in edge.tags:
             continue
             #nodes  = nodes + twopointWays(0, len(edge.nds), f, [], edge)
             #print(i)
-        if edge.tags.get('highway') != 'residential':
+        if edge.tags.get('highway') != 'residential' and edge.tags.get('highway') != 'crossing' and edge.tags.get('highway') != 'motorway'\
+        and edge.tags.get('highway') != 'primary' and edge.tags.get('highway') != 'secondary' and edge.tags.get('highway') != 'tertiary'\
+        and edge.tags.get('highway') != 'trunk' and edge.tags.get('highway') != 'trunk_link' and edge.tags.get('highway') != 'motorway_link':
             continue
         for i in range(0, len(edge.nds)):
             if i == 0 or i == len(edge.nds) - 1:
@@ -61,11 +68,21 @@ def read_osm(filename_or_stream, only_roads=True):
         f.write('\n')
     f.close()
     #values = positions(osm.nodes, nodes)
-    f = open('nodes', 'w')
+    f = open('dev/OutputMap/nodes', 'w')
     for key, node in osm.nodes.items():
         #print(node.id)
         if node.id in nodes:
             f.write(str(mappedID[node.id]) + " " + str(node.x * 1000) + " " + str(node.y * 1000) + '\n')
+    f.close()
+
+    f = open('dev/OutputMap/edges', 'r')
+    lines = f.readlines()
+    f.close()
+    f = open('dev/OutputMap/edges', 'w')
+    for line in lines:
+        arguments = line.split()
+        if arguments[0] != arguments[1]:
+            f.write(arguments[0] + " " + arguments[1] + '\n')
     f.close()
 
 """
@@ -194,4 +211,4 @@ class OSM:
                 new_ways[split_way.id] = split_way
         self.ways = new_ways
      
-read_osm('map.osm')        
+read_osm('dev/InputMap/map.osm')        

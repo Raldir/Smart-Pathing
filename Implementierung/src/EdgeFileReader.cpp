@@ -12,7 +12,7 @@ std::vector<Edge*> calculateEdges(vector<Vertex*> vertices, string path)
 	for (vector<pair<int, int>>::iterator it = connections.begin(); it != connections.end(); it++) {
 		int start = it->first;
 		int end = it->second;
-		//cout << start << " " << end;
+		cout << start << " " << end << std::endl;
 		pair<float, float> coordinates1;
 		pair<float, float> coordinates2;
 		Vertex* startv = NULL;
