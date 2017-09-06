@@ -19,6 +19,7 @@ public:
 	Graph();
 
 	std::vector<Spawner*> getSpawner();
+	Edge* getEdge(int edgeID);
 	std::vector<Edge*> getEdges();
 	std::vector<Vertex*> getVertices();
 	std::map<int, Vertex*> getVertexMap();

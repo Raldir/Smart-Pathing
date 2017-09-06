@@ -186,7 +186,7 @@ int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTa
 	return timeTableValues;
 }
 
-float Graph::distance_heuristic2(size_t start, size_t goal) {
+float Graph::distance_heuristicOverID(size_t start, size_t goal) {
 	std::pair<float, float> korStart = _vertexMap[start]->getPosition();
 	std::pair<float, float> korEnd = _vertexMap[goal]->getPosition();
 	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +

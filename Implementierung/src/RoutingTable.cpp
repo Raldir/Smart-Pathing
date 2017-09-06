@@ -219,16 +219,23 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 {
 	std::map<int, float> costs;
 	for (int goalID : k_nn[destID]) {
-		if (goalID == startID) {
-			//std::cout << "Would take same";
+		//Eingang soll nicht als Ausgang in Betracht gezogen werden, und wenn keine Route exisitert soll auch nicht in Betracht gezogen werden
+		if (goalID == startID|| getRoute(startID, goalID).empty()) {
+			//TODO Maybe find a better solution for this problem
+			//std::cout << "Would calculate Costs between same Spawners, if you enter you should leave on a different Vertex";
 			continue;
 		}
 		//std::cout << "CurrentGoalvertex " << goalID << std::endl;
 		int timeTableValue = _graph->getSumWeightFromTimeTables(startID, goalID, currentTimeTableIndex, routingMatrix[startID][goalID]);
-		costs[goalID] = costMatrix[startID][goalID] + timeTableValue;
+		//Berechnet zusatzkosten, dafür das Zeil weiter weg vom eigentlichen ausgangsziel ist, nutze hierfür distanzheuristik
+		float extraCosts = _graph->distance_heuristicOverID(destID, goalID) / 2;
+		costs[goalID] = costMatrix[startID][goalID] + timeTableValue + extraCosts;
 		//std::cout << "calculated for one goalVertex" <<std::endl;
 	}
 	//std::cout << "afterAll ";
+	if (costs.empty()) {
+		return -1;
+	}
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
 	std::cout << "Best Goal for Car: " << v[0].first <<std::endl;
