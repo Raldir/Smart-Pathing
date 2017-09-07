@@ -24,16 +24,18 @@ public:
 	std::map<int, Vertex*> getVertexMap();
 	float distance(int vertex1, int vertex2, std::queue<int> route);
 	void addWeightToTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
-
+	std::map<int, Spawner*> createSpawnerMap();
 	static std::pair<int,int> calculateTimetableValues(int intitialTimetableIndex, float toaldistance);
-	
+	std::vector<int> createSpawnerIDVector();
 	int getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
+	float distance_heuristicOverID(size_t start, size_t goal);
+	int getNumberVertices();
+	int getNumberEdges();
 	float getMaxX();
 	float getMaxY();
 
 private:
 	void initGraphProperties();
-	float distance_heuristic2(size_t start, size_t goal);
 	void createTrafficLights();
 
 	float _maxX;

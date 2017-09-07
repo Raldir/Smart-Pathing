@@ -22,13 +22,20 @@
 int main(int argc, char *argv[]) {
 
 	//testChristoph();
-	int rank;
-	MPI_Init(&argc, &argv);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	printf("Hello World von %d", rank);
-	MPI_Finalize();
-	return 0;
+	//Graph* _graph = new Graph();
+	//std::vector<int> ids = _graph->createSpawnerIDVector();
+	//RoutingTable* table = new RoutingTable(_graph, _NEAREST_NEIGHBOR, ids);
+	//std::vector<std::vector<int>> matrix = table->getRoutingMatrix();
 
+	MPI_Init(&argc, &argv);
+	int numberProcesses;
+	MPI_Comm_size(MPI_COMM_WORLD, &numberProcesses);
+	std::cout << "Count: " << numberProcesses<< std::endl;
+	Simulation* s = new Simulation(numberProcesses);
+	//new RoutingTable(new Graph(), 3);
+	//MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	//printf("Hello World von %d", rank);
+	MPI_Finalize();
 	//testRami();
 
 	return 0;
@@ -37,7 +44,7 @@ int main(int argc, char *argv[]) {
 
 void testRami()
 {
-	Simulation* s = new Simulation();
+	//Simulation* s = new Simulation();
 	//Graph* g = new Graph();
 	//RoutingTable* table = new RoutingTable(g, 7);
 	system("PAUSE");

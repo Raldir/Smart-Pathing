@@ -30,7 +30,8 @@ public:
 	//TODO Mulitple Routenfindungsalgorithmen implementieren
 
 	RoutingTable(Graph* g, int numberNearestNeighbors);
-
+	RoutingTable(Graph* g, int numberNearestNeighbors, std::vector<int> spawner);
+	RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrix);
 
 	void insertRoute(int originID, int destID, std::queue<int> route);
 	void removeRoute(int originID, int destID);
@@ -38,13 +39,13 @@ public:
 	void replaceRoute(int originID, int destID, std::queue<int> route);
 
 	int calculateBestGoal(int startID, int destID, int currentTimeTableIndex);
-
+	void calculateRoutes(std::vector<Spawner*> _spawner);
 	//ToDO Add  a method that only adds on a specific range
 	void addCosts(int startID, int destID, int currentTimeTableIndex);
 
 	//Get Route from origin to destination
 	std::queue<int>  getRoute(int originID, int destID);
-
+	std::vector<std::vector<int>> RoutingTable::getRoutingMatrix();
 	void setCost(int originID, int destID, float cost);
 	float getCost(int originID, int destID);
 
@@ -53,8 +54,8 @@ private:
 	std::queue<int> reverseQueue(std::queue<int> queue);
 
 	static bool comp(const std::pair<int, float> &a, const std::pair<int, float> &b);
-
 	int dimension;
+	int _numberNearestNeighbors;
 
 	//Routing Table "Matrix", die die Routen enthält
 	/*

@@ -31,6 +31,18 @@ Adde eine Config file, also xml, und die main.h ließt dann die Werte aus der con
 Nutzung von Librarys im Python script::
 
 networkx (muss man explizit einbinden)
+
+
+Füge hinzu das beim Exportieren die Größe der straße mit in betracht gezogen wird bei der Berechnung der relevanz be iden Spawner(realisterisches Verhalten)
+
+
+Karte export momentan noch ein wenig buggy.... geht besser, irgendwie muss man unnötige Knoten entfernen könnenn etc. viel arbeit, später
+
 mathplotlib (nicht in pip eingebunden, geht auch ohne muss aber vielel ibs installieren! mit pip)
 open cv (muss man explizit einbinden)
 numpy
+
+Bei der generierung der Karte kann man noch verbessern, dass unnötige Knoten rausgeworfen werden. Wichtig hierbei ist dass man entweder filtert welche Knoten
+Knoten zu fußgängerwegen sind, und anhand dessen diese Knoten löscht und überbrückungskanten erzeugt, oder Man könnte auch einen Smoothing algorithmus schreiben,
+der die um Faktor fest reduziert.
+Ändert nichts an der Auswertung, da bei der Auswertung nur die Anzahl der Knoten und Kanten als Referenz gewählt wird, nicht die Größe der exportierten Karte.
