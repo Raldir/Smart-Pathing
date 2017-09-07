@@ -15,6 +15,7 @@
 #include <fstream>
 #include <math.h>    // for sqrt
 #include "Simulation.h"
+#include <stdio.h>
 #include "mpi.h"
 
 
@@ -29,9 +30,10 @@ int main(int argc, char *argv[]) {
 
 	MPI_Init(&argc, &argv);
 	int numberProcesses;
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &numberProcesses);
-	std::cout << "Count: " << numberProcesses<< std::endl;
-	Simulation* s = new Simulation(numberProcesses);
+	Simulation* s = new Simulation(numberProcesses, rank);
 	//new RoutingTable(new Graph(), 3);
 	//MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	//printf("Hello World von %d", rank);

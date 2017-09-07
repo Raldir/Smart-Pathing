@@ -109,6 +109,7 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector
 
 
 void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
 	std::map<int, Vertex*> _vertexMap = _graph->getVertexMap();
 	std::vector<Vertex*> _vertices = _graph->getVertices();
@@ -139,14 +140,14 @@ void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
 	for (spawnerContainer::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
 		int start = (*it2)->getID();
 		std::map<int, float> distances;
-		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
+		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
 			int goal = (*it)->getID();
 
 			//Speicher alle Abstände von Knoten zum Startknoten
 			distances[goal] = _vertexMap[start]->distanceTo(_vertexMap[goal]);
 			int sumDistance = 0;
-
-			if (!(getRoute(goal, start).empty()))	continue;
+			//Bei Parallelisierung wird diese Zeile nicht beachtet, was in der theorie zu einem zweifachen aufwand führt
+			//if (!(getRoute(goal, start).empty()))	continue;
 
 			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
 			std::vector<float> d(num_vertices(g));
@@ -214,7 +215,8 @@ void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 	routingMatrix[originID][destID] = route;
 
 	//Pushes queue on symmetrical pair
-	routingMatrix[destID][originID] = reverseQueue(route);
+	//Would cause problems on Parallelism
+	//routingMatrix[destID][originID] = reverseQueue(route);
 
 	std::cout << "Added queue from " << originID << " to " << destID << std::endl;
 }
@@ -304,6 +306,7 @@ std::vector<std::vector<int>> RoutingTable::getRoutingMatrix()
 			}
 			//std::cout << routingMatrix[ent1.first][ent2.first].size();
 			for (int i = 0; i < routingMatrix[ent1.first][ent2.first].size(); i++) {
+				//std::cout << ent1.first << " " << ent2.first<<std::endl;
 				route.push_back(copy.front());
 				copy.pop();
 			}

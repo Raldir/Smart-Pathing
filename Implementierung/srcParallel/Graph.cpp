@@ -51,8 +51,8 @@ std::map<int, Spawner*> Graph::createSpawnerMap()
 std::vector<int> Graph::createSpawnerIDVector()
 {
 	std::vector<int> spawner;
-	for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
-		spawner.push_back((*it)->getID());
+	for (int i = 0; i < _spawner.size(); i++) {
+		spawner.push_back(_spawner[i]->getID());
 	}
 	return spawner;
 }

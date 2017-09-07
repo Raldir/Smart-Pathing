@@ -8,7 +8,7 @@
 class Simulation
 {
 public:
-	Simulation(int numberProcesses);
+	Simulation(int numberProcesses, int rank);
 	~Simulation();
 	void writeResultsCurrentTick();
 
