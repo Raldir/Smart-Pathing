@@ -12,6 +12,8 @@ Simulation::Simulation()
 	int rank;
 	int root = 0;
 
+	InitVectors();
+
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	_currentTick = 0;
@@ -65,25 +67,40 @@ void Simulation::nextTick()
 	}
 
 	//########### PARALLEL ###########
-	/*
-		Request arrays for Waitall
-	*/
-	MPI_Request *recvReq = new MPI_Request[incomingConnections.size()];
-	MPI_Request *sendReq = new MPI_Request[outgoingConnections.size()];
 
-	int counter = 0;
+	//### FREE SPACE MSG ###
 
-	for (auto o : outgoingConnections) {
-		//Buffer, size of buffer, type, dest, tag, comm, req
-		MPI_Isend(edgeSpaceSendBuffer[o.first], , MPI_INT, o.first, 0, MPI_COMM_WORLD, &sendReq[counter]);
-		counter++;
+	//Prepare send buffer for free space of edges
+	fillEdgeSpaceSendBuffer();
+
+	//Send and receive messages in buffer
+	exchangeEgdeFreeSpace();
+
+
+
+	//Sending information about cars transitioning to different process
+	for (auto process : outgoingConnections) {
+		//TODO Encode car information into an array of ints
 	}
 
-	MPI_Status *recvStatus = new MPI_Status[incomingConnections.size()];
-	MPI_Status *sendStatus = new MPI_Status[incomingConnections.size()];
-	MPI_Waitall(outgoingConnections.size(), sendReq, sendStatus);
-	MPI_Waitall(incomingConnections.size(), recvReq, recvStatus);
+	MPI_Barrier(MPI_COMM_WORLD);
 
+	for (auto process : incomingConnections) {
+		
+		MPI_Status status;
+		int recvBufferLength;
+
+		MPI_Probe(process.first, 1, MPI_COMM_WORLD, &status);
+		MPI_Get_count(&status, MPI_INT, &recvBufferLength);
+		
+		//Reserve car buffer
+		std::vector<int> v;
+		v.resize(recvBufferLength);
+		carRecvBuffer[process.first] = &v;
+
+		//Actual receive of car information
+		MPI_Irecv(&carRecvBuffer, recvBufferLength, MPI_INT, process.first, 1, MPI_COMM_WORLD, NULL);
+	}
 
 	//########### PARALLEL ###########
 
@@ -99,6 +116,7 @@ void Simulation::nextTick()
 			else it2++;
 		}
 	}
+
 	std::cout << "Edge update Phase 2 completed" << '\n';
 	spawnerContainer spawners = _graph->getSpawner();
 	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
@@ -121,6 +139,53 @@ void Simulation::initSpawner() {
 	}
 }
 
+/*
+	Fill the send buffer which contains the free space of edges with edges sorted in ascending order
+*/
+void Simulation::fillEdgeSpaceSendBuffer() {
+
+	/*
+
+	//Fill sending buffer for every process (con.first)
+	for (std::pair<int, std::vector<int>> outCon : outgoingConnections) {
+
+		//Go through the vector of edges and get the amount of free space in them
+		for (int edge = 0; edge < outCon.second.size(); edge++) {
+
+			//Get free space amount from edge (must be in the same process)
+			int freeSpaceAmount = _graph->getEdge(outCon.second[edge])->getFreeSpaceAmount();
+
+			//Push number into buffer at right place
+			edgeSpaceSendBuffer[outCon.first]->push_back(freeSpaceAmount);
+		}
+	}*/
+}
+
+void Simulation::exchangeEgdeFreeSpace() {
+
+	int requestCounter = 0;
+	//ISend free space amount to every process
+	for (auto process : edgeSpaceSendBuffer) {
+		//Send buffer, count, type, dest, tag, comm, request
+		MPI_Isend(process.second, process.second->size(), MPI_INT, process.first, 0, MPI_COMM_WORLD, &sendReq[requestCounter]);
+		requestCounter++;
+	}
+
+	requestCounter = 0;
+	//Receive free space amount of every edge in connected processes
+	for (auto process : edgeSpaceRecvBuffer) {
+		//Recv buffer, count, type, dest, tag, comm, request
+		MPI_Irecv(process.second, process.second->max_size(), MPI_INT, process.first, 0, MPI_COMM_WORLD, &recvReq[requestCounter]);
+		requestCounter++;
+	}
+
+	//Wait for ISends and IRecv to finish 
+	MPI_Status *recvStatus = new MPI_Status[incomingConnections.size()];
+	MPI_Status *sendStatus = new MPI_Status[incomingConnections.size()];
+	MPI_Waitall(outgoingConnections.size(), sendReq, sendStatus);
+	MPI_Waitall(incomingConnections.size(), recvReq, recvStatus);
+}
+
 void Simulation::InitVectors()
 {
 	//Prepare receive buffer for every edge from every process
@@ -139,7 +204,7 @@ void Simulation::InitVectors()
 
 	//Prepare vector buffers for outgoing connection
 	for (auto out : outgoingConnections) {
-		
+
 		//Vector that will send space of edges in this process for another process
 		std::vector<int> edgeSpaceSend;
 

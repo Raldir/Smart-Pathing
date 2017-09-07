@@ -3,6 +3,7 @@
 #include "Spawner.h"
 #include "main.h"
 #include "RoutingTable.h"
+#include "mpi.h"
 
 
 class Simulation
@@ -21,6 +22,10 @@ private:
 
 	void nextTick();
 	void initSpawner();
+
+	void fillEdgeSpaceSendBuffer();
+
+	void exchangeEgdeFreeSpace();
 
 	//Stores which process has which connections to this process
 	//Incoming -> all edges which can receive cars from other processes
@@ -41,8 +46,15 @@ private:
 	std::map<int, std::vector<int>*> edgeSpaceRecvBuffer;
 	std::map<int, std::vector<int>*> edgeSpaceSendBuffer;
 
-	//Stores how much space is left for every edge (only incomingEdges)
-	std::map<int, int> edgeSpace;
+	//Vectors that transfer information about cars between processes
+	std::map<int, std::vector<int>*> carRecvBuffer;
+	std::map<int, std::vector<int>*> carSendBuffer;
+
+	/*
+	Request arrays for Waitall
+	*/
+	MPI_Request *recvReq = new MPI_Request[incomingConnections.size()];
+	MPI_Request *sendReq = new MPI_Request[outgoingConnections.size()];
 
 	void InitVectors();
 };

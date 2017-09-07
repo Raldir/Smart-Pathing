@@ -173,6 +173,12 @@ int Edge::calculateTimetableSpan(int i) {
 int Edge::getEdgeCapacity() {
 	return _carQueueCapacity;
 }
+
+//TODO
+int Edge::getFreeSpaceAmount() {
+	return _carQueueCapacity - carQueue.size();
+}
+
 /*
 ###### QUEUE
 */

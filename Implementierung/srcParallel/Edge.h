@@ -63,6 +63,8 @@ public:
 
 	int getEdgeCapacity();
 
+	int getFreeSpaceAmount();
+
 	//Indicates wheter there are cars still to be updated for the second update wave
 	bool hasOverflow();
 

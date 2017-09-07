@@ -17,21 +17,72 @@
 #include "Simulation.h"
 #include "mpi.h"
 
-
 int main(int argc, char *argv[]) {
 
-	//testChristoph();
-	int rank;
+	/*MPI_Init(NULL, NULL);
 
-	MPI_Init(NULL, NULL);	
+	//testChristoph();
+	int rank, world_size;
+		
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	printf("Hello World von %d", rank);
 
-	std::cout << rank << std::endl;
+	std::map<int, std::vector<int>> v;
+	std::map<int, std::vector<int>> r;
 
-	testRami();
+	MPI_Request *req = new MPI_Request[v.size()];
+	MPI_Request *send = new MPI_Request[v.size()];
+
+	//Fill send buffers
+	for (int i = 0; i < world_size; i++) {
+		v[i].push_back(rank);
+	}
+
+	//Set size of recvBuffer
+	for (auto con : r) {
+		con.second.reserve(4);
+	}
+
+	//Send buffers
+	for (auto con : v) {
+
+		MPI_Isend(&con.second, 1, MPI_INT, con.first, 0, MPI_COMM_WORLD, &send[con.first]);
+	}
+
+	//Wait
+	std::cout << "Barrier" << std::endl;
+	MPI_Barrier(MPI_COMM_WORLD);
+	std::cout << "Barrier 2" << std::endl;
+
+	//Receive
+	for (auto con : r) {
+		MPI_Irecv(&con.second, 1, MPI_INT, con.first, 0, MPI_COMM_WORLD, &req[con.first]);
+	}
+
+	//MPI Vor wait all
+	std::cout << "Vor wait all";
+	MPI_Status *recvStatus = new MPI_Status[v.size()];
+	MPI_Status *sendStatus = new MPI_Status[v.size()];
+	MPI_Waitall(v.size(), req, recvStatus);
+	MPI_Waitall(v.size(), send, sendStatus);
+
+	for (auto con : r) {
+
+		std::cout << "Rank " << rank << ":" << std::endl;
+
+		for (auto i : con.second)
+		{
+			std::cout << i << ", ";
+
+		}
+
+		std::cout << std::endl;
+	}
 	
-	MPI_Finalize();
+	std::cout << "Finish" << std::endl;
+
+	MPI_Finalize();*/
 
 
 	return 0;
@@ -76,6 +127,7 @@ void testChristoph() {
 
 			std::cout << "VertexPtr Test: VertexOriginalID: " << vertices[i].getID() << ". VertexPtrID: " << vertexPtrs[i]->getID() << std::endl;
 		}
+<<<<<<< HEAD
 
 		Edge edge(100, 1, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
 		Edge edge2(100, 10, 2);
@@ -149,6 +201,81 @@ void testChristoph() {
 
 		int k = 0;
 
+=======
+
+		Edge edge(100, 1, std::make_pair(vertexPtrs[0], vertexPtrs[1]));
+		Edge edge2(100, 10, 2);
+		Edge edge0(100, 10, 0);
+		Edge edge3(100, 15, 3);
+
+		edge0.registerObserver(vertexPtrs[0], "end");
+		edge.registerObserver(vertexPtrs[0], "start");
+		edge.registerObserver(vertexPtrs[1], "end");
+		edge2.registerObserver(vertexPtrs[1], "start");
+		edge2.registerObserver(vertexPtrs[2], "end");
+
+		Edge* edgePtr[4];
+
+		//Assign Pointer to edge
+		edgePtr[1] = &edge;
+		edgePtr[2] = &edge2;
+		edgePtr[0] = &edge0;
+		edgePtr[3] = &edge3;
+
+		vertexPtrs[0]->addIncomingEdges(edgePtr[0]);
+		vertexPtrs[0]->addOutgoingEdges(edgePtr[1]);
+		vertexPtrs[1]->addIncomingEdges(edgePtr[1]);
+		vertexPtrs[1]->addOutgoingEdges(edgePtr[2]);
+		vertexPtrs[2]->addIncomingEdges(edgePtr[2]);
+
+		for (Vertex* v : vertexPtrs) {
+			v->printEdges();
+		}
+
+		const int carAmount = 30;
+
+		Car* carsPtr[30];
+		Car carStorage[30];
+
+		/*for (int c = 0; c < carAmount; c++) {
+			Car car = new Car(c);
+
+			carStorage[c] = car;
+		}
+
+		for (int i = 0; i < carAmount; i++) {
+
+			std::cout << "Counter: " << i << std::endl;
+			//std::cout << "Made car with ID " << carStorage[i].getID() << std::endl;
+
+			carsPtr[i] = new Car();
+			//std::cout << "Car: " << carsPtr[i]->getID() << " ready." << std::endl;
+
+		}
+
+		//Transfer car
+		std::deque<int> d{ vertexPtrs[0]->getID(), vertexPtrs[1]->getID(), vertexPtrs[2]->getID() };
+
+		//ROUTING TABLES
+		RoutingTable table(new Graph(), 7);
+
+		std::queue<int> q(d);
+
+		for (Car* c : carsPtr) {
+			c->assignRoute(q);
+		}
+
+		//carsPtr[0]->setPosition(20.0);
+		//carsPtr[1]->setPosition(0.0);
+
+		//SUPER TRANSFER STUFF
+
+		//edgePtr[0]->pushCar(carsPtr[1]);
+		//std::cout << "Position of Car 1: " << carsPtr[1]->getCurrentPosition() << std::endl;
+
+		int k = 0;
+
+>>>>>>> c3c78d1ada7be45e4fc308483b80e4b150e39406
 		for (int i = 1; i < 50; i++) {
 			if (carsPtr[k]->getRoute().size() > 4) {
 				k++;
