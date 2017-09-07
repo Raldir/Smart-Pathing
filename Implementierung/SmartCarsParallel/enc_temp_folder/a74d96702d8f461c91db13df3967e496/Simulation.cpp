@@ -85,43 +85,68 @@ void Simulation::parallelRouting() {
 	for (int i = 0; i < _world_size; i++) {
 		MPI_Gatherv(&(routes_arr[0][0]), num_elem, MPI_INT, receive_buf, receive_elementC, receive_displs, MPI_INT, i, MPI_COMM_WORLD);
 	}
-	//EVERY PROCESS CALCULATES THE MATRIX BASED ON THE RECEIVING VALUES OF THE OTHER PROCESSES
 	std::cout << receive_displs[_rank] << " " << _rank << std::endl;
 	//for (int i = 0; i < receive_elementC[_rank]; i++) {
 	//	std::cout << receive_buf[i] << std::endl;
 	//}
 	std::map<int, std::map<int, std::queue<int>>> routingTableC;
 	int lastC = 0;
-	for (int i = 0; i < _world_size; i++) {
-		std::queue<int> route;
-		//GEGEBENNENFALLS IST HIER DER INDEX UM 1 ZU KLEIN UND schneidet einen knoten ab
-		//Normalerweise sollte man immer ienen über haben, da anzahl der knoten die gesamtzahl istu n man nicht einen Kreis fährt.
-		int last = 0;
+	if (_rank != -1) {
+		for (int i = 0; i < _world_size; i++) {
+			std::queue<int> route;
+			//GEGEBENNENFALLS IST HIER DER INDEX UM 1 ZU KLEIN UND schneidet einen knoten ab
+			//Normalerweise sollte man immer ienen über haben, da anzahl der knoten die gesamtzahl istu n man nicht einen Kreis fährt.
+			int last = 0;
 
-		for (int j = 0; j < receive_elementC[i]; j++) {
-			if (receive_buf[j + lastC] == -1 && last != -1) {
-				routingTableC[route.front()][route.back()] = route;
-				clear(route);
-				last = -1;
+			for (int j = 0; j < receive_elementC[i]; j++) {
+				if (receive_buf[j + lastC] == -1 && last != -1) {
+					routingTableC[route.front()][route.back()] = route;
+					clear(route);
+					last = -1;
+				}
+				else if (receive_buf[j + lastC] == -1) {
+					last = receive_buf[j + lastC];
+				}
+				else {
+					route.push(receive_buf[j + lastC]);
+					last = receive_buf[j + lastC];
+				}
 			}
-			else if (receive_buf[j + lastC] == -1) {
-				last = receive_buf[j + lastC];
-			}
-			else {
-				route.push(receive_buf[j + lastC]);
-				last = receive_buf[j + lastC];
-			}
+			lastC += receive_elementC[i];
 		}
-		lastC += receive_elementC[i];
-	}
-	_routingTable = new RoutingTable(_graph, _NEAREST_NEIGHBOR, routingTableC);
-	std::vector<std::vector<int>> matrix2 = _routingTable->getRoutingMatrix();
-	for (int i = 0; i < matrix2.size(); i++) {
-		for (int j = 0; j < matrix2[i].size(); j++) {
-			std::cout << matrix2[i][j] << " ";
+		_routingTable = new RoutingTable(_graph, _NEAREST_NEIGHBOR, routingTableC);
+		std::vector<std::vector<int>> matrix2 = _routingTable->getRoutingMatrix();
+		for (int i = 0; i < matrix2.size(); i++) {
+			for (int j = 0; j < matrix2[i].size(); j++) {
+				std::cout << matrix2[i][j] << " ";
+			}
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
 	}
+	//if (_rank == 0) {
+	//	std::map<int, std::map<int, std::queue<int>>> routingTableC;
+	//	for (int i = 0; i < splitting.size(); i++) {
+	//		std::queue<int> route;
+	//		//GEGEBENNENFALLS IST HIER DER INDEX UM 1 ZU KLEIN UND schneidet einen knoten ab
+	//		//Normalerweise sollte man immer ienen über haben, da anzahl der knoten die gesamtzahl istu n man nicht einen Kreis fährt.
+	//		int last = 0;
+	//		for (int j = 0; j < receive_elementC[i]; j++) {
+	//			if (receive_buf[j] == -1 && last != -1) {
+	//				routingTableC[route.front()][route.back()] = route;
+	//				clear(route);
+	//				last = -1;
+	//			}
+	//			else if (receive_buf[j] == -1) {
+	//				last = receive_buf[j];
+	//			}
+	//			else {
+	//				route.push(receive_buf[j]);
+	//				last = receive_buf[j];
+	//			}
+	//		}
+	//	}
+	//	_routingTable = new RoutingTable(_graph, _NEAREST_NEIGHBOR, routingTableC);
+	//}
 }
 
 
