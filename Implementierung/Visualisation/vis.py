@@ -25,16 +25,16 @@ f = open('dev/OutputMap/edges', 'r')
 counter = 0
 for line in f:
     argumentsedge = line.split()
-    G.add_edge(float(argumentsedge[0]), float(argumentsedge[1]), color = ' ', weight = 0, width = 0.05)
+    G.add_edge(float(argumentsedge[0]), float(argumentsedge[1]), color = ' ', weight = 0, width = 0.2)
     counter+=2
 counter = 1
 f.close()
 f = open('dev/OutputMap/edges', 'r')
 for line in f:
     argumentsedge = line.split()
-    G.add_edge(float(argumentsedge[1]), float(argumentsedge[0]), color = ' ', weight = 0, width = 0.05)
+    G.add_edge(float(argumentsedge[1]), float(argumentsedge[0]), color = ' ', weight = 0, width = 0.2)
     counter+=2
-#nx.draw_networkx_labels(G, pos2, labels, font_size = 0.05)
+nx.draw_networkx_labels(G, pos2, labels, font_size = 0.1)
 
 
 for file in files:
@@ -92,5 +92,6 @@ for file in files:
     #nx.draw_networkx_edges(G,pos,edge_labels = edgelabels,
     #                width=6)
     #nx.draw_networkx_edge_labels(G, pos, edge_labels = edgelabels,  font_size = 0.03)
-    nx.draw(G, pos, node_size = 0.01, width = width , edge_color = colors)
+    nx.draw(G, pos, node_size = 0.05, width = width , edge_color = colors)
     plt.savefig('Visualisation/visofSteps/' + path  + '.png', dpi = 500)
+    print(path  + '.png created')

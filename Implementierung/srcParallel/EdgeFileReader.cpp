@@ -34,7 +34,7 @@ std::vector<Edge*> calculateEdges(vector<Vertex*> vertices, string path)
 		id++;
 		//cout << id;
 		edges.push_back(new Edge(length, id, std::pair<Vertex*, Vertex*>(endv, startv)));
-		cout << length << " " << id << " " << startv->getID() << " " << endv->getID() <<"\n";
+		//cout << length << " " << id << " " << startv->getID() << " " << endv->getID() <<"\n";
 		id++;
 	}
 	return edges;

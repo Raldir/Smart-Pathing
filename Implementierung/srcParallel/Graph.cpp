@@ -28,6 +28,11 @@ std::vector<Spawner*> Graph::getSpawner()
 	return _spawner;
 }
 
+Edge* Graph::getEdge(int edgeID) {
+	return _edgeMap[edgeID];
+}
+
+
 std::vector<Edge*> Graph::getEdges()
 {
 	return _edges;
@@ -36,6 +41,25 @@ std::vector<Edge*> Graph::getEdges()
 std::map<int, Vertex*> Graph::getVertexMap()
 {
 	return _vertexMap;
+}
+
+
+std::map<int, Spawner*> Graph::createSpawnerMap()
+{
+	std::map<int, Spawner*> spawner;
+	for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
+		spawner[(*it)->getID()] = (*it);
+	}
+	return spawner;
+}
+
+std::vector<int> Graph::createSpawnerIDVector()
+{
+	std::vector<int> spawner;
+	for (int i = 0; i < _spawner.size(); i++) {
+		spawner.push_back(_spawner[i]->getID());
+	}
+	return spawner;
 }
 
 float Graph::getMaxX()
@@ -151,7 +175,7 @@ void Graph::createTrafficLights() {
 		//nicht "wirklich" zufällig, soll aber reicehn (Bei jeder durchführung wird gleiche generierungsufnktion
 		//für zufallzahl genommen
 		int start = rand() % TRAFFICLIGHT_DURATION;
-		std::cout << "rand:" << start;
+		//std::cout << "rand:" << start;
 		TrafficLight tl(tLMap, TRAFFICLIGHT_DURATION, start);
 		(*it)->setTrafficLight(tl);
 	}
@@ -186,9 +210,19 @@ int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTa
 	return timeTableValues;
 }
 
-float Graph::distance_heuristic2(size_t start, size_t goal) {
+float Graph::distance_heuristicOverID(size_t start, size_t goal) {
 	std::pair<float, float> korStart = _vertexMap[start]->getPosition();
 	std::pair<float, float> korEnd = _vertexMap[goal]->getPosition();
 	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +
 		pow((korStart.second - korEnd.second), 2.0f));
+}
+
+int Graph::getNumberVertices()
+{
+	return _vertices.size();
+}
+
+int Graph::getNumberEdges()
+{
+	return _edges.size();
 }

@@ -85,10 +85,34 @@ float RoutingTable::getCost(int originID, int destID)
 
 RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 	_graph = graph;
-	std::vector<Edge*> _edges = graph->getEdges();
-	std::map<int, Vertex*> _vertexMap = graph->getVertexMap();
-	std::vector<Vertex*> _vertices = graph->getVertices();
+	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> _spawner = graph->getSpawner();
+	calculateRoutes(_spawner);
+}
+
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP) {
+	_graph = graph;
+	_numberNearestNeighbors = numberNearestNeighbors;
+	routingMatrix = routingMatrixP;
+}
+
+
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector<int> spawnerID) {
+	_graph = graph;
+	_numberNearestNeighbors = numberNearestNeighbors;
+	std::vector<Spawner*> spawner;
+	for (int i = 0; i < spawnerID.size(); i++) {
+		spawner.push_back(_graph->createSpawnerMap()[spawnerID[i]]);
+	}
+	calculateRoutes(spawner);
+}
+
+
+void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	std::vector<Edge*> _edges = _graph->getEdges();
+	std::map<int, Vertex*> _vertexMap = _graph->getVertexMap();
+	std::vector<Vertex*> _vertices = _graph->getVertices();
 
 	typedef adjacency_list<listS, vecS, directedS, no_property,
 		property<edge_weight_t, int> > mygraph_t;
@@ -116,25 +140,25 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 	for (spawnerContainer::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
 		int start = (*it2)->getID();
 		std::map<int, float> distances;
-		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
+		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
 			int goal = (*it)->getID();
 
-				//Speicher alle Abstände von Knoten zum Startknoten
-				distances[goal] = _vertexMap[start]->distanceTo(_vertexMap[goal]);
+			//Speicher alle Abstände von Knoten zum Startknoten
+			distances[goal] = _vertexMap[start]->distanceTo(_vertexMap[goal]);
 			int sumDistance = 0;
-
-			if (!(getRoute(goal, start).empty()))	continue;
+			//Bei Parallelisierung wird diese Zeile nicht beachtet, was in der theorie zu einem zweifachen aufwand führt
+			//if (!(getRoute(goal, start).empty()))	continue;
 
 			std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
 			std::vector<float> d(num_vertices(g));
 			try {
 				// call astar named parameter interface
 				astar_search
-				(g, start,
-					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-					(_vertexMap, goal),
-					predecessor_map(&p[0]).distance_map(&d[0]).
-					visitor(astar_goal_visitor<vertex>(goal)));
+					(g, start,
+						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+						(_vertexMap, goal),
+						predecessor_map(&p[0]).distance_map(&d[0]).
+						visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -171,10 +195,10 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 			std::cout << "Didn't find a path from " << _vertexMap[start]->getID() << "to"
 				<< _vertexMap[goal]->getID() << "!" << std::endl;
 		}
-		size_t m = numberNearestNeighbors;
+		size_t m = _numberNearestNeighbors;
 		//Erstelle liste mit abständen und mache partial sort
 		std::vector<std::pair<int, float>> v{ distances.begin(), distances.end() };
-		if (int(v.size()) < numberNearestNeighbors) {
+		if (int(v.size()) < _numberNearestNeighbors) {
 			m = v.size();
 		}
 		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
@@ -185,14 +209,14 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 		std::cout << std::endl;
 	}
 }
-
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
 	//Pushes originID into first map and int queue pair into the second
 	routingMatrix[originID][destID] = route;
 
 	//Pushes queue on symmetrical pair
-	routingMatrix[destID][originID] = reverseQueue(route);
+	//Would cause problems on Parallelism
+	//routingMatrix[destID][originID] = reverseQueue(route);
 
 	std::cout << "Added queue from " << originID << " to " << destID << std::endl;
 }
@@ -219,16 +243,21 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 {
 	std::map<int, float> costs;
 	for (int goalID : k_nn[destID]) {
-		if (goalID == startID) {
+		if (goalID == startID||getRoute(startID, goalID).empty()) {
 			//std::cout << "Would take same";
 			continue;
 		}
 		//std::cout << "CurrentGoalvertex " << goalID << std::endl;
 		int timeTableValue = _graph->getSumWeightFromTimeTables(startID, goalID, currentTimeTableIndex, routingMatrix[startID][goalID]);
-		costs[goalID] = costMatrix[startID][goalID] + timeTableValue;
+		//Berechnet zusatzkosten, dafür das Zeil weiter weg vom eigentlichen ausgangsziel ist, nutze hierfür distanzheuristik
+		float extraCosts = _graph->distance_heuristicOverID(destID, goalID) / 2;
+		costs[goalID] = costMatrix[startID][goalID] + timeTableValue + extraCosts;
 		//std::cout << "calculated for one goalVertex" <<std::endl;
 	}
 	//std::cout << "afterAll ";
+	if (costs.empty()) {
+		return -1;
+	}
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
 	std::cout << "Best Goal for Car: " << v[0].first <<std::endl;
@@ -263,4 +292,26 @@ std::queue<int>  RoutingTable::getRoute(int originID, int destID) {
 	}
 
 	return queue;
+}
+
+std::vector<std::vector<int>> RoutingTable::getRoutingMatrix()
+{
+	std::vector<std::vector<int>> matrix;
+	for (auto const &ent1 : routingMatrix) {
+		for (auto const &ent2 : ent1.second) {
+			std::vector<int> route;
+			std::queue<int> copy = routingMatrix[ent1.first][ent2.first];
+			if (copy.size() == 0) {
+				continue;
+			}
+			//std::cout << routingMatrix[ent1.first][ent2.first].size();
+			for (int i = 0; i < routingMatrix[ent1.first][ent2.first].size(); i++) {
+				//std::cout << ent1.first << " " << ent2.first<<std::endl;
+				route.push_back(copy.front());
+				copy.pop();
+			}
+			matrix.push_back(route);
+		}
+	}
+	return matrix;
 }

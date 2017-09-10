@@ -253,3 +253,9 @@ int Vertex::getProcessOfVertex(int vertexID)
 		return it->second;
 	}
 }
+
+//Get cars which want to transition to outgoingEdge
+std::vector<Car*> Vertex::getTransitioningCars(int outgoingEdgeID)
+{
+	return transitioningCars[outgoingEdgeID];
+}

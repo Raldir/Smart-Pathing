@@ -7,6 +7,8 @@ const float _CAR_MINIMUM_GAP = 0.2;
 //TODO Bessere Methodik finden
 const int _TIMETABLE_SPAN = 1000;
 
+//Die anzahl der nächsten Nachbarn die als alternative Routen in Betracht gezogen werden sollen
+const int _NEAREST_NEIGHBOR = 3;
 //TRAFFIC LIGHT
 /*
 #define _TRAFFIC_LIGHT_PERIOD

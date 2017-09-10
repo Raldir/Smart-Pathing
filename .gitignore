@@ -13,6 +13,15 @@ Implementierung/SmartCarsSequentiell/SmartCarsSequentiell/SmartCarsSequentiell.v
 Implementierung/SmartCarsSequentiell/SmartCarsSequentiell/SmartCarsSequentiell.vcxproj.filters
 Implementierung/SmartCarsSequentiell/Debug/**
 Implementierung/SmartCarsSequentiell/x64/
-Implementierung/SmartCarsSequentiell/Output/
 Implementierung/Visualisation/visOfSteps/
 Implementierung/SmartCarsParallel/
+Implementierung/SmartCarsParallel/SmartCarsParallel.VC.opendb
+Implementierung/SmartCarsParallel/SmartCarsParallel.VC.VC.opendb
+Implementierung/SmartCarsParallel/SmartCarsParallel.VC.db
+Implementierung/SmartCarsParallel/SmartCarsParallel/SmartCarsParallel.vcxproj.filters
+Implementierung/SmartCarsParallel/Debug/**
+Implementierung/SmartCarsParallel/x64/
+Implementierung/Output/
+Implementierung/SmartCarsParallel/SmartCarsParallel/Debug/
+Implementierung/SmartCarsParallel/SmartCarsParallel/x64/Debug/
+
