@@ -17,7 +17,7 @@ public:
 private:
 
 	void spawnCar(int currentTick);
-	Spawner* Spawner::createPartlyRandomizedGoal();
+	Spawner* createPartlyRandomizedGoal();
 
 	std::vector<std::pair<Spawner*, int>> _vertexPriorities;
 	RoutingTable* _routingTable;

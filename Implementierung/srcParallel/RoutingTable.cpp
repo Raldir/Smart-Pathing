@@ -1,10 +1,12 @@
 #include "RoutingTable.h"
+#include "mpi.h"
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
 
 using namespace boost;
+using boost::graph::distributed::mpi_process_group;
 
 //using namespace boost::lambda;
 //
@@ -18,6 +20,7 @@ using namespace boost;
 //		coord_t y = a.get<1>() - b.get<1>();
 //		return x*x + y*y;
 //}
+
 
 std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
 {
@@ -83,32 +86,41 @@ float RoutingTable::getCost(int originID, int destID)
 	return costMatrix[originID][destID];
 }
 
+/*
+The Constructor for the Routingtable, that will calculate each Route parallel but the number of Routes sequential
+*/
 RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> _spawner = graph->getSpawner();
-	calculateRoutes(_spawner);
+	calculateRoutesParallel(_spawner);
 }
 
-RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP) {
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP, std::map<int, std::map<int, float>> costs) {
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	routingMatrix = routingMatrixP;
+	costMatrix = costs;
 }
 
 
-RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector<int> spawnerID) {
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector<int> verticesID) {
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> spawner;
-	for (int i = 0; i < spawnerID.size(); i++) {
-		spawner.push_back(_graph->createSpawnerMap()[spawnerID[i]]);
+	for (int i = 0; i < verticesID.size(); i++) {
+		spawner.push_back(_graph->createSpawnerMap()[verticesID[i]]);
 	}
 	calculateRoutes(spawner);
 }
 
 
-void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
+
+/*
+Calculate the Routingtable sequential(however it is implemented so that seperate calculations and merging of different routes through other
+processes is feasible
+*/
+void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
 	std::map<int, Vertex*> _vertexMap = _graph->getVertexMap();
@@ -120,7 +132,7 @@ void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
 	typedef mygraph_t::vertex_descriptor vertex;
 	typedef mygraph_t::edge_descriptor edge_descriptor;
 
-	unsigned int num_edges = unsigned int(_edges.size());
+	int num_edges = (_edges.size());
 	std::vector<int> vertices_ID;
 	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
 		vertices_ID.push_back((*it)->getID());
@@ -209,6 +221,8 @@ void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
 		std::cout << std::endl;
 	}
 }
+
+
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
 	//Pushes originID into first map and int queue pair into the second
@@ -243,7 +257,7 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 {
 	std::map<int, float> costs;
 	for (int goalID : k_nn[destID]) {
-		if (goalID == startID||getRoute(startID, goalID).empty()) {
+		if (goalID == startID || getRoute(startID, goalID).empty()) {
 			//std::cout << "Would take same";
 			continue;
 		}
@@ -260,7 +274,7 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 	}
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
-	std::cout << "Best Goal for Car: " << v[0].first <<std::endl;
+	std::cout << "Best Goal for Car: " << v[0].first << std::endl;
 	return v[0].first;
 }
 
@@ -314,4 +328,129 @@ std::vector<std::vector<int>> RoutingTable::getRoutingMatrix()
 		}
 	}
 	return matrix;
+}
+
+std::vector<std::vector<int>> RoutingTable::getRoutingCosts()
+{
+	std::vector<std::vector<int>> matrix;
+	for (auto const &ent1 : costMatrix) {
+		for (auto const &ent2 : ent1.second) {
+			std::vector<int> costsOrigin;
+			costsOrigin.push_back(ent1.first);
+			costsOrigin.push_back(int(ent2.second));
+			costsOrigin.push_back(ent2.first);
+			matrix.push_back(costsOrigin);
+		}
+	}
+	return matrix;
+}
+
+/*
+STRUCTURE: IN EACH VECTOR IS THE FIRST VALUE THE ORIGINVERTEX IT BELONGS TO
+*/
+std::vector<std::vector<int>> RoutingTable::getKNearestMatrix()
+{
+	std::vector<std::vector<int>> matrix;
+	for (auto const &ent1 : k_nn) {
+		std::vector<int> k_nnOrigin;
+		for (int i = 0; i < k_nn[ent1.first].size(); i++) {
+			k_nnOrigin.push_back(ent1.second[i]);
+		}
+		matrix.push_back(k_nnOrigin);
+	}
+	return matrix;
+}
+
+/*
+Parallelism which calculates each Route parallel but the number of Routes sequential
+*/
+template<typename Vertex, typename Graph>
+int get_vertex_name(Vertex v, const Graph& g, std::vector<int> spawners)
+{
+	return spawners[g.distribution().global(owner(v), local(v))];
+}
+
+void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	std::vector<Edge*> _edges = _graph->getEdges();
+	std::map<int, Vertex*> _vertexMap = _graph->getVertexMap();
+	std::vector<Vertex*> _vertices = _graph->getVertices();
+
+	std::vector<int> vertices_ID;
+
+	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+		vertices_ID.push_back((*it)->getID());
+	}
+	typedef adjacency_list<listS, distributedS<mpi_process_group, vecS>, directedS,
+		no_property,                 // Vertex properties
+		property<edge_weight_t, int> // Edge properties
+	> graph_t;
+	typedef graph_traits < graph_t >::vertex_descriptor vertex_descriptor;
+	typedef graph_traits < graph_t >::edge_descriptor edge_descriptor;
+	graph_t g(_graph->getNumberVertices());
+
+	for (std::vector<Edge*>::iterator it = _edges.begin(); it != _edges.end(); it++) {
+		add_edge(vertex((*it)->getVertices().first->getID(), g), vertex((*it)->getVertices().second->getID(), g), int((*it)->getLength()), g);
+	}
+	synchronize(g.process_group());
+
+	// Keeps track of the predecessor of each vertex
+	std::vector<vertex_descriptor> p(num_vertices(g));
+	// Keeps track of the distance to each vertex
+	std::vector<int> d(num_vertices(g));
+
+	for (spawnerContainer::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
+		vertex_descriptor s = vertex((*it2)->getID(), g);
+
+		/*dijkstra_shortest_paths
+		(g, s,
+		predecessor_map(
+		make_iterator_property_map(p.begin(), get(vertex_index, g))).
+		distance_map(
+		make_iterator_property_map(d.begin(), get(vertex_index, g)))
+		);*/
+
+		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
+			vertex_descriptor v = vertex((*it)->getID(), g);
+			std::vector<int> route;
+			vertex_descriptor current = p[v.local];
+			std::cout << "pathOf(" << get_vertex_name(v, g, vertices_ID) << ") = " << get_vertex_name(current, g, vertices_ID) << " ";
+			while (current != s) {
+				route.push_back(get_vertex_name(current, g, vertices_ID));
+				current = p[current.local];
+				std::cout << get_vertex_name(current, g, vertices_ID) << " ";
+			}
+			std::cout << std::endl;
+			std::reverse(route.begin(), route.end());
+
+			std::queue<int> routeQ;
+			for (size_t i = 0; i < route.size(); i++) {
+				routeQ.push(route[i]);
+			}
+			insertRoute(get_vertex_name(s, g, vertices_ID), (*it)->getID(), routeQ);
+		}
+	}
+}
+
+void RoutingTable::calculateKNearest() {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	//VERWENDE EVENTUELL DIE LUFTDISTANZ?? BESSERE HEURISTIK?
+	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
+		std::vector<std::pair<int, float>>  v;
+		int start = (*it2)->getID();
+		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
+			int goal = (*it)->getID();
+			v.push_back(std::pair<int, float> (goal, costMatrix[start][goal]));
+		}
+		int m = _numberNearestNeighbors;
+		if (int(v.size()) < _numberNearestNeighbors) {
+			m = v.size();
+		}
+		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
+		for (std::vector<std::pair<int, float>> ::iterator it = v.begin(); it != v.begin() + m; it++) {
+			k_nn[start].push_back((*it).first);
+			std::cout << (*it).first << ">";
+		}
+		std::cout << std::endl;
+	}
 }

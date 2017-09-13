@@ -15,6 +15,20 @@
 #include <boost/lambda/lambda.hpp>  // _1
 #include <boost/lambda/bind.hpp>    // bind()
 #include <boost/tuple/tuple_io.hpp>
+#include <boost/config.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <memory>
+
+#include <iostream>
+#include <boost/graph/use_mpi.hpp>
+#include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/serialization/vector.hpp>
+//#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/distributed/mpi_process_group.hpp>
+#include <boost/graph/distributed/adjacency_list.hpp>
+//#include <boost/test/minimal.hpp>
 
 class Edge;
 class Vertex;
@@ -31,7 +45,8 @@ public:
 
 	RoutingTable(Graph* g, int numberNearestNeighbors);
 	RoutingTable(Graph* g, int numberNearestNeighbors, std::vector<int> spawner);
-	RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrix);
+	RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP,
+		std::map<int, std::map<int, float>> costs);
 
 	void insertRoute(int originID, int destID, std::queue<int> route);
 	void removeRoute(int originID, int destID);
@@ -40,12 +55,16 @@ public:
 
 	int calculateBestGoal(int startID, int destID, int currentTimeTableIndex);
 	void calculateRoutes(std::vector<Spawner*> _spawner);
+	void calculateRoutesParallel(std::vector<Spawner*> _spawner);
 	//ToDO Add  a method that only adds on a specific range
 	void addCosts(int startID, int destID, int currentTimeTableIndex);
 
 	//Get Route from origin to destination
 	std::queue<int>  getRoute(int originID, int destID);
-	std::vector<std::vector<int>> RoutingTable::getRoutingMatrix();
+	std::vector<std::vector<int>> getRoutingMatrix();
+	std::vector<std::vector<int>> getRoutingCosts();
+	std::vector<std::vector<int>> getKNearestMatrix();
+	void calculateKNearest();
 	void setCost(int originID, int destID, float cost);
 	float getCost(int originID, int destID);
 

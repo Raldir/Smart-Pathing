@@ -18,6 +18,17 @@
 #include <stdio.h>
 #include "mpi.h"
 
+#ifdef BOOST_NO_EXCEPTIONS
+void
+boost::throw_exception(std::exception const& ex)
+{
+	std::cout << ex.what() << std::endl;
+	abort();
+}
+#endif
+
+using namespace boost;
+using boost::graph::distributed::mpi_process_group;
 
 
 int main(int argc, char *argv[]) {
@@ -28,18 +39,24 @@ int main(int argc, char *argv[]) {
 	//RoutingTable* table = new RoutingTable(_graph, _NEAREST_NEIGHBOR, ids);
 	//std::vector<std::vector<int>> matrix = table->getRoutingMatrix();
 
+	//mpi::environment env(argc, argv);
+
 	MPI_Init(&argc, &argv);
+	//mpi::environment env(argc, argv);
+	//test_distributed_dfs();
 	int numberProcesses;
 	int rank;
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &numberProcesses);
+	std::cout<<"RANK: "<<rank<<" NUMBER numberProcesses: " << numberProcesses<<std::endl;
+	//Graph* graph = new Graph();
+	//RoutingTable* table = new RoutingTable(graph, _NEAREST_NEIGHBOR);
 	Simulation* s = new Simulation(numberProcesses, rank);
-	//new RoutingTable(new Graph(), 3);
-	//MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	//printf("Hello World von %d", rank);
+
 	MPI_Finalize();
 	//testRami();
 
+	
 	return 0;
 }
 
@@ -49,7 +66,7 @@ void testRami()
 	//Simulation* s = new Simulation();
 	//Graph* g = new Graph();
 	//RoutingTable* table = new RoutingTable(g, 7);
-	system("PAUSE");
+	//system("PAUSE");
 
 }
 
