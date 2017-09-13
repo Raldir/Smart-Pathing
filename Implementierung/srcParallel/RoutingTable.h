@@ -20,6 +20,8 @@ class Edge;
 class Vertex;
 
 typedef std::map<int, std::map<int, std::queue<int>>> RoutingMatrix;
+typedef std::map<int, std::map<int, std::queue<int>>>::iterator RoutingMatrixIt;
+
 typedef std::map<int, std::map<int, float>> CostMatrix;
 typedef std::map<int, std::vector<int>> KNearestNeighborMatrix;
 
@@ -44,11 +46,15 @@ public:
 	void addCosts(int startID, int destID, int currentTimeTableIndex);
 
 	//Get Route from origin to destination
-	std::queue<int>  getRoute(int originID, int destID);
+	std::queue<int> getRoute(int originID, int destID);
 	std::vector<std::vector<int>> RoutingTable::getRoutingMatrix();
 	void setCost(int originID, int destID, float cost);
 	float getCost(int originID, int destID);
 
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
+	
+	//Returns incomingConnection and outgoingConnection for every connected process
+	void insertProcessRoutes(std::pair<int, std::vector<std::pair<int, int>>>);
 
 private:
 	std::queue<int> reverseQueue(std::queue<int> queue);
@@ -66,4 +72,9 @@ private:
 	CostMatrix costMatrix;
 	KNearestNeighborMatrix k_nn;
 	Graph* _graph;
+
+	//Contains every route inside this process
+	std::vector<std::vector<int>> processRoutingMatrix;
+
+	std::map<int, std::vector<std::pair<int, int>>> processRoutesMap;
 };

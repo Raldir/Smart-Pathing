@@ -12,7 +12,7 @@ Simulation::Simulation(int world_size, int rank)
 {
 	int root = 0;
 
-	InitVectors();
+	InitEdgeFreeSpaceBuffers();
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -26,7 +26,6 @@ Simulation::Simulation(int world_size, int rank)
 	initSpawner();
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
 		std::cout << rank << " came to barrier on tick " << i << std::endl;
-		MPI_Barrier(MPI_COMM_WORLD);
 		_currentTick++;
 		nextTick();
 
@@ -236,6 +235,8 @@ void Simulation::nextTick()
 	int timeStamp = _currentTick %_TIMETABLE_SPAN;
 	std::cout << "begin update" << '\n';
 	vertexContainer vertices = _graph->getVertices();
+
+	//Update Vertices (TrafficLight)
 	for (vertexContainer::iterator it2 = vertices.begin(); it2 != vertices.end(); it2++) {
 		(*it2)->Update();
 	}
@@ -247,49 +248,39 @@ void Simulation::nextTick()
 	//Send and receive messages in buffer
 	exchangeEgdeFreeSpace();
 
+	//First Update
 	std::cout << "Vertex update completed" << '\n';
 	for (Edge* ed : _graph->getEdges()) {
 		ed->Update(_currentTick);
 	}
 
-	//Sending information about cars transitioning to different process
-	for (auto process : outgoingConnections) {
-		//TODO Encode car information into an array of ints
-	}
-
-	//TODO
-	for (auto process : incomingConnections) {
-
-		MPI_Status status;
-		int recvBufferLength;
-
-		MPI_Probe(process.first, 1, MPI_COMM_WORLD, &status);
-		MPI_Get_count(&status, MPI_INT, &recvBufferLength);
-
-		//Reserve car buffer
-		delete carRecvBuffer[process.first];
-
-
-		carRecvBuffer[process.first] = new int[recvBufferLength];
-
-		//Actual receive of car information
-		MPI_Irecv(&carRecvBuffer, recvBufferLength, MPI_INT, process.first, 1, MPI_COMM_WORLD, NULL);
-	}
-
-	//########### PARALLEL ###########
+	//SENDING CAR INFORMATION
+	sendCarInformation();
+	receiveCarInformation();
 
 	std::cout << "Edge update Phase 1 completed" << '\n';
 	std::vector<Edge*> remainingEdges = _graph->getEdges();
 	for (int i = 0; i < _graph->getEdges().size(); i++) {
+		
+		//After every Update, exchange the space
+		fillEdgeSpaceSendBuffer();
+		exchangeEgdeFreeSpace();
+		
 		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end();) {
 			(*it2)->UpdateOverflow();
-			//(*it2)->printCars();
 			if (!(*it2)->hasOverflow()) {
 				it2 = remainingEdges.erase(it2);
 			}
 			else it2++;
 		}
+
+		sendCarInformation();
+		receiveCarInformation();	
 	}
+
+	//After every Update, exchange the space
+	fillEdgeSpaceSendBuffer();
+	exchangeEgdeFreeSpace();
 
 	std::cout << "Edge update Phase 2 completed" << '\n';
 	spawnerContainer spawners = _graph->getSpawner();
@@ -319,35 +310,34 @@ void Simulation::initSpawner() {
 void Simulation::fillEdgeSpaceSendBuffer() {
 
 	//Fill sending buffer for every process (con.first)
-	for (auto outCon : outgoingConnections) {
+	for (auto &outCon : outgoingConnections) {
 
 		//Go through the vector of edges and get the amount of free space in them
-		for (int edge = 0; edge < outCon.second.size(); edge++) {
-
+		for (std::vector<int>::iterator it = outCon.second.begin(); it != outCon.second.end(); it++) {
+			
 			//Get free space amount from edge (must be in the same process)
-			int freeSpaceAmount = _graph->getEdge(outCon.second[edge])->getFreeSpaceAmount();
-
+			int freeSpaceAmount = _graph->getEdge(outCon.second[*it])->getFreeSpaceAmount();
 			//Push free space amount into the corresponding place inside buffer
-			edgeSpaceSendBuffer[outCon.first][edge] = freeSpaceAmount;
+			edgeSpaceSendBuffer[outCon.first][*it] = freeSpaceAmount;
 		}
 	}
 }
 
 void Simulation::exchangeEgdeFreeSpace() {
 
-	int requestCounter = 0;
+	reqCounter = 0;
 	//ISend free space amount to every process
-	for (auto process : edgeSpaceSendBuffer) {
+	for (auto &process : edgeSpaceSendBuffer) {
 		//Send buffer, count, type, dest, tag, comm, request
-		MPI_Isend(process.second, outgoingConnections[process.first].size(), MPI_INT, process.first, 0, MPI_COMM_WORLD, &req[requestCounter]);
-		requestCounter++;
+		MPI_Isend(process.second, outgoingConnections[process.first].size(), MPI_INT, process.first, 0, MPI_COMM_WORLD, &req[reqCounter]);
+		reqCounter++;
 	}
 
 	//Receive free space amount of every edge in connected processes
-	for (auto process : edgeSpaceRecvBuffer) {
+	for (auto &process : edgeSpaceRecvBuffer) {
 		//Recv buffer, count, type, dest, tag, comm, request
-		MPI_Irecv(process.second, incomingConnections[process.first].size(), MPI_INT, process.first, 0, MPI_COMM_WORLD, &req[requestCounter]);
-		requestCounter++;
+		MPI_Irecv(process.second, incomingConnections[process.first].size(), MPI_INT, process.first, 0, MPI_COMM_WORLD, &req[reqCounter]);
+		reqCounter++;
 	}
 
 	//Wait for ISends and IRecv to finish 
@@ -355,52 +345,137 @@ void Simulation::exchangeEgdeFreeSpace() {
 	MPI_Waitall(outgoingConnections.size() + incomingConnections.size(), req, status);
 }
 
-void Simulation::fillCarSendBuffer() {
+void Simulation::sendCarInformation() {
 
 	/*
+		Data to be send
 		first int -> processID
 		second int -> edgeID
 		vector -> cars that want to transition to the edge and process
 	*/
 	std::map<int, std::map<int, std::vector<Car*>>> send;
 
-	//Count every buffer
+	//Counter for every buffer
 	std::map<int, int> bufferSizeMap;
 
-	//Go through every process
-	for (auto process : outgoingConnections) {
+	//Gather information and size for the buffer
+	for (auto &process : outgoingConnections) {
 
-		int counter = 0;
+		//Counter for size of carSendBuffer
+		int size = 0;
 
 		//first int -> edgeID, vector -> cars
-		std::map<int, std::vector<Car*>> p;
+		std::map<int, std::vector<Car*>> edgeBuffer;
 		//Go through every edge connected with that process
-		for (auto edgeID : process.second) {
+		for (int &edgeID : process.second) {
 
 			//Get vector of cars for edge from start Vertex
-			std::vector<Car*> v = _graph->getEdge(edgeID)->getVertices().first->getTransitioningCars(edgeID);
+			std::vector<Car*> cars = _graph->getEdge(edgeID)->getVertices().first->popTransitioningCars(edgeID);
 
 			//Go through every car and increase counter for buffer, including the route of every car
-			for (Car* car : v) {
-				counter += 3 + car->getRoute().size();
+			for (Car* car : cars) {
+				//4 --> edge, overflowPosition, distanceTravelled und -1 als Begrenzung
+				size += 3 + car->getRoute().size() + 1;
 			}
 
 			//Assign vector of cars for edge to send buffer
-			p[edgeID] = v;
+			edgeBuffer[edgeID] = cars;
 		}
-		//Assign map of whole process to map for all processes
-		bufferSizeMap[process.first] = counter;
-		send[process.first] = p;
+
+		bufferSizeMap[process.first] = size;
+		send[process.first] = edgeBuffer;
 	}
 
-	for (auto process : send) {
+	//Extract information from cars into sendBuffer
+	for (auto &process : send) {
 
+		//Delete and reassign sendBuffer
+		delete carSendBuffer[process.first];
+		carSendBuffer[process.first] = new int[bufferSizeMap[process.first]];
 
+		//Place where information is read inside buffer for this process
+		int bufferCounter = 0;
+
+		//Put car information into buffer
+		for (auto edgeMap : process.second) {
+			//Go through every car and extract information
+			for (Car* car : edgeMap.second) {
+				//ID of Edge
+				carSendBuffer[process.first][bufferCounter] = edgeMap.first;
+				//Overflow Position of Car
+				carSendBuffer[process.first][++bufferCounter] = car->getOverflow();
+				//Distance Travelled
+				carSendBuffer[process.first][++bufferCounter] = car->getDistanceTravelled();
+
+				std::queue<int> queue = car->getRoute();
+				//Feed route of car into buffer
+				for (int vertex = 0; vertex < queue.size(); vertex++) {
+					carSendBuffer[process.first][++bufferCounter] = queue.front();
+
+					queue.pop();
+				}
+				//Set stopping point for this car in buffer
+				carSendBuffer[process.first][++bufferCounter] = -1;
+			}
+		}
+	}
+
+	//Set global reqCounter to zero
+	reqCounter = 0;
+
+	for (auto process : carSendBuffer) {
+		MPI_Isend(process.second, bufferSizeMap[process.first], MPI_INT, process.first, 1, MPI_COMM_WORLD, &req[reqCounter++]);
 	}
 }
 
+void Simulation::receiveCarInformation() {
 
-void Simulation::InitVectors() {
+	std::map<int, int> recvBufferLength;
+
+	for (auto &con : incomingConnections) {
+
+		MPI_Status status;
+		MPI_Probe(con.first, 1, MPI_COMM_WORLD, &status);
+		//Get size of message
+		MPI_Get_count(&status, MPI_INT, &recvBufferLength[con.first]);
+
+		delete carRecvBuffer[con.first];
+		carRecvBuffer[con.first] = new int[recvBufferLength[con.first]];
+
+		MPI_Irecv(carRecvBuffer[con.first], recvBufferLength[con.first], MPI_INT, con.first, 1, MPI_COMM_WORLD, &req[reqCounter++]);
+	}
+
+	//Read buffer and store it in new car objects again
+	for (auto &process : carRecvBuffer) {
+
+		int counter = 0;
+		//Go through every int in the buffer
+		while (counter < recvBufferLength[process.first]) {
+
+			//Parse through the array of ints
+			int* buffer = process.second;
+
+			int edgeID = buffer[counter++];
+			int overflowPosition = buffer[counter++];
+			int distanceTravelled = buffer[counter++];
+
+			int currentID = 0;
+			std::queue<int> route;
+
+			//Get the route until a -1 is read
+			while (currentID != - 1) {
+				currentID = buffer[counter++];
+				route.push(currentID);
+			}
+
+			//Create car with parameters and push it on edge
+			Car* car = new Car(overflowPosition, distanceTravelled, route);
+			_graph->getEdge(edgeID)->pushCar(car);
+		}		
+	}
+}
+
+void Simulation::InitEdgeFreeSpaceBuffers() {
 
 	//Prepare receive buffer for every edge from every process
 	for (auto in : incomingConnections) {
@@ -423,6 +498,11 @@ void Simulation::InitVectors() {
 	}
 }
 
+void Simulation::InitConnections(std::map<int,int> vertexVector)
+{
+	std::vector<int> incoming;
+	std::vector<int> outgoing;
+}
 
 int Simulation::getEnd(std::queue<int> route) {
 	int temp = 0;

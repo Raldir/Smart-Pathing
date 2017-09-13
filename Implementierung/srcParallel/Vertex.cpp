@@ -12,11 +12,13 @@
 /**
 */
 Vertex::Vertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {
+	MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
 }
 
 
 Vertex::Vertex(int id, float x, float y, TrafficLight tL) : _X(x), _Y(y), _ID(id) {
 	trafficLight = tL;
+	MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
 }
 
 void Vertex::setTrafficLight(TrafficLight tL) {
@@ -56,29 +58,50 @@ void Vertex::transferCar(int incomingEdgeID) {
 	//Checks wheter or not this is the destination of this car
 	if (_ID != car->getDestination()) {
 
-		Edge* nextEdge = outgoingNeighbor(car->getNextVertexID());
+		//Get the next edgeID
+		int edgeID = outgoingNeighbor(car->getNextVertexID())->getID();
 
-		//std::cout << "PUT CAR ON" << this->getID() << " " << car->getNextVertexID() << std::endl;
-		//If there is an edge the car can transported to
-		if (nextEdge != NULL) {
-			if (!nextEdge->isFull()) {
+		//If car is to be transitioned to other process
+		if (!isInsideProcess(edgeID)) {
 
-				std::cout << "CALLED on IncomingEdgeID " << incomingEdgeID << std::endl;
+			//Is there free space?
+			//TODO
+			if (freeEdgeSpaceMap[edgeID] > 0) {
+				freeEdgeSpaceMap[edgeID]--;
 
-				//Haben car schon, brauchen keinen neuen Pointer
+				//Take car from edge and remove vertex from route
 				takeCar(incomingEdgeID);
 				car->popCurrentVertex();
 
-				//TODO PARALLEL
-				giveCar(nextEdge, car);
-				std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
-
-				//Removes the next point as destination
+				//Storing for later transfer
+				transitioningCars[edgeID].push_back(car);
 			}
 		}
-		//No edge found
 		else {
-			std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
+			Edge* nextEdge = outgoingNeighbor(car->getNextVertexID());
+
+			//std::cout << "PUT CAR ON" << this->getID() << " " << car->getNextVertexID() << std::endl;
+			//If there is an edge the car can transported to
+			if (nextEdge != NULL) {
+				if (!nextEdge->isFull()) {
+
+					std::cout << "CALLED on IncomingEdgeID " << incomingEdgeID << std::endl;
+
+					//Haben car schon, brauchen keinen neuen Pointer
+					takeCar(incomingEdgeID);
+					car->popCurrentVertex();
+
+					//Actual transfer to car
+					giveCar(nextEdge, car);
+
+					//std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
+					//Removes the next point as destination
+				}
+			}
+			//No edge found
+			else {
+				std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
+			}
 		}
 	}
 	//If this is the destination -> take car from edge and destroy it
@@ -94,11 +117,10 @@ Car* Vertex::takeCar(int incomingEdgeID) {
 	Edge* e = getEdgeFromID(incomingEdgeID);
 	//Remove car from edge
 	Car* car = e->popCar();
-	std::cout << "TOOK OUT CAR of EDGE " << incomingEdgeID << std::endl;
-	//Add travelled distance to car inner variable
+	
+	//Add travelled distance
 	car->addDistanceTravelled(e->getLength());
 
-	//VON CHRISTOPH
 	//Correct timestamp to remove weight from timetable 
 	std::pair<int, int> timetableValues = Graph::calculateTimetableValues(car->getSpawnTick(), car->getDistanceTravelled());
 	//Remove weight from timetable set at the moment of birth of car
@@ -251,11 +273,23 @@ int Vertex::getProcessOfVertex(int vertexID)
 	if (it != processMap.end()) {
 		//Returns process of edge from processM
 		return it->second;
-	}
+	} 
+
+	return -1;
+}
+
+bool Vertex::isInsideProcess(int edgeID)
+{
+	//Is this edge inside the same process?
+	return processMap[edgeID] == _rank;
 }
 
 //Get cars which want to transition to outgoingEdge
-std::vector<Car*> Vertex::getTransitioningCars(int outgoingEdgeID)
+std::vector<Car*> Vertex::popTransitioningCars(int outgoingEdgeID)
 {
-	return transitioningCars[outgoingEdgeID];
+	//Get transitioning cars and delete the content of the vector for so new cars can be pushed afterwards
+	std::vector<Car*> v = transitioningCars[outgoingEdgeID];
+	transitioningCars[outgoingEdgeID].clear();
+
+	return v;
 }

@@ -174,7 +174,6 @@ int Edge::getEdgeCapacity() {
 	return _carQueueCapacity;
 }
 
-//TODO
 int Edge::getFreeSpaceAmount() {
 	return _carQueueCapacity - carQueue.size();
 }
@@ -187,7 +186,6 @@ int Edge::getFreeSpaceAmount() {
 ///Removes first car from queue
 ///</summary>
 Car * Edge::popCar() {
-	std::cout << "DELETED CAR";
 	std::cout << "CarQueue Size " << carQueue.size() << std::endl;
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
@@ -225,7 +223,6 @@ void Edge::pushCar(Car* car) {
 
 	car->setPosition(0.0);
 	carQueue.push_back(car);
-
 	car->UpdateWithOverflow(backPosition);
 
 	if (car->hasOverflow()) {

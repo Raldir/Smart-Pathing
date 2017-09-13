@@ -34,14 +34,13 @@ private:
 	int _currentTick;
 
 	void fillEdgeSpaceSendBuffer();
-
 	void exchangeEgdeFreeSpace();
 
-	void fillCarSendBuffer();
+	void sendCarInformation();
+	void receiveCarInformation();
 
 	//Stores which process has which connections to this process
 	//Incoming -> all edges which can receive cars from other processes
-	
 	/*
 		int -> processID
 		vector -> edges related to that process
@@ -53,7 +52,6 @@ private:
 	/*
 		int -> processID
 		vector -> buffer for edge space of every edge in ascending order
-		//TODO
 	*/
 	std::map<int, int*> edgeSpaceRecvBuffer;
 	std::map<int, int*> edgeSpaceSendBuffer;
@@ -66,7 +64,9 @@ private:
 	Request arrays for Waitall
 	*/
 	MPI_Request *req = new MPI_Request[outgoingConnections.size() + incomingConnections.size()];
+	int reqCounter;
 
-	void InitVectors();
+	void InitEdgeFreeSpaceBuffers();
+	void InitConnections(std::map<int,int> vertexVector);
 };
 

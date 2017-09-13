@@ -9,6 +9,9 @@ Car::Car(int cT) {
 	toBeDeleted = false;
 }
 
+Car::Car(int overfl, int distTravelled, std::queue<int> r) : overflow(overfl), distanceTravelled(distTravelled), route(r)
+{}
+
 Car::~Car()
 {
 	//TODO
@@ -69,6 +72,11 @@ void Car::UpdateWithOverflow(float nextCarPosition) {
 
 bool Car::hasOverflow() {
 	return overflow > 0;
+}
+
+int Car::getOverflow()
+{
+	return overflow;
 }
 
 void Car::setPosition(float newPosition) {

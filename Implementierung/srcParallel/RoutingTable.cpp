@@ -1,4 +1,6 @@
 #include "RoutingTable.h"
+#include "mpi.h"
+#include <algorithm>
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
@@ -37,6 +39,76 @@ std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
 
 bool RoutingTable::comp(const std::pair<int, float> &a, const std::pair<int, float> &b) {
 	return a.second < b.second;
+}
+
+//TODO
+void RoutingTable::insertProcessRoutes(std::pair<int, std::vector<std::pair<int, int>>> map)
+{
+	processRoutesMap[map.first] = map.second;
+}
+
+//Returns connections used in Simulation.cpp
+std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> RoutingTable::getProcessConnectionVectors()
+{
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPair;
+
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+	std::vector<int> localVertices;
+
+	//Get vertecies which are in this process by reconstructing routes via routing table
+	for (const std::vector<int> &vector : processRoutingMatrix) {
+		//Go through every vertex in the vector
+		for (const int &vertex : vector) {
+			//If this vertex is not yet contained in localVertices
+			if (std::find(localVertices.begin(), localVertices.end(), vertex) == localVertices.end()) {
+				//Add vertex localVertices
+				localVertices.push_back(vertex);
+			}
+		}
+	}
+
+	//first int -> processID, second int -> edgeID
+	std::map<int, std::vector<int>> incomingEdges;
+	std::map<int, std::vector<int>> outgoingEdges;
+
+	//Map which contains every vertex of the graph
+	std::map<int, Vertex*> globalVerticesMap = _graph->getVertexMap();
+
+	//Go through vertices of the local process and add the edges attached to them 
+	for (int &vertexID : localVertices) {
+		//Get every outgoing edge of current vertex
+		for (Edge* &edge : globalVerticesMap[vertexID]->getOutgoingEdges()) {
+
+			Vertex* currentEndVertex = edge->getVertices().second;
+
+			//If the endVertex of the edge is not inside this process (localVertices)
+			if (std::find(localVertices.begin(), localVertices.end(), currentEndVertex->getID()) == localVertices.end()) {
+				
+				//TODO
+				int currentEndVertexProcessID;
+				//Add both edges of the same street between the two vertices to the proper vector
+				outgoingEdges[currentEndVertexProcessID].push_back(edge->getID());
+				incomingEdges[currentEndVertexProcessID].push_back(currentEndVertex->outgoingNeighbor(vertexID)->getID());
+			}
+		}
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : incomingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : outgoingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	connectionPair.first = incomingEdges;
+	connectionPair.second = outgoingEdges;
+
+	return connectionPair;
 }
 
 template <class Graph, class CostType, class LocMap>
@@ -108,7 +180,7 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector
 }
 
 
-void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
+void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
 	std::map<int, Vertex*> _vertexMap = _graph->getVertexMap();
@@ -154,11 +226,11 @@ void RoutingTable::calculateRoutes( std::vector<Spawner*> _spawner) {
 			try {
 				// call astar named parameter interface
 				astar_search
-					(g, start,
-						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-						(_vertexMap, goal),
-						predecessor_map(&p[0]).distance_map(&d[0]).
-						visitor(astar_goal_visitor<vertex>(goal)));
+				(g, start,
+					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+					(_vertexMap, goal),
+					predecessor_map(&p[0]).distance_map(&d[0]).
+					visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -243,7 +315,7 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 {
 	std::map<int, float> costs;
 	for (int goalID : k_nn[destID]) {
-		if (goalID == startID||getRoute(startID, goalID).empty()) {
+		if (goalID == startID || getRoute(startID, goalID).empty()) {
 			//std::cout << "Would take same";
 			continue;
 		}
@@ -260,7 +332,7 @@ int RoutingTable::calculateBestGoal(int startID, int destID, int currentTimeTabl
 	}
 	std::vector<std::pair<int, float>> v{ costs.begin(), costs.end() };
 	std::partial_sort(v.begin(), v.begin() + 1, v.end(), &comp);
-	std::cout << "Best Goal for Car: " << v[0].first <<std::endl;
+	std::cout << "Best Goal for Car: " << v[0].first << std::endl;
 	return v[0].first;
 }
 
@@ -273,7 +345,7 @@ void RoutingTable::addCosts(int startID, int destID, int currentTimeTableIndex) 
 
 
 //Gibt Route zwischen origin und destination aus
-std::queue<int>  RoutingTable::getRoute(int originID, int destID) {
+std::queue<int> RoutingTable::getRoute(int originID, int destID) {
 
 	std::queue<int> queue;
 
