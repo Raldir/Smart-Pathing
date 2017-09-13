@@ -2,11 +2,9 @@
 #include <iostream>
 #include <fstream>
 #include "mpi.h"
-<<<<<<< HEAD
 #include <ctime>
-=======
 #include "Car.h"
->>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
+
 
 typedef std::vector<Edge*> edgeContainer;
 typedef std::vector<Spawner*> spawnerContainer;
@@ -26,35 +24,23 @@ Simulation::Simulation(int world_size, int rank)
 	_graph = new Graph();
 	clock_t begin = clock();
 	parallelRouting();
-<<<<<<< HEAD
 	clock_t end = clock();
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-	std::cout<<"Gesamte Zeit: " << elapsed_secs<<std::endl;
-
-
+	std::cout << "Gesamte Zeit: " << elapsed_secs << std::endl;
 
 	//initSpawner();
-	//for (int i = 0; i < _SIMULATION_TICKS; i++) {
-	//	nextTick();
-	//	writeResultsCurrentTick();
-	//}
-
-=======
-	system("Pause");
-	initSpawner();
-	for (int i = 0; i < _SIMULATION_TICKS; i++) {
+	/*for (int i = 0; i < _SIMULATION_TICKS; i++) {
 		std::cout << rank << " came to barrier on tick " << i << std::endl;
 		_currentTick++;
 		nextTick();
 
 		writeResultsCurrentTick();
-	}
->>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
+	}*/
 }
 
 
 void Simulation::parallelRouting() {
-	
+
 	//TODO Besser: Alle zu allen senden;
 	std::vector<int> ids = _graph->createSpawnerIDVector();
 	//std::cout << ids.size() << std::endl;
@@ -83,7 +69,7 @@ void Simulation::parallelRouting() {
 	RoutingTable routingTable(_graph, _NEAREST_NEIGHBOR, v);
 	std::vector<std::vector<int>> matrix = routingTable.getRoutingMatrix();
 	std::vector<std::vector<int>> matrixK_nn = routingTable.getKNearestMatrix();
-	executeGatherRouting(matrix, displays, send_cnt, _graph->getNumberVertices(), _graph->getSpawner().size()-1);
+	executeGatherRouting(matrix, displays, send_cnt, _graph->getNumberVertices(), _graph->getSpawner().size() - 1);
 
 	//EVERY PROCESS CALCULATES THE MATRIX BASED ON THE RECEIVING VALUES OF THE OTHER PROCESSES
 	std::map<int, std::map<int, std::queue<int>>> routingTableC;
@@ -115,12 +101,12 @@ void Simulation::parallelRouting() {
 
 	std::vector<std::vector<int>> matrixC = routingTable.getRoutingCosts();
 	int totalRow = _graph->getSpawner().size();
-	executeGatherRouting(matrixC, displays, send_cnt, 3, totalRow );
+	executeGatherRouting(matrixC, displays, send_cnt, 3, totalRow);
 	/*for (int i = 0; i < receive_elementC[_rank]; i++) {
 		std::cout << receive_buf[i] << " ";
 		if (i % 3 == 0 && i !0) std::cout << std::endl;
 	}*/
-	std::cout<<std::endl;
+	std::cout << std::endl;
 	std::map<int, std::map<int, float>> routingCosts;
 	lastC = 0;
 	for (int i = 0; i < _world_size; i++) {
@@ -129,7 +115,7 @@ void Simulation::parallelRouting() {
 			if (route.size() < 3) {
 				route.push_back(receive_buf[j + lastC]);
 			}
-			else{
+			else {
 				//std::cout << route.front() << " " << route.back() << std::endl;
 				routingCosts[route.front()][route.back()] = float(route[1]);
 				route.clear();
@@ -151,7 +137,7 @@ void Simulation::executeGatherRouting(std::vector<std::vector<int>> matrix, int*
 	int rows = matrix.size();
 	int** routes_arr = setupHMM(matrix, rows, cols);
 	int num_elem = rows * cols;
-	receive_buf = new int[cols * totalRows * (totalRows) * splitting[_rank]];
+	receive_buf = new int[cols * totalRows * (totalRows)* splitting[_rank]];
 	receive_elementC = new int[_world_size];
 
 	receive_displs = new int[_world_size];
@@ -170,130 +156,102 @@ void Simulation::executeGatherRouting(std::vector<std::vector<int>> matrix, int*
 
 
 
-	void Simulation::clear(std::queue<int> &q)
-	{
-		std::queue<int> empty;
-		std::swap(q, empty);
-	}
+void Simulation::clear(std::queue<int> &q)
+{
+	std::queue<int> empty;
+	std::swap(q, empty);
+}
 
-	int Simulation::getMaxCol(std::vector < std::vector<int>> &vals) {
-		int max = INT_MIN;
-		for (int i = 0; i < vals.size(); i++) {
-			for (int j = 0; j < vals[i].size(); j++) {
-				if (vals[i][j] > max) max = vals[i][j];
-			}
+int Simulation::getMaxCol(std::vector < std::vector<int>> &vals) {
+	int max = INT_MIN;
+	for (int i = 0; i < vals.size(); i++) {
+		for (int j = 0; j < vals[i].size(); j++) {
+			if (vals[i][j] > max) max = vals[i][j];
 		}
-		return max;
 	}
+	return max;
+}
 
-	int** Simulation::setupHMM(std::vector<std::vector<int>> &vals, int N, int M)
+int** Simulation::setupHMM(std::vector<std::vector<int>> &vals, int N, int M)
+{
+	int *buffer = new int[M*N];
+	int **temp = new int*[N];
+	for (int i = 0; i < N; ++i)
+		temp[i] = buffer + i*M;
+	//int** temp;
+	//temp = new int*[N];
+	for (unsigned i = 0; (i < N); i++)
 	{
-		int *buffer = new int[M*N];
-		int **temp = new int*[N];
-		for (int i = 0; i < N; ++i)
-			temp[i] = buffer + i*M;
-		//int** temp;
-		//temp = new int*[N];
-		for (unsigned i = 0; (i < N); i++)
+		for (unsigned j = 0; (j < M); j++)
 		{
-			for (unsigned j = 0; (j < M); j++)
-			{
-				//Stroes -1, in case the vector is smaller than the largest array
-				if (j >= vals[i].size()) temp[i][j] = -1;
-				else temp[i][j] = vals[i][j];
-			}
+			//Stroes -1, in case the vector is smaller than the largest array
+			if (j >= vals[i].size()) temp[i][j] = -1;
+			else temp[i][j] = vals[i][j];
 		}
-		return temp;
 	}
+	return temp;
+}
 
 
-	std::vector<int> Simulation::splitGraphSize(int numberProcesses) {
-		std::vector<Spawner*> spawners = _graph->getSpawner();
-		std::vector<int> splitedGraphSize;
-		//system("Pause");
-		int eachSpawnerNumber = int(spawners.size() / numberProcesses);
-		int overflow = spawners.size() - eachSpawnerNumber * numberProcesses;
-		for (int j = 0; j < numberProcesses; j++) {
-			int margin = eachSpawnerNumber;
-			if (overflow > 0) {
-				margin = eachSpawnerNumber + 1;
-				overflow--;
-			}
-			splitedGraphSize.push_back(margin);
+std::vector<int> Simulation::splitGraphSize(int numberProcesses) {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	std::vector<int> splitedGraphSize;
+	//system("Pause");
+	int eachSpawnerNumber = int(spawners.size() / numberProcesses);
+	int overflow = spawners.size() - eachSpawnerNumber * numberProcesses;
+	for (int j = 0; j < numberProcesses; j++) {
+		int margin = eachSpawnerNumber;
+		if (overflow > 0) {
+			margin = eachSpawnerNumber + 1;
+			overflow--;
 		}
-		return splitedGraphSize;
+		splitedGraphSize.push_back(margin);
 	}
+	return splitedGraphSize;
+}
 
-	std::vector<int> Simulation::splitGraphLocation(std::vector<int> buffer) {
-		std::vector<int> splitedGraphLocation;
-		int count = 0;
-		for (int j = 0; j < buffer.size(); j++) {
-			splitedGraphLocation.push_back(count);
-			count += buffer[j];
-		}
-		return splitedGraphLocation;
+std::vector<int> Simulation::splitGraphLocation(std::vector<int> buffer) {
+	std::vector<int> splitedGraphLocation;
+	int count = 0;
+	for (int j = 0; j < buffer.size(); j++) {
+		splitedGraphLocation.push_back(count);
+		count += buffer[j];
 	}
+	return splitedGraphLocation;
+}
 
-	std::vector<std::vector<int>> Simulation::splitGraph(int numberProcesses) {
-		std::vector<Spawner*> spawners = _graph->getSpawner();
-		std::vector<std::vector<int>> splitedGraph;
-		int eachSpawnerNumber = int(spawners.size() / numberProcesses);
-		int overflow = spawners.size() - eachSpawnerNumber * numberProcesses;
-		for (int i = 0; i < numberProcesses; i++) {
-			int margin = eachSpawnerNumber;
-			if (overflow > 0) margin = eachSpawnerNumber + 1;
-			for (int j = 0; j < margin; j++) {
-				splitedGraph[i].push_back(spawners[eachSpawnerNumber * i + j]->getID());
-				overflow--;
-			}
+std::vector<std::vector<int>> Simulation::splitGraph(int numberProcesses) {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	std::vector<std::vector<int>> splitedGraph;
+	int eachSpawnerNumber = int(spawners.size() / numberProcesses);
+	int overflow = spawners.size() - eachSpawnerNumber * numberProcesses;
+	for (int i = 0; i < numberProcesses; i++) {
+		int margin = eachSpawnerNumber;
+		if (overflow > 0) margin = eachSpawnerNumber + 1;
+		for (int j = 0; j < margin; j++) {
+			splitedGraph[i].push_back(spawners[eachSpawnerNumber * i + j]->getID());
+			overflow--;
 		}
-		return splitedGraph;
 	}
+	return splitedGraph;
+}
 
-	Simulation::~Simulation()
-	{
+Simulation::~Simulation()
+{
+}
+
+void Simulation::writeResultsCurrentTick()
+{
+	std::ofstream results;
+	edgeContainer edges = _graph->getEdges();
+	results.open("../../Output/" + std::to_string(_currentTick) + ".txt");
+	for (edgeContainer::iterator it2 = edges.begin(); it2 != edges.end(); it2++) {
+		results << (*it2)->getID() << " " << (*it2)->numberOfCars() << " " << (*it2)->getEdgeCapacity() << '\n';
 	}
-
-	void Simulation::writeResultsCurrentTick()
-	{
-		std::ofstream results;
-		edgeContainer edges = _graph->getEdges();
-		results.open("../../Output/" + std::to_string(_currentTick) + ".txt");
-		for (edgeContainer::iterator it2 = edges.begin(); it2 != edges.end(); it2++) {
-			results << (*it2)->getID() << " " << (*it2)->numberOfCars() << " " << (*it2)->getEdgeCapacity() << '\n';
-		}
-		results.close();
-	}
+	results.close();
+}
 
 
-<<<<<<< HEAD
-	void Simulation::nextTick()
-	{
-		//VON CHRISTOPH
-		_currentTick++;
-		int timeStamp = _currentTick %_TIMETABLE_SPAN;
-		std::cout << "begin update" << '\n';
-		vertexContainer vertices = _graph->getVertices();
-		for (vertexContainer::iterator it2 = vertices.begin(); it2 != vertices.end(); it2++) {
-			(*it2)->Update();
-		}
-		std::cout << "Vertex update completed" << '\n';
-		for (Edge* ed : _graph->getEdges()) {
-			ed->Update(_currentTick);
-			//Methode zum Testen
-			//ed->printCars();
-		}
-		std::cout << "Edge update Phase 1 completed" << '\n';
-		std::vector<Edge*> remainingEdges = _graph->getEdges();
-		for (int i = 0; i < _graph->getEdges().size(); i++) {
-			for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end();) {
-				(*it2)->UpdateOverflow();
-				//(*it2)->printCars();
-				if (!(*it2)->hasOverflow()) {
-					it2 = remainingEdges.erase(it2);
-				}
-				else it2++;
-=======
 void Simulation::nextTick()
 {
 	int timeStamp = _currentTick %_TIMETABLE_SPAN;
@@ -325,32 +283,21 @@ void Simulation::nextTick()
 	std::cout << "Edge update Phase 1 completed" << '\n';
 	std::vector<Edge*> remainingEdges = _graph->getEdges();
 	for (int i = 0; i < _graph->getEdges().size(); i++) {
-		
+
 		//After every Update, exchange the space
 		fillEdgeSpaceSendBuffer();
 		exchangeEgdeFreeSpace();
-		
+
 		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end();) {
 			(*it2)->UpdateOverflow();
 			if (!(*it2)->hasOverflow()) {
 				it2 = remainingEdges.erase(it2);
->>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
 			}
+			else it2++;
 		}
-<<<<<<< HEAD
-		std::cout << "Edge update Phase 2 completed" << '\n';
-		spawnerContainer spawners = _graph->getSpawner();
-		for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
-			//std::cout << "hello";
-			//VON CHRISTOPH --> gibt tick an update weiter
-			(*it2)->Update(timeStamp);
-		}
-		std::cout << "Tick " << _currentTick << "finished" << '\n';
-	}
-=======
 
 		sendCarInformation();
-		receiveCarInformation();	
+		receiveCarInformation();
 	}
 
 	//After every Update, exchange the space
@@ -366,19 +313,18 @@ void Simulation::nextTick()
 	}
 	std::cout << "Tick " << _currentTick << "finished" << '\n';
 }
->>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
 
-	void Simulation::initSpawner() {
-		std::vector<Spawner*> spawner = _graph->getSpawner();
-		std::vector<std::pair<Spawner*, int>> vertexPriorities;
-		for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
-			vertexPriorities.push_back(std::pair<Spawner*, int>((*it2), rand() % VERTEX_PRIORITY_DIVERGENCE));
-		}
-		for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
-			(*it2)->linkRoutingTable(_routingTable);
-			(*it2)->linkVertexPriorities(vertexPriorities);
-		}
+void Simulation::initSpawner() {
+	std::vector<Spawner*> spawner = _graph->getSpawner();
+	std::vector<std::pair<Spawner*, int>> vertexPriorities;
+	for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
+		vertexPriorities.push_back(std::pair<Spawner*, int>((*it2), rand() % VERTEX_PRIORITY_DIVERGENCE));
 	}
+	for (std::vector<Spawner*>::iterator it2 = spawner.begin(); it2 != spawner.end(); it2++) {
+		(*it2)->linkRoutingTable(_routingTable);
+		(*it2)->linkVertexPriorities(vertexPriorities);
+	}
+}
 
 /*
 	Fill the send buffer which contains the free space of edges with edges sorted in ascending order
@@ -390,7 +336,7 @@ void Simulation::fillEdgeSpaceSendBuffer() {
 
 		//Go through the vector of edges and get the amount of free space in them
 		for (std::vector<int>::iterator it = outCon.second.begin(); it != outCon.second.end(); it++) {
-			
+
 			//Get free space amount from edge (must be in the same process)
 			int freeSpaceAmount = _graph->getEdge(outCon.second[*it])->getFreeSpaceAmount();
 			//Push free space amount into the corresponding place inside buffer
@@ -539,7 +485,7 @@ void Simulation::receiveCarInformation() {
 			std::queue<int> route;
 
 			//Get the route until a -1 is read
-			while (currentID != - 1) {
+			while (currentID != -1) {
 				currentID = buffer[counter++];
 				route.push(currentID);
 			}
@@ -547,7 +493,7 @@ void Simulation::receiveCarInformation() {
 			//Create car with parameters and push it on edge
 			Car* car = new Car(overflowPosition, distanceTravelled, route);
 			_graph->getEdge(edgeID)->pushCar(car);
-		}		
+		}
 	}
 }
 
@@ -574,22 +520,22 @@ void Simulation::InitEdgeFreeSpaceBuffers() {
 	}
 }
 
-void Simulation::InitConnections(std::map<int,int> vertexVector)
+void Simulation::InitConnections(std::map<int, int> vertexVector)
 {
 	std::vector<int> incoming;
 	std::vector<int> outgoing;
 }
 
-	int Simulation::getEnd(std::queue<int> route) {
-		int temp = 0;
-		for (int i = 0; i < route.size(); i++) {
-			if (route.front() == -1) {
-				return temp;
-			}
-			else {
-				temp = route.front();
-				route.pop();
-			}
+int Simulation::getEnd(std::queue<int> route) {
+	int temp = 0;
+	for (int i = 0; i < route.size(); i++) {
+		if (route.front() == -1) {
+			return temp;
 		}
-		return temp;
+		else {
+			temp = route.front();
+			route.pop();
+		}
 	}
+	return temp;
+}

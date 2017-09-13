@@ -67,8 +67,8 @@ public:
 	std::vector<std::vector<int>> getRoutingCosts();
 	std::vector<std::vector<int>> getKNearestMatrix();
 	void calculateKNearest();
-	std::queue<int> getRoute(int originID, int destID);
-	std::vector<std::vector<int>> RoutingTable::getRoutingMatrix();
+
+
 	void setCost(int originID, int destID, float cost);
     float getCost(int originID, int destID);
 

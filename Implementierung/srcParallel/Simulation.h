@@ -34,12 +34,10 @@ private:
 	Graph* _graph;
 	int _currentTick;
 
-<<<<<<< HEAD
 	//For Parallelisation
 	int* receive_displs;
 	int* receive_elementC;
 	int* receive_buf;
-=======
 	void fillEdgeSpaceSendBuffer();
 	void exchangeEgdeFreeSpace();
 
@@ -75,6 +73,5 @@ private:
 
 	void InitEdgeFreeSpaceBuffers();
 	void InitConnections(std::map<int,int> vertexVector);
->>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
 };
 

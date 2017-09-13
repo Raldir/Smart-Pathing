@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include "mpi.h"
 
-<<<<<<< HEAD
 #ifdef BOOST_NO_EXCEPTIONS
 void
 boost::throw_exception(std::exception const& ex)
@@ -30,9 +29,8 @@ boost::throw_exception(std::exception const& ex)
 
 using namespace boost;
 using boost::graph::distributed::mpi_process_group;
-=======
+
 int main(int argc, char *argv[]) {
->>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
 
 	MPI_Init(NULL, NULL);
 
@@ -40,8 +38,9 @@ int main(int argc, char *argv[]) {
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-	printf("Hello World von %d", rank);
 
+	printf("Hello World von %d", rank);
+	/*
 	std::map<int, int*> sendMap;
 	std::map<int, int*> recvMap;
 
@@ -85,8 +84,8 @@ int main(int argc, char *argv[]) {
 
 	for (auto con : recvMap) {
 		std::cout << "As Process " << rank << " from Process " << con.first << ", data received: " << *con.second << std::endl;
-	}
-
+	}*/
+	Simulation* simulation = new Simulation(world_size, rank);
 	MPI_Finalize();
 
 	/*//Graph* _graph = new Graph();
