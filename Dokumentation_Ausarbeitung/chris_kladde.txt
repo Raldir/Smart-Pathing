@@ -40,8 +40,8 @@ TIMETABLE:
 	TODO Auto merkt sich wie lange es lebt/ wann es angefangen hat
 	TODO Auto merkt sich Route
 	
-	Bei entfernen des Gewichts auf Edge braucht man:
-		50g Autoerzeugungzeitpunkt / vergangen
+	Bei entfernen des Gewichts auf Edge braucht man: (siehe auch addT
+		50g Autoerzeugungzeitpunkt / vergangene Zeit seit Erzeugung
 			Distanz vom Startpunkt --> Inkrementieren bei jedem Update
 			Remove that filth at the correct timestamp
 	

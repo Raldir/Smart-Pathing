@@ -7,15 +7,18 @@
 #include "TrafficLight.h"
 #include "Graph.h"
 #include "main.h"
+#include "mpi.h"
 
 /**
 */
 Vertex::Vertex(int id, float x, float y) : _X(x), _Y(y), _ID(id) {
+	MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
 }
 
 
 Vertex::Vertex(int id, float x, float y, TrafficLight tL) : _X(x), _Y(y), _ID(id) {
 	trafficLight = tL;
+	MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
 }
 
 void Vertex::setTrafficLight(TrafficLight tL) {
@@ -52,35 +55,55 @@ void Vertex::Update() {
 void Vertex::transferCar(int incomingEdgeID) {
 
 	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
-
-	Edge* nextEdge;
-
 	//Checks wheter or not this is the destination of this car
 	if (_ID != car->getDestination()) {
-		nextEdge = outgoingNeighbor(car->getNextVertexID());
-		//std::cout << "PUT CAR ON" << this->getID() << " " << car->getNextVertexID() << std::endl;
-		//If there is an edge the car can transported to
-		if (nextEdge != NULL) {
-			if (!nextEdge->isFull()) {
-				std::cout << "CALLED on IncomingEdgeID " <<incomingEdgeID << std::endl;
-				//Haben car schon, brauchen keinen neuen Pointer
+
+		//Get the next edgeID
+		int edgeID = outgoingNeighbor(car->getNextVertexID())->getID();
+
+		//If car is to be transitioned to other process
+		if (!isInsideProcess(edgeID)) {
+
+			//Is there free space?
+			//TODO
+			if (freeEdgeSpaceMap[edgeID] > 0) {
+				freeEdgeSpaceMap[edgeID]--;
+
+				//Take car from edge and remove vertex from route
 				takeCar(incomingEdgeID);
 				car->popCurrentVertex();
 
-				//TODO PARALLEL
-				giveCar(nextEdge, car);
-
-
-				std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
-
-				//Removes the next point as destination
+				//Storing for later transfer
+				transitioningCars[edgeID].push_back(car);
 			}
 		}
-		//No edge found
 		else {
-			std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
+			Edge* nextEdge = outgoingNeighbor(car->getNextVertexID());
+
+			//std::cout << "PUT CAR ON" << this->getID() << " " << car->getNextVertexID() << std::endl;
+			//If there is an edge the car can transported to
+			if (nextEdge != NULL) {
+				if (!nextEdge->isFull()) {
+
+					std::cout << "CALLED on IncomingEdgeID " << incomingEdgeID << std::endl;
+
+					//Haben car schon, brauchen keinen neuen Pointer
+					takeCar(incomingEdgeID);
+					car->popCurrentVertex();
+
+					//Actual transfer to car
+					giveCar(nextEdge, car);
+
+					//std::cout << "VERTEX" << _ID << ", transferred car " << car->getID() << " from " << incomingEdgeID << " to " << nextEdge->getID() << std::endl;
+					//Removes the next point as destination
+				}
+			}
+			//No edge found
+			else {
+				std::cout << "No edge/vertex found leading to next vertex " << car->getNextVertexID() << "!" << std::endl;
+			}
 		}
-	} 
+	}
 	//If this is the destination -> take car from edge and destroy it
 	else {
 		car->markAsDeleted();
@@ -94,11 +117,10 @@ Car* Vertex::takeCar(int incomingEdgeID) {
 	Edge* e = getEdgeFromID(incomingEdgeID);
 	//Remove car from edge
 	Car* car = e->popCar();
-	std::cout << "TOOK OUT CAR of EDGE " <<incomingEdgeID<< std::endl;
-	//Add travelled distance to car inner variable
+	
+	//Add travelled distance
 	car->addDistanceTravelled(e->getLength());
 
-	//VON CHRISTOPH
 	//Correct timestamp to remove weight from timetable 
 	std::pair<int, int> timetableValues = Graph::calculateTimetableValues(car->getSpawnTick(), car->getDistanceTravelled());
 	//Remove weight from timetable set at the moment of birth of car
@@ -117,7 +139,7 @@ bool Vertex::canTransit(int incomingEdgeID, int outgoingEdgeID) {
 	//TODO Implement when Traffic Light is ready
 
 	//return !isEdgeFullMap[outgoingEdgeID];
-	return trafficLight.canCross(incomingEdgeID) &&!(getEdgeFromID(outgoingEdgeID)->isFull());
+	return trafficLight.canCross(incomingEdgeID) && !(getEdgeFromID(outgoingEdgeID)->isFull());
 }
 
 /*
@@ -213,7 +235,7 @@ Edge* Vertex::getEdgeFromID(int edgeID) {
 
 void Vertex::printEdges() {
 	std::cout << "Vertex:" << _ID << " ";
-	for ( Edge* e : incomingEdges) {
+	for (Edge* e : incomingEdges) {
 		std::cout << "Incoming Edge: " << e->getID() << std::endl;
 	}
 
@@ -238,4 +260,36 @@ float Vertex::getY() {
 std::pair<float, float> Vertex::getPosition()
 {
 	return std::make_pair(_X, _Y);
+}
+
+void Vertex::setProcessOfEdge(int edgeID, int procID) {
+	processMap[edgeID] = procID;
+}
+
+int Vertex::getProcessOfVertex(int vertexID)
+{
+	std::map<int, int>::iterator it = processMap.find(vertexID);
+
+	if (it != processMap.end()) {
+		//Returns process of edge from processM
+		return it->second;
+	} 
+
+	return -1;
+}
+
+bool Vertex::isInsideProcess(int edgeID)
+{
+	//Is this edge inside the same process?
+	return processMap[edgeID] == _rank;
+}
+
+//Get cars which want to transition to outgoingEdge
+std::vector<Car*> Vertex::popTransitioningCars(int outgoingEdgeID)
+{
+	//Get transitioning cars and delete the content of the vector for so new cars can be pushed afterwards
+	std::vector<Car*> v = transitioningCars[outgoingEdgeID];
+	transitioningCars[outgoingEdgeID].clear();
+
+	return v;
 }

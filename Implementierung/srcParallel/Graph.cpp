@@ -28,6 +28,11 @@ std::vector<Spawner*> Graph::getSpawner()
 	return _spawner;
 }
 
+Edge* Graph::getEdge(int edgeID) {
+	return _edgeMap[edgeID];
+}
+
+
 std::vector<Edge*> Graph::getEdges()
 {
 	return _edges;

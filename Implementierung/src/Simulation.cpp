@@ -1,13 +1,22 @@
 #include "Simulation.h"
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 typedef std::vector<Edge*> edgeContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 typedef std::vector<Vertex*> vertexContainer;
+typedef std::chrono::high_resolution_clock chrono_t;
 
 Simulation::Simulation()
 {
+	//Time at the beginning
+	chrono_t::time_point t1 = chrono_t::now();
+	chrono_t::time_point tC;
+
+	std::array<chrono_t::time_point, _SIMULATION_TICKS> timePointBeginning;
+	std::array<chrono_t::time_point, _SIMULATION_TICKS> timePointEnding;
+
 	_currentTick = 0;
 
 	_graph = new Graph();
@@ -15,10 +24,25 @@ Simulation::Simulation()
 	initSpawner();
 	std::cout << "Init completed";
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
+		timePointBeginning[i] = chrono_t::now();
 		nextTick();
+		timePointEnding[i] = chrono_t::now();
 		writeResultsCurrentTick();
 	}
 
+	//Time at the end
+	chrono_t::time_point t2 = chrono_t::now();
+
+	std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+	std::cout << "TIME PASSED SINCE BEGINNING: " << time_span.count() << " SECONDS" << std::endl;
+
+	double tickSpan = 0;
+
+	for (int t = 0; t < _SIMULATION_TICKS; t++) {
+		 tickSpan += std::chrono::duration_cast<std::chrono::duration<double>>(timePointEnding[t] - timePointBeginning[t]).count();
+	}
+
+	std::cout << "Durchschnittliche Zeit pro Tick: " << (double)tickSpan / _SIMULATION_TICKS << std::endl;
 }
 
 

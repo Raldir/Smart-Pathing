@@ -3,6 +3,7 @@
 #include "Spawner.h"
 #include "main.h"
 #include "RoutingTable.h"
+#include "mpi.h"
 
 
 class Simulation
@@ -33,9 +34,47 @@ private:
 	Graph* _graph;
 	int _currentTick;
 
+<<<<<<< HEAD
 	//For Parallelisation
 	int* receive_displs;
 	int* receive_elementC;
 	int* receive_buf;
+=======
+	void fillEdgeSpaceSendBuffer();
+	void exchangeEgdeFreeSpace();
+
+	void sendCarInformation();
+	void receiveCarInformation();
+
+	//Stores which process has which connections to this process
+	//Incoming -> all edges which can receive cars from other processes
+	/*
+		int -> processID
+		vector -> edges related to that process
+	*/
+	std::map<int, std::vector<int>> incomingConnections;
+	std::map<int, std::vector<int>> outgoingConnections;
+
+	//Vectors of vectors of pointers to buffer for information about other processes edges
+	/*
+		int -> processID
+		vector -> buffer for edge space of every edge in ascending order
+	*/
+	std::map<int, int*> edgeSpaceRecvBuffer;
+	std::map<int, int*> edgeSpaceSendBuffer;
+
+	//Vectors that transfer information about cars between processes
+	std::map<int, int*> carRecvBuffer;
+	std::map<int, int*> carSendBuffer;
+
+	/*
+	Request arrays for Waitall
+	*/
+	MPI_Request *req = new MPI_Request[outgoingConnections.size() + incomingConnections.size()];
+	int reqCounter;
+
+	void InitEdgeFreeSpaceBuffers();
+	void InitConnections(std::map<int,int> vertexVector);
+>>>>>>> 3a82967eb275c9b073b1308a784abe4add6af0e6
 };
 

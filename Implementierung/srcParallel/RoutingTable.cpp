@@ -1,5 +1,5 @@
 #include "RoutingTable.h"
-#include "mpi.h"
+#include <algorithm>
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
@@ -7,19 +7,6 @@ typedef std::vector<Spawner*> spawnerContainer;
 
 using namespace boost;
 using boost::graph::distributed::mpi_process_group;
-
-//using namespace boost::lambda;
-//
-//typedef float coord_t;
-//typedef tuple<coord_t, coord_t> point_t;
-//
-//coord_t RoutingTable::distance_sq(Vertex* v1, Vertex* v2) { // or boost::geometry::distance
-//	point_t a = make_tuple(v1->getX(), v1->getY());
-//	point_t b = make_tuple(v2->getX(), v2->getY());
-//		coord_t x = a.get<0>() - b.get<0>();
-//		coord_t y = a.get<1>() - b.get<1>();
-//		return x*x + y*y;
-//}
 
 
 std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
@@ -40,6 +27,76 @@ std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
 
 bool RoutingTable::comp(const std::pair<int, float> &a, const std::pair<int, float> &b) {
 	return a.second < b.second;
+}
+
+//TODO
+void RoutingTable::insertProcessRoutes(std::pair<int, std::vector<std::pair<int, int>>> map)
+{
+	processRoutesMap[map.first] = map.second;
+}
+
+//Returns connections used in Simulation.cpp
+std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> RoutingTable::getProcessConnectionVectors()
+{
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPair;
+
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+	std::vector<int> localVertices;
+
+	//Get vertecies which are in this process by reconstructing routes via routing table
+	for (const std::vector<int> &vector : processRoutingMatrix) {
+		//Go through every vertex in the vector
+		for (const int &vertex : vector) {
+			//If this vertex is not yet contained in localVertices
+			if (std::find(localVertices.begin(), localVertices.end(), vertex) == localVertices.end()) {
+				//Add vertex localVertices
+				localVertices.push_back(vertex);
+			}
+		}
+	}
+
+	//first int -> processID, second int -> edgeID
+	std::map<int, std::vector<int>> incomingEdges;
+	std::map<int, std::vector<int>> outgoingEdges;
+
+	//Map which contains every vertex of the graph
+	std::map<int, Vertex*> globalVerticesMap = _graph->getVertexMap();
+
+	//Go through vertices of the local process and add the edges attached to them 
+	for (int &vertexID : localVertices) {
+		//Get every outgoing edge of current vertex
+		for (Edge* &edge : globalVerticesMap[vertexID]->getOutgoingEdges()) {
+
+			Vertex* currentEndVertex = edge->getVertices().second;
+
+			//If the endVertex of the edge is not inside this process (localVertices)
+			if (std::find(localVertices.begin(), localVertices.end(), currentEndVertex->getID()) == localVertices.end()) {
+				
+				//TODO
+				int currentEndVertexProcessID;
+				//Add both edges of the same street between the two vertices to the proper vector
+				outgoingEdges[currentEndVertexProcessID].push_back(edge->getID());
+				incomingEdges[currentEndVertexProcessID].push_back(currentEndVertex->outgoingNeighbor(vertexID)->getID());
+			}
+		}
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : incomingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : outgoingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	connectionPair.first = incomingEdges;
+	connectionPair.second = outgoingEdges;
+
+	return connectionPair;
 }
 
 template <class Graph, class CostType, class LocMap>
@@ -166,11 +223,11 @@ void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 			try {
 				// call astar named parameter interface
 				astar_search
-					(g, start,
-						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-						(_vertexMap, goal),
-						predecessor_map(&p[0]).distance_map(&d[0]).
-						visitor(astar_goal_visitor<vertex>(goal)));
+				(g, start,
+					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+					(_vertexMap, goal),
+					predecessor_map(&p[0]).distance_map(&d[0]).
+					visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -287,7 +344,7 @@ void RoutingTable::addCosts(int startID, int destID, int currentTimeTableIndex) 
 
 
 //Gibt Route zwischen origin und destination aus
-std::queue<int>  RoutingTable::getRoute(int originID, int destID) {
+std::queue<int> RoutingTable::getRoute(int originID, int destID) {
 
 	std::queue<int> queue;
 

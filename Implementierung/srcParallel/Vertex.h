@@ -50,7 +50,6 @@ public:
 	std::vector<Edge*> getEdges();
 
 	Edge* outgoingNeighbor(int destID);
-
 	Edge* incomingNeighbor(int destID);
 
 	Edge* getEdgeFromID(int edgeID);
@@ -64,10 +63,14 @@ public:
 
 	std::pair<float, float> getPosition();
 
+	std::vector<Car*> popTransitioningCars(int outgoingEdgeID);
 
 protected:
 
 	TrafficLight trafficLight;
+
+	void setProcessOfEdge(int edgeID, int processID);
+	int getProcessOfVertex(int vertexID);
 
 	/*
 		int -> ID of edge
@@ -79,4 +82,27 @@ protected:
 	float _X;
 	float _Y;
 	int _ID;
+	int _rank;
+
+	/*
+		Maps Edge ID to its process
+		Needed for transitioning between two processes
+
+		first int -> edgeID
+		second int -> processID
+	*/
+	std::map<int, int> processMap;
+
+	//TODO Nötig?
+	bool isInsideProcess(int edgeID);
+
+	//TODO
+	/*
+		first int -> edge
+		second int -> freeSpace
+	*/
+	std::map<int, int> freeEdgeSpaceMap;
+
+	//After each update is finished transitioning cars will have been stored here
+	std::map<int, std::vector<Car*>> transitioningCars;
 };

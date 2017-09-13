@@ -12,6 +12,8 @@ class Car {
 public:
 	Car(int id);
 
+	Car(int overfl, int distTravelled, std::queue<int> r);
+
 	Car() {};
 
 	~Car();
@@ -22,6 +24,7 @@ public:
 	void UpdateWithOverflow(float nextCarPosition);
 
 	bool hasOverflow();
+	int getOverflow();
 
 	//Updates position based on overflow
 	//void updateWithOverflowPosition(float nextCarPosition);

@@ -55,7 +55,8 @@ void Edge::Update(int currentTick) {
 			nextCarPosition = car->getCurrentPosition();
 
 			//If this car has remaining overflow
-			if (!hasOverflowCars && car->hasOverflow()) {
+			//If first car has no overflow, any accumulating overflow is meaningless
+			if (carQueue.front()->hasOverflow() && !hasOverflowCars && car->hasOverflow()) {
 				hasOverflowCars = true;
 			}
 		}
@@ -174,6 +175,11 @@ int Edge::calculateTimetableSpan(int i) {
 int Edge::getEdgeCapacity() {
 	return _carQueueCapacity;
 }
+
+int Edge::getFreeSpaceAmount() {
+	return _carQueueCapacity - carQueue.size();
+}
+
 /*
 ###### QUEUE
 */
@@ -182,7 +188,6 @@ int Edge::getEdgeCapacity() {
 ///Removes first car from queue
 ///</summary>
 Car * Edge::popCar() {
-	std::cout << "DELETED CAR";
 	std::cout << "CarQueue Size " << carQueue.size() << std::endl;
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
@@ -220,7 +225,6 @@ void Edge::pushCar(Car* car) {
 
 	car->setPosition(0.0);
 	carQueue.push_back(car);
-
 	car->UpdateWithOverflow(backPosition);
 
 	if (car->hasOverflow()) {
@@ -306,20 +310,10 @@ void Edge::removeObserver(std::string indicator) {
 ///</summary>
 void Edge::notifyVertex() {
 
-	//Wenn die Edge voll ist
-	/*if (isFull() != lastTickIsFull && startVertex != NULL) {
-		startVertex->setIsEdgeFull(_ID, isFull());
-
-		lastTickIsFull = isFull();
-
-		std::cout << "EDGE " << _ID << " toggled lastTickIsFull flag to " << lastTickIsFull << std::endl;
-	}*/
-
 	//If a car has reached the end of the street with a small margin
 	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH * 0.98) {
 
-		std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
-		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
+		//std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
 		endVertex->transferCar(_ID);
 	}
 	else {
