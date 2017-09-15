@@ -1,0 +1,316 @@
+------ Build started: Project: SmartCarsParallel, Configuration: Debug x64 ------
+1>  RoutingTable.cpp
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\main.h(3): warning C4305: 'initializing': truncation from 'double' to 'float'
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\main.h(5): warning C4305: 'initializing': truncation from 'double' to 'float'
+1>c:\local\boost_1_65_0\boost\mpi\detail\mpi_datatype_primitive.hpp(61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\mpi_datatype_primitive.hpp(80): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\packed_iprimitive.hpp(62): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\packed_iprimitive.hpp(106): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\binary_buffer_iprimitive.hpp(64): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\packed_oprimitive.hpp(52): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\packed_oprimitive.hpp(96): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\packed_oprimitive.hpp(100): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>c:\local\boost_1_65_0\boost\mpi\detail\binary_buffer_oprimitive.hpp(53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(252): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(252): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(253): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(257): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(263): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(236): warning C4101: 'fg': unreferenced local variable
+1>c:\local\boost_1_65_0\boost\graph\distributed\adjacency_list.hpp(2899): warning C4267: 'argument': conversion from 'size_t' to 'boost::processor_id_type', possible loss of data
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(145): note: see reference to function template instantiation 'boost::detail::parallel::global_descriptor<unsigned __int64> boost::vertex<boost::listS,boost::graph::distributed::mpi_process_group,boost::vecS,boost::defaultS,boost::directedS,boost::no_property,boost::property<boost::edge_weight_t,int,boost::no_property>,boost::no_property,boost::listS>(unsigned __int64,const boost::adjacency_list<boost::listS,boost::distributedS<boost::graph::distributed::mpi_process_group,boost::vecS,boost::defaultS>,boost::directedS,boost::no_property,boost::property<boost::edge_weight_t,int,boost::no_property>,boost::no_property,boost::listS> &)' being compiled
+1>c:\local\boost_1_65_0\boost\graph\distributed\shuffled_distribution.hpp(63): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+1>  c:\local\boost_1_65_0\boost\graph\distributed\adjacency_list.hpp(1600): note: see reference to function template instantiation 'boost::graph::distributed::shuffled_distribution<boost::parallel::variant_distribution<ProcessGroup,VertexSize>>::size_type boost::graph::distributed::shuffled_distribution<boost::parallel::variant_distribution<ProcessGroup,VertexSize>>::block_size<boost::graph::distributed::mpi_process_group::process_id_type>(ProcessID,boost::graph::distributed::shuffled_distribution<boost::parallel::variant_distribution<ProcessGroup,VertexSize>>::size_type) const' being compiled
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              ProcessID=boost::graph::distributed::mpi_process_group::process_id_type
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\distributed\adjacency_list.hpp(1600): note: see reference to function template instantiation 'boost::graph::distributed::shuffled_distribution<boost::parallel::variant_distribution<ProcessGroup,VertexSize>>::size_type boost::graph::distributed::shuffled_distribution<boost::parallel::variant_distribution<ProcessGroup,VertexSize>>::block_size<boost::graph::distributed::mpi_process_group::process_id_type>(ProcessID,boost::graph::distributed::shuffled_distribution<boost::parallel::variant_distribution<ProcessGroup,VertexSize>>::size_type) const' being compiled
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              ProcessID=boost::graph::distributed::mpi_process_group::process_id_type
+1>          ]
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(134): note: see reference to function template instantiation 'boost::adjacency_list<boost::listS,boost::distributedS<boost::graph::distributed::mpi_process_group,boost::vecS,boost::defaultS>,boost::directedS,boost::no_property,boost::property<boost::edge_weight_t,int,boost::no_property>,boost::no_property,boost::listS>::adjacency_list<Edge*,int*>(EdgeIterator,EdgeIterator,EdgePropertyIterator,unsigned __int64,const ProcessGroup &,const GraphProperty &)' being compiled
+1>          with
+1>          [
+1>              EdgeIterator=Edge *,
+1>              EdgePropertyIterator=int *,
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              GraphProperty=boost::no_property
+1>          ]
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(134): note: see reference to function template instantiation 'boost::adjacency_list<boost::listS,boost::distributedS<boost::graph::distributed::mpi_process_group,boost::vecS,boost::defaultS>,boost::directedS,boost::no_property,boost::property<boost::edge_weight_t,int,boost::no_property>,boost::no_property,boost::listS>::adjacency_list<Edge*,int*>(EdgeIterator,EdgeIterator,EdgePropertyIterator,unsigned __int64,const ProcessGroup &,const GraphProperty &)' being compiled
+1>          with
+1>          [
+1>              EdgeIterator=Edge *,
+1>              EdgePropertyIterator=int *,
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              GraphProperty=boost::no_property
+1>          ]
+1>c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(61): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+1>  c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(61): note: while compiling class template member function 'int boost::parallel::variant_distribution<ProcessGroup,VertexSize>::poly_distribution<Distribution>::in_process(unsigned __int64) const'
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              Distribution=boost::parallel::block
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(85): note: see reference to class template instantiation 'boost::parallel::variant_distribution<ProcessGroup,VertexSize>::poly_distribution<Distribution>' being compiled
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              Distribution=boost::parallel::block
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\distributed\adjacency_list.hpp(1602): note: see reference to function template instantiation 'boost::parallel::variant_distribution<ProcessGroup,VertexSize>::variant_distribution<boost::parallel::block>(const Distribution &)' being compiled
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              Distribution=boost::parallel::block
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\distributed\adjacency_list.hpp(1599): note: see reference to function template instantiation 'boost::parallel::variant_distribution<ProcessGroup,VertexSize>::variant_distribution<boost::parallel::block>(const Distribution &)' being compiled
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              Distribution=boost::parallel::block
+1>          ]
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(53): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(52): note: while compiling class template member function 'float distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>>::operator ()(unsigned __int64)'
+1>          with
+1>          [
+1>              _Kty=int,
+1>              _Ty=Vertex *
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\astar_search.hpp(374): note: see reference to function template instantiation 'float distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>>::operator ()(unsigned __int64)' being compiled
+1>          with
+1>          [
+1>              _Kty=int,
+1>              _Ty=Vertex *
+1>          ]
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(230): note: see reference to class template instantiation 'distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>>' being compiled
+1>          with
+1>          [
+1>              _Kty=int,
+1>              _Ty=Vertex *
+1>          ]
+1>d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(54): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+1>c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(160): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+1>  c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(181): note: see reference to function template instantiation 'size_t boost::parallel::block::start<ProcessID>(ID) const' being compiled
+1>          with
+1>          [
+1>              ProcessID=int,
+1>              ID=int
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(70): note: see reference to function template instantiation 'SizeType boost::parallel::block::global<int,unsigned __int64>(ProcessID,SizeType) const' being compiled
+1>          with
+1>          [
+1>              SizeType=unsigned __int64,
+1>              ProcessID=int
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\parallel\distribution.hpp(70): note: while compiling class template member function 'unsigned __int64 boost::parallel::variant_distribution<ProcessGroup,VertexSize>::poly_distribution<Distribution>::global(int,unsigned __int64) const'
+1>          with
+1>          [
+1>              ProcessGroup=boost::graph::distributed::mpi_process_group,
+1>              VertexSize=unsigned __int64,
+1>              Distribution=boost::parallel::block
+1>          ]
+1>c:\local\boost_1_65_0\boost\graph\distributed\dijkstra_shortest_paths.hpp(116): error C2664: 'void boost::local_put<boost::detail::parallel::global_descriptor<unsigned __int64>,boost::default_color_type>(boost::dummy_property_map,const Key &,const Value &)': cannot convert argument 1 from 'boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::default_color_type>>>,IndexMap,boost::default_color_type,boost::default_color_type &>' to 'boost::dummy_property_map'
+1>          with
+1>          [
+1>              Key=boost::detail::parallel::global_descriptor<unsigned __int64>,
+1>              Value=boost::default_color_type
+1>          ]
+1>          and
+1>          [
+1>              IndexMap=boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\distributed\dijkstra_shortest_paths.hpp(116): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+1>  c:\local\boost_1_65_0\boost\graph\distributed\dijkstra_shortest_paths.hpp(146): note: see reference to function template instantiation 'void boost::graph::detail::parallel_dijkstra_impl<boost::param_not_found>::run_impl<DistributedGraph,DijkstraVisitor,PredecessorMap,DistanceMap,Lookahead,WeightMap,IndexMap,boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::default_color_type>>>,IndexMap,boost::default_color_type,boost::default_color_type &>,Compare,Combine,DistInf,DistZero>(const DistributedGraph &,boost::detail::parallel::global_descriptor<unsigned __int64>,PredecessorMap,DistanceMap,Lookahead,WeightMap,IndexMap,ColorMap,Compare,Combine,DistInf,DistZero,DijkstraVisitor)' being compiled
+1>          with
+1>          [
+1>              DistributedGraph=mygraph_t,
+1>              DijkstraVisitor=boost::dijkstra_visitor<boost::null_visitor>,
+1>              PredecessorMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,
+1>              DistanceMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,
+1>              Lookahead=boost::param_not_found,
+1>              WeightMap=boost::parallel::distributed_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::edge_global_property_map<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>>,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_target_processor_id_t,boost::processor_id_type,boost::property<boost::edge_weight_t,int,boost::no_property>>,boost::edge_weight_t>>,
+1>              IndexMap=boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              Compare=std::less<int>,
+1>              Combine=boost::closed_plus<D>,
+1>              DistInf=D,
+1>              DistZero=std::numeric_limits<int>::_Ty,
+1>              ColorMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::default_color_type>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::default_color_type,boost::default_color_type &>
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\distributed\dijkstra_shortest_paths.hpp(200): note: see reference to function template instantiation 'void boost::graph::detail::parallel_dijkstra_impl<boost::param_not_found>::run<DistributedGraph,DijkstraVisitor,PredecessorMap,DistanceMap,boost::param_not_found,WeightMap,IndexMap,Compare,Combine,DistInf,DistZero>(const DistributedGraph &,boost::detail::parallel::global_descriptor<unsigned __int64>,PredecessorMap,DistanceMap,Lookahead,WeightMap,IndexMap,boost::param_not_found,Compare,Combine,DistInf,DistZero,DijkstraVisitor)' being compiled
+1>          with
+1>          [
+1>              DistributedGraph=mygraph_t,
+1>              DijkstraVisitor=boost::dijkstra_visitor<boost::null_visitor>,
+1>              PredecessorMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,
+1>              DistanceMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,
+1>              WeightMap=boost::parallel::distributed_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::edge_global_property_map<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>>,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_target_processor_id_t,boost::processor_id_type,boost::property<boost::edge_weight_t,int,boost::no_property>>,boost::edge_weight_t>>,
+1>              IndexMap=boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              Compare=std::less<int>,
+1>              Combine=boost::closed_plus<D>,
+1>              DistInf=D,
+1>              DistZero=std::numeric_limits<int>::_Ty,
+1>              Lookahead=boost::param_not_found
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\dijkstra_shortest_paths.hpp(573): note: see reference to function template instantiation 'void boost::dijkstra_shortest_paths<VertexListGraph,Default,P,DistanceMap,WeightMap,IndexMap,std::less<_Kty>,boost::closed_plus<D>,D,int,boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,IndexMap,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,IndexMap,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>>(const DistributedGraph &,boost::detail::parallel::global_descriptor<unsigned __int64>,PredecessorMap,DistanceMap,WeightMap,IndexMap,Compare,Combine,DistInf,DistZero,DijkstraVisitor,const boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,IndexMap,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,IndexMap,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>> &,boost::graph::detail::no_parameter)' being compiled
+1>          with
+1>          [
+1>              VertexListGraph=mygraph_t,
+1>              Default=boost::dijkstra_visitor<boost::null_visitor>,
+1>              P=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,
+1>              DistanceMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,
+1>              WeightMap=boost::parallel::distributed_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::edge_global_property_map<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>>,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_target_processor_id_t,boost::processor_id_type,boost::property<boost::edge_weight_t,int,boost::no_property>>,boost::edge_weight_t>>,
+1>              IndexMap=boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              _Kty=int,
+1>              DistributedGraph=mygraph_t,
+1>              PredecessorMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,
+1>              Compare=std::less<int>,
+1>              Combine=boost::closed_plus<D>,
+1>              DistInf=D,
+1>              DistZero=std::numeric_limits<int>::_Ty,
+1>              DijkstraVisitor=boost::dijkstra_visitor<boost::null_visitor>
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\dijkstra_shortest_paths.hpp(595): note: see reference to function template instantiation 'void boost::detail::dijkstra_dispatch2<VertexListGraph,P,WeightMap,IndexMap,Params>(const VertexListGraph &,boost::detail::parallel::global_descriptor<unsigned __int64>,DistanceMap,WeightMap,IndexMap,const Params &)' being compiled
+1>          with
+1>          [
+1>              VertexListGraph=mygraph_t,
+1>              P=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,
+1>              WeightMap=boost::parallel::distributed_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::edge_global_property_map<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>>,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_target_processor_id_t,boost::processor_id_type,boost::property<boost::edge_weight_t,int,boost::no_property>>,boost::edge_weight_t>>,
+1>              IndexMap=boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              Params=boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>>,
+1>              DistanceMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\dijkstra_shortest_paths.hpp(614): note: see reference to function template instantiation 'void boost::detail::dijkstra_dispatch1<VertexListGraph,boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,int,int &>,boost::parallel::distributed_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::edge_global_property_map<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>>,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_target_processor_id_t,boost::processor_id_type,EdgeProperty>,Tag>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>>>(const VertexListGraph &,boost::detail::parallel::global_descriptor<unsigned __int64>,DistanceMap,WeightMap,IndexMap,const Params &)' being compiled
+1>          with
+1>          [
+1>              VertexListGraph=mygraph_t,
+1>              Property=boost::no_property,
+1>              EdgeProperty=boost::property<boost::edge_weight_t,int,boost::no_property>,
+1>              Tag=boost::edge_weight_t,
+1>              DistanceMap=boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,
+1>              WeightMap=boost::parallel::distributed_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::edge_global_property_map<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>>,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_target_processor_id_t,boost::processor_id_type,boost::property<boost::edge_weight_t,int,boost::no_property>>,boost::edge_weight_t>>,
+1>              IndexMap=boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              Params=boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>>
+1>          ]
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(152): note: see reference to function template instantiation 'void boost::dijkstra_shortest_paths<mygraph_t,boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>>(const VertexListGraph &,boost::detail::parallel::global_descriptor<unsigned __int64>,const boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<int>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,int,int &>,boost::vertex_distance_t,boost::bgl_named_params<boost::iterator_property_map<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<boost::detail::parallel::global_descriptor<unsigned __int64>>>>,boost::local_property_map<boost::graph::distributed::mpi_process_group,boost::detail::parallel::global_descriptor_property_map<unsigned __int64>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,boost::detail::parallel::global_descriptor<unsigned __int64>,boost::detail::parallel::global_descriptor<unsigned __int64> &>,boost::vertex_predecessor_t,boost::no_property>> &)' being compiled
+1>          with
+1>          [
+1>              Property=boost::no_property,
+1>              VertexListGraph=mygraph_t
+1>          ]
+1>c:\local\boost_1_65_0\boost\graph\astar_search.hpp(153): warning C4244: 'argument': conversion from 'const int' to 'const D', possible loss of data
+1>  c:\local\boost_1_65_0\boost\graph\breadth_first_search.hpp(81): note: see reference to function template instantiation 'void boost::detail::astar_bfs_visitor<AStarHeuristic,AStarVisitor,MutableQueue,PredecessorMap,CostMap,DistanceMap,WeightMap,ColorMap,CombineFunction,CompareFunction>::examine_edge<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>,IncidenceGraph>(Edge,const Graph &)' being compiled
+1>          with
+1>          [
+1>              AStarHeuristic=distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,
+1>              AStarVisitor=const astar_goal_visitor<vertex>,
+1>              PredecessorMap=unsigned __int64 *const ,
+1>              CostMap=boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              DistanceMap=float *,
+1>              WeightMap=boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,
+1>              ColorMap=boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              CombineFunction=const boost::closed_plus<D>,
+1>              CompareFunction=const std::less<D>,
+1>              IncidenceGraph=mygraph_t,
+1>              Edge=boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>,
+1>              Graph=mygraph_t
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\breadth_first_search.hpp(81): note: see reference to function template instantiation 'void boost::detail::astar_bfs_visitor<AStarHeuristic,AStarVisitor,MutableQueue,PredecessorMap,CostMap,DistanceMap,WeightMap,ColorMap,CombineFunction,CompareFunction>::examine_edge<boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>,IncidenceGraph>(Edge,const Graph &)' being compiled
+1>          with
+1>          [
+1>              AStarHeuristic=distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,
+1>              AStarVisitor=const astar_goal_visitor<vertex>,
+1>              PredecessorMap=unsigned __int64 *const ,
+1>              CostMap=boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              DistanceMap=float *,
+1>              WeightMap=boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,
+1>              ColorMap=boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              CombineFunction=const boost::closed_plus<D>,
+1>              CompareFunction=const std::less<D>,
+1>              IncidenceGraph=mygraph_t,
+1>              Edge=boost::detail::edge_desc_impl<boost::directed_tag,unsigned __int64>,
+1>              Graph=mygraph_t
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\breadth_first_search.hpp(104): note: see reference to function template instantiation 'void boost::breadth_first_visit<IncidenceGraph,Buffer,BFSVisitor,ColorMap,unsigned __int64*>(const IncidenceGraph &,SourceIterator,SourceIterator,Buffer &,BFSVisitor,ColorMap)' being compiled
+1>          with
+1>          [
+1>              IncidenceGraph=mygraph_t,
+1>              Buffer=MutableQueue,
+1>              BFSVisitor=boost::detail::astar_bfs_visitor<distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,astar_goal_visitor<vertex>,MutableQueue,unsigned __int64 *,boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,float *,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::closed_plus<D>,std::less<D>>,
+1>              ColorMap=boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              SourceIterator=unsigned __int64 *
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\astar_search.hpp(268): note: see reference to function template instantiation 'void boost::breadth_first_visit<VertexListGraph,MutableQueue,boost::detail::astar_bfs_visitor<AStarHeuristic,AStarVisitor,MutableQueue,PredecessorMap,CostMap,DistanceMap,WeightMap,ColorMap,CombineFunction,CompareFunction>,ColorMap>(const IncidenceGraph &,unsigned __int64,Buffer &,BFSVisitor,ColorMap)' being compiled
+1>          with
+1>          [
+1>              VertexListGraph=mygraph_t,
+1>              AStarHeuristic=distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,
+1>              AStarVisitor=const astar_goal_visitor<vertex>,
+1>              PredecessorMap=unsigned __int64 *const ,
+1>              CostMap=boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              DistanceMap=float *,
+1>              WeightMap=boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,
+1>              ColorMap=boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              CombineFunction=const boost::closed_plus<D>,
+1>              CompareFunction=const std::less<D>,
+1>              IncidenceGraph=mygraph_t,
+1>              Buffer=MutableQueue,
+1>              BFSVisitor=boost::detail::astar_bfs_visitor<distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,astar_goal_visitor<vertex>,MutableQueue,unsigned __int64 *,boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,float *,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,boost::closed_plus<D>,std::less<D>>
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\astar_search.hpp(378): note: see reference to function template instantiation 'void boost::astar_search_no_init<VertexListGraph,AStarHeuristic,AStarVisitor,PredecessorMap,CostMap,DistanceMap,WeightMap,ColorMap,VertexIndexMap,CompareFunction,CombineFunction,CostInf,CostZero>(const VertexListGraph &,unsigned __int64,AStarHeuristic,AStarVisitor,PredecessorMap,CostMap,DistanceMap,WeightMap,ColorMap,VertexIndexMap,CompareFunction,CombineFunction,CostInf,CostZero)' being compiled
+1>          with
+1>          [
+1>              VertexListGraph=mygraph_t,
+1>              AStarHeuristic=distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,
+1>              AStarVisitor=const astar_goal_visitor<vertex>,
+1>              PredecessorMap=unsigned __int64 *const ,
+1>              CostMap=boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              DistanceMap=float *,
+1>              WeightMap=boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,
+1>              ColorMap=boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              VertexIndexMap=boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>,
+1>              CompareFunction=const std::less<D>,
+1>              CombineFunction=const boost::closed_plus<D>,
+1>              CostInf=D,
+1>              CostZero=const D
+1>          ]
+1>  c:\local\boost_1_65_0\boost\graph\astar_search.hpp(455): note: see reference to function template instantiation 'void boost::astar_search<VertexListGraph,AStarHeuristic,const Arg,unsigned __int64,boost::shared_array_property_map<Value,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,float*,boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,Tag>,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>,boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<Property,unsigned __int64>>,const Default,boost::closed_plus<D>,D,float>(const VertexListGraph &,unsigned __int64,AStarHeuristic,AStarVisitor,PredecessorMap,CostMap,DistanceMap,WeightMap,VertexIndexMap,ColorMap,CompareFunction,CombineFunction,CostInf,CostZero)' being compiled
+1>          with
+1>          [
+1>              VertexListGraph=mygraph_t,
+1>              AStarHeuristic=distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>,
+1>              Arg=const astar_goal_visitor<vertex>,
+1>              Value=D,
+1>              Property=boost::no_property,
+1>              Tag=boost::edge_weight_t,
+1>              Default=const std::less<D>,
+1>              AStarVisitor=const astar_goal_visitor<vertex>,
+1>              PredecessorMap=unsigned __int64 *const ,
+1>              CostMap=boost::shared_array_property_map<D,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              DistanceMap=float *,
+1>              WeightMap=boost::adj_list_edge_property_map<boost::directed_tag,int,const int &,unsigned __int64,const boost::property<boost::edge_weight_t,int,boost::no_property>,boost::edge_weight_t>,
+1>              VertexIndexMap=boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>,
+1>              ColorMap=boost::shared_array_property_map<boost::default_color_type,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned __int64>>,
+1>              CompareFunction=const std::less<D>,
+1>              CombineFunction=const boost::closed_plus<D>,
+1>              CostInf=D,
+1>              CostZero=const D
+1>          ]
+1>  d:\onedrive\module\semester4\parallele_programmierung\papo_smartcars\implementierung\srcparallel\routingtable.cpp(232): note: see reference to function template instantiation 'void boost::astar_search<mygraph_t,distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>>,astar_goal_visitor<vertex>,boost::graph_visitor_t,boost::bgl_named_params<float *,boost::vertex_distance_t,boost::bgl_named_params<unsigned __int64 *,boost::vertex_predecessor_t,boost::no_property>>>(const VertexListGraph &,unsigned __int64,AStarHeuristic,const boost::bgl_named_params<astar_goal_visitor<vertex>,boost::graph_visitor_t,boost::bgl_named_params<float *,boost::vertex_distance_t,boost::bgl_named_params<unsigned __int64 *,boost::vertex_predecessor_t,boost::no_property>>> &)' being compiled
+1>          with
+1>          [
+1>              _Kty=int,
+1>              _Ty=Vertex *,
+1>              VertexListGraph=mygraph_t,
+1>              AStarHeuristic=distance_heuristic<mygraph_t,float,std::map<int,Vertex *,std::less<int>,std::allocator<std::pair<const int,Vertex *>>>>
+1>          ]
+========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========

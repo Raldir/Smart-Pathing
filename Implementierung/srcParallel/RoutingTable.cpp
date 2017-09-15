@@ -1,25 +1,25 @@
 #include "RoutingTable.h"
-#include "mpi.h"
-#include <algorithm>
+
+#include <boost/graph/use_mpi.hpp>
+#include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/serialization/vector.hpp>
+//#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/distributed/mpi_process_group.hpp>
+#include <boost/graph/distributed/adjacency_list.hpp>
+//#include <boost/test/minimal.hpp>
+
+#include <boost/graph/astar_search.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
 
 using namespace boost;
+using boost::graph::distributed::mpi_process_group;
 
-//using namespace boost::lambda;
-//
-//typedef float coord_t;
-//typedef tuple<coord_t, coord_t> point_t;
-//
-//coord_t RoutingTable::distance_sq(Vertex* v1, Vertex* v2) { // or boost::geometry::distance
-//	point_t a = make_tuple(v1->getX(), v1->getY());
-//	point_t b = make_tuple(v2->getX(), v2->getY());
-//		coord_t x = a.get<0>() - b.get<0>();
-//		coord_t y = a.get<1>() - b.get<1>();
-//		return x*x + y*y;
-//}
 
 std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
 {
@@ -85,31 +85,46 @@ float RoutingTable::getCost(int originID, int destID)
 	return costMatrix[originID][destID];
 }
 
+/*
+The Constructor for the Routingtable, that will calculate each Route parallel but the number of Routes sequential
+*/
 RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> _spawner = graph->getSpawner();
-	calculateRoutes(_spawner);
+	calculateRoutesParallel(_spawner);
 }
 
-RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP) {
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP, std::map<int, std::map<int, float>> costs) {
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	routingMatrix = routingMatrixP;
+	costMatrix = costs;
 }
 
 
-RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector<int> spawnerID) {
+RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector<int> verticesID) {
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> spawner;
-	for (int i = 0; i < spawnerID.size(); i++) {
-		spawner.push_back(_graph->createSpawnerMap()[spawnerID[i]]);
+	for (int i = 0; i < verticesID.size(); i++) {
+		spawner.push_back(_graph->createSpawnerMap()[verticesID[i]]);
 	}
 	calculateRoutes(spawner);
 }
 
 
+
+/*
+Calculate the Routingtable sequential(however it is implemented so that seperate calculations and merging of different routes through other
+processes is feasible
+*/
 void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
@@ -122,7 +137,7 @@ void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 	typedef mygraph_t::vertex_descriptor vertex;
 	typedef mygraph_t::edge_descriptor edge_descriptor;
 
-	unsigned int num_edges = unsigned int(_edges.size());
+	int num_edges = (_edges.size());
 	std::vector<int> vertices_ID;
 	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
 		vertices_ID.push_back((*it)->getID());
@@ -156,11 +171,11 @@ void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 			try {
 				// call astar named parameter interface
 				astar_search
-				(g, start,
-					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-					(_vertexMap, goal),
-					predecessor_map(&p[0]).distance_map(&d[0]).
-					visitor(astar_goal_visitor<vertex>(goal)));
+					(g, start,
+						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+						(_vertexMap, goal),
+						predecessor_map(&p[0]).distance_map(&d[0]).
+						visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -211,6 +226,8 @@ void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 		std::cout << std::endl;
 	}
 }
+
+
 void RoutingTable::insertRoute(int originID, int destID, std::queue<int> route)
 {
 	//Pushes originID into first map and int queue pair into the second
@@ -315,176 +332,145 @@ std::vector<std::vector<int>> RoutingTable::getRoutingMatrix() {
 	return matrix;
 }
 
-//TODO
-void RoutingTable::insertProcessRoutes(std::map<int, std::vector<int>> map)
+std::vector<std::vector<int>> RoutingTable::getRoutingCosts()
 {
-	//Assign new map with resolved conflicts
-	vertexProcessMap = solveVertexConflicts(map); 
-}
-
-//Returns connections used in Simulation.cpp
-std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> RoutingTable::getProcessConnectionVectors()
-{
-	int rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPair;
-
-	//Get vertecies which are in this process by reconstructing routes via routing table
-	//for (const std::vector<int> &vector : localProcessRoutes) {
-	//	//Go through every vertex in the vector
-	//	for (const int &vertex : vector) {
-	//		//If this vertex is not yet contained in localVertices
-	//		if (std::find(localVertices.begin(), localVertices.end(), vertex) == localVertices.end()) {
-	//			//Add vertex localVertices
-	//			localVertices.push_back(vertex);
-	//		}
-	//	}
-	//}
-
-	//first int -> processID, second int -> edgeID
-	std::map<int, std::vector<int>> incomingEdges;
-	std::map<int, std::vector<int>> outgoingEdges;
-
-	//Map which contains every vertex of the graph
-	std::map<int, Vertex*> globalVerticesMap = _graph->getVertexMap();
-
-	//## Check vertices and assign each edge to a processID ##
-
-	//Go through vertices of the local process and add the edges attached to them 
-	for (int &vertexID : localProcessVertices) {
-		//Get every outgoing edge of current vertex
-		for (Edge* &edge : globalVerticesMap[vertexID]->getOutgoingEdges()) {
-
-			//Get ID and Process of Vertex
-			Vertex* currentEndVertex = edge->getVertices().second;
-			int currentEndVertexProcessID = vertexProcessMap[currentEndVertex->getID()];
-
-			//VERTEX IN DIFFERENT PROCESS
-			if (currentEndVertexProcessID != rank) {
-
-				//Add both edges of the same street between the two vertices to the correct vector
-				outgoingEdges[currentEndVertexProcessID].push_back(edge->getID());
-				incomingEdges[currentEndVertexProcessID].push_back(currentEndVertex->outgoingNeighbor(vertexID)->getID());
-			}
+	std::vector<std::vector<int>> matrix;
+	for (auto const &ent1 : costMatrix) {
+		for (auto const &ent2 : ent1.second) {
+			std::vector<int> costsOrigin;
+			costsOrigin.push_back(ent1.first);
+			costsOrigin.push_back(int(ent2.second));
+			costsOrigin.push_back(ent2.first);
+			matrix.push_back(costsOrigin);
 		}
 	}
-
-	//Sort vectors in ascending order
-	for (auto &v : incomingEdges) {
-		std::sort(v.second.begin(), v.second.end(), std::less<int>());
-	}
-
-	//Sort vectors in ascending order
-	for (auto &v : outgoingEdges) {
-		std::sort(v.second.begin(), v.second.end(), std::less<int>());
-	}
-
-	connectionPair.first = incomingEdges;
-	connectionPair.second = outgoingEdges;
-
-	return connectionPair;
-}
-
-std::pair<std::map<int,Vertex*>, std::map<int,Edge*>> RoutingTable::getLocalVerticesEdges()
-{
-	/*
-		first vector -> edges
-	*/
-	std::pair<std::map<int,Vertex*>, std::map<int,Edge*>> verticesEdgesPair;
-
-	return verticesEdgesPair;
-}
-
-//Assigns every Vertex a single processID
-std::map<int, int> RoutingTable::solveVertexConflicts(std::map<int,std::vector<int>> vertexProcessesMap) {
-
-	/*
-		first int -> vertex
-		second int -> process
-	*/
-	std::map<int, int> procVertexMap;
-
-	//Check if vertex has already been assigned to a process before
-	for (auto &conflictVertexMap : vertexProcessesMap) {
-		//If a conflict is found find the process to claim this vertex
-		if (conflictVertexMap.second.size() > 1) {
-			//Use solveVertexConflict to determine the owner process of this vertex 
-			procVertexMap[conflictVertexMap.first] = solveVertexConflict(conflictVertexMap.second);
-		}
-		else {
-			//If only one process exists
-			procVertexMap[conflictVertexMap.first] = conflictVertexMap.second.front();
-		}
-	}
-	return procVertexMap;
-}
-
-int RoutingTable::solveVertexConflict(std::vector<int> processes) {
-	int world_size;
-	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-	return *std::max_element(processes.begin(), processes.end());
+	return matrix;
 }
 
 /*
-std::map<int, int> RoutingTable::solveVertexConflicts() {
+STRUCTURE: IN EACH VECTOR IS THE FIRST VALUE THE ORIGINVERTEX IT BELONGS TO
+*/
+std::vector<std::vector<int>> RoutingTable::getKNearestMatrix()
+{
+	std::vector<std::vector<int>> matrix;
+	for (auto const &ent1 : k_nn) {
+		std::vector<int> k_nnOrigin;
+		for (int i = 0; i < k_nn[ent1.first].size(); i++) {
+			k_nnOrigin.push_back(ent1.second[i]);
+		}
+		matrix.push_back(k_nnOrigin);
+	}
+	return matrix;
+}
 
+/*
+Parallelism which calculates each Route parallel but the number of Routes sequential
+*/
+template<typename Vertex, typename Graph>
+int get_vertex_name(Vertex v, const Graph& g, std::vector<int> vertex_names)
+{
+	return vertex_names[g.distribution().global(owner(v), local(v))];
+}
 
-	first int->vertex
-		second int->edges
-		//
-		std::map<int, int> procVerMap;
+void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	std::vector<Edge*> _edges = _graph->getEdges();
+	std::map<int, int> vertices_ID;
+	std::vector<Vertex*> _vertices = _graph->getVertices();
+	std::vector<int> vertex_names;
+	typedef adjacency_list<listS, distributedS<mpi_process_group, vecS>, directedS,
+		no_property,                 // Vertex properties
+		property<edge_weight_t, int> // Edge properties
+	> graph_t;
+	typedef graph_traits < graph_t >::vertex_descriptor vertex_descriptor;
+	typedef graph_traits < graph_t >::edge_descriptor edge_descriptor;
 
+	int count = 0;
+	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+		vertices_ID[(*it)->getID()] = count;
+		vertex_names.push_back((*it)->getID());
+		count++;
+	}
+	graph_t g(_graph->getNumberVertices());
 
-	first int->vertex
-		second int->vector of conflicting processes
+	for (std::vector<Edge*>::iterator it = _edges.begin(); it != _edges.end(); it++) {
+		add_edge(vertex((*it)->getVertices().first->getID(), g), vertex((*it)->getVertices().second->getID(), g), int((*it)->getLength()) + 1, g);
+		std::cout << int((*it)->getLength());
+	}
+	synchronize(g.process_group());
 
-		std::map<int, std::vector<int>> procVerMapConflicts;
+	for (spawnerContainer::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
+		vertex_descriptor s = vertex((*it2)->getID(), g);
 
-	//Routes already checked to avoiv checking symmetric pair
-	std::vector<std::pair<int, int>> checkedRoutes;
+		std::vector<vertex_descriptor> p(num_vertices(g));
+		std::vector<int> d(num_vertices(g));
+		auto parents =
+			make_iterator_property_map(p.begin(), get(vertex_index, g));
 
-	//For every process go through every route
-	for (const auto &processRoutes : processRoutesMap) {
-		//Get every vertex on the route
-		for (const auto &route : processRoutes.second) {
-			//Check if the symetrical pair hasn't been check before
-			if (std::find(checkedRoutes.begin(), checkedRoutes.end(), route) == checkedRoutes.end()) {
+		//*************NUR AUF UNIXSYSTEMEN AUSKOMMENTIEREN; FUNKTIONIERT AUF WINDOWS NICHT!*******************************
+		//dijkstra_shortest_paths
+		//	(g, s,
+		//		predecessor_map(parents).
+		//		distance_map(
+		//			make_iterator_property_map(d.begin(), get(vertex_index, g)))
+		//		);
+		synchronize(g.process_group());
 
-				//Push route and symmetrical pair into checkedRoutes
-				checkedRoutes.push_back(route);
-				checkedRoutes.push_back(std::make_pair(route.second, route.first));
-
-				//Get copy of route
-				std::queue<int> vertexQueue = getRoute(route.first, route.second);
-
-				//Go through every vertex of queue and add it to the map
-				while (!vertexQueue.empty()) {
-					int vertex = vertexQueue.front();
-
-					std::map<int, int>::iterator conflictVertex = procVerMap.find(vertex);
-
-					//Check if vertex has already been assigned to a process before
-					if (conflictVertex != procVerMap.end()) {
-						if (procVerMapConflicts[vertex].empty()) {
-							//If the conflictVector is still empty fill conflicting vertex first
-							procVerMapConflicts[vertex].push_back((*conflictVertex).first);
-						}
-						//Push current vertex into conflict vector
-						procVerMapConflicts[vertex].push_back(vertex);
-					}
-					//When this is the first process to claim this vertex
-					else {
-						//Put assign vertex to process
-						procVerMap[vertex] = processRoutes.first;
-					}
-					//Next Vertex
-					vertexQueue.pop();
+		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
+			vertex_descriptor v = vertex((*it)->getID(), g);
+			std::vector<int> route;
+			request(parents, v);
+			synchronize(parents);
+			vertex_descriptor current = get(parents, v);
+			route.push_back(get_vertex_name(v, g, vertex_names));
+			route.push_back(get_vertex_name(current, g, vertex_names));
+			if (process_id(g.process_group()) == 0) {
+				std::cout << "pathOf(" << get_vertex_name(v, g, vertex_names) << ") = " << get_vertex_name(current, g, vertex_names) << " ";
+			}
+			while (current != s) {
+				current = get(parents, current);
+				if (std::find(route.begin(), route.end(), get_vertex_name(current, g, vertex_names)) != route.end()) {
+					break;
+				}
+				route.push_back(get_vertex_name(current, g, vertex_names));
+				if (process_id(g.process_group()) == 0) {
+					std::cout << get_vertex_name(current, g, vertex_names) << " ";
 				}
 			}
+			if (process_id(g.process_group()) == 0) {
+				std::cout << std::endl;
+			}
+
+			std::reverse(route.begin(), route.end());
+			std::queue<int> routeQ;
+			for (size_t i = 0; i < route.size(); i++) {
+				routeQ.push(route[i]);
+			}
+			insertRoute(get_vertex_name(s, g, vertex_names), get_vertex_name(v, g, vertex_names), routeQ);
+			//Kosten müssten noch berechent werden, soll aber für weiteres nicht wichtig sein.....
 		}
 	}
-	return procVerMap;
 }
-*/
+
+void RoutingTable::calculateKNearest() {
+	std::vector<Spawner*> spawners = _graph->getSpawner();
+	//VERWENDE EVENTUELL DIE LUFTDISTANZ?? BESSERE HEURISTIK?
+	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
+		std::vector<std::pair<int, float>>  v;
+		int start = (*it2)->getID();
+		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
+			int goal = (*it)->getID();
+			v.push_back(std::pair<int, float>(goal, costMatrix[start][goal]));
+		}
+		int m = _numberNearestNeighbors;
+		if (int(v.size()) < _numberNearestNeighbors) {
+			m = v.size();
+		}
+		std::partial_sort(v.begin(), v.begin() + m, v.end(), &comp);
+		for (std::vector<std::pair<int, float>> ::iterator it = v.begin(); it != v.begin() + m; it++) {
+			k_nn[start].push_back((*it).first);
+			std::cout << (*it).first << ">";
+		}
+		std::cout << std::endl;
+	}
+}

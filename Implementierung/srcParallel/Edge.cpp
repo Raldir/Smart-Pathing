@@ -5,7 +5,9 @@
 #include "Vertex.h"
 #include "Car.h"
 #include "Edge.h"
-#include "Main.h"
+#include "main.h"
+#include <algorithm> 
+#include <deque>
 
 Edge::Edge(float length, int capacity, int id) : _LENGTH(length), _carQueueCapacity(capacity), _ID(id) {
 

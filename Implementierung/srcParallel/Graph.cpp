@@ -4,10 +4,12 @@
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
 #include "main.h"
+#include "mpi.h"
+#include <limits.h>
 
 
 
-using namespace boost;
+
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 typedef std::vector<Edge*> edgeContainer;
@@ -15,6 +17,8 @@ typedef std::vector<Edge*> edgeContainer;
 
 Graph::Graph()
 {
+	MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
+
 	_vertices = readVertexFile("../../dev/OutputMap/nodes");
 	_edges = calculateEdges(_vertices, "../../dev/OutputMap/edges");
 	connectVertices(_edges);
@@ -76,7 +80,6 @@ std::vector<Vertex*> Graph::getVertices()
 {
 	return _vertices;
 }
-
 
 void Graph::initGraphProperties() {
 	int maxX = INT_MIN;
@@ -226,3 +229,165 @@ int Graph::getNumberEdges()
 {
 	return _edges.size();
 }
+
+/*
+############################
+		FOR PARALLEL
+		SIMULATION
+############################
+*/
+
+//TODO Umbauen zu single insert und nicht ganze map einfügen
+void Graph::insertVertexProcessMap(std::map<int, std::vector<int>> map)
+{
+	//Assign new map with resolved conflicts
+	_vertexProcessMap = solveVertexProcessConflicts(map);
+}
+
+/*
+	Initializes local vertex and edge vectors and maps
+*/
+void Graph::InitLocalVerticesEdges()
+{
+	//id, vertex
+	std::map<int, Vertex*> localVertexMap;
+	//id, edge
+	std::map<int, Edge*> localEdgeMap;
+
+	std::vector<Edge*> localEdges;
+	std::vector<Vertex*> localVertices;
+
+	//Go through every vertex of the map and filter all relevant local vertices and edges
+	for (std::pair<const int, int> &processPair : _vertexProcessMap) {
+		//If vertex is a local vertex
+		if (_rank == processPair.second) {
+
+			//Get vertex pointer and incoming edges attached to it
+			Vertex* vertex = _vertexMap.find(processPair.first)->second;
+
+			//Get only incoming edges
+			std::vector<Edge*> incomingEdges = vertex->getIncomingEdges();
+
+			//Iterate through edges attached to vertex
+			for (std::vector<Edge*>::iterator edgeIt = incomingEdges.begin(); edgeIt != incomingEdges.end(); edgeIt++) {
+				//Push edge into vector and map with ID
+				localEdges.push_back(*edgeIt);
+				localEdgeMap[(*edgeIt)->getID()] = *edgeIt;
+			}
+
+			//Map vertex int to vertex pointer
+			localVertices.push_back(vertex);
+			localVertexMap[processPair.first] = vertex;
+		}
+	}
+
+	/*
+		Assign each vertex/map
+	*/
+	_localVertexMap = localVertexMap;
+	_localEdgeMap = localEdgeMap;
+
+	_localVertices = localVertices;
+	_localEdges = localEdges;
+}
+
+//Assigns every Vertex a single processID
+std::map<int, int> Graph::solveVertexProcessConflicts(std::map<int, std::vector<int>> vertexProcessesMap) {
+
+	/*
+	first int -> vertex
+	second int -> process
+	*/
+	std::map<int, int> procVertexMap;
+
+	//Check if vertex has already been assigned to a process before
+	for (auto &conflictVertexMap : vertexProcessesMap) {
+		//If a conflict is found find the process to claim this vertex
+		if (conflictVertexMap.second.size() > 1) {
+			//SOLVE CONFLICT
+			procVertexMap[conflictVertexMap.first] = solveProcessConflict(conflictVertexMap.second);
+		}
+		else {
+			//If only one process exists
+			procVertexMap[conflictVertexMap.first] = conflictVertexMap.second.front();
+		}
+	}
+	return procVertexMap;
+}
+
+int Graph::solveProcessConflict(std::vector<int> processes) {
+	//int world_size;
+	//MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+	return *std::max_element(processes.begin(), processes.end());
+}
+
+/*
+	Returns connections used in Simulation.cpp
+	first map -> incoming
+	second map -> outgoing
+*/
+std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> Graph::getProcessConnectionVectors()
+{
+
+	//first int -> processID, second int -> edgeID
+	std::map<int, std::vector<int>> incomingEdges;
+	std::map<int, std::vector<int>> outgoingEdges;
+
+	//## Check vertices and assign each edge to a processID ##
+
+	//Go through vertexMap of the local process and add the edges attached to them 
+	for (std::pair<const int, Vertex*> &vertexPair : _localVertexMap) {
+
+		std::vector<Edge*> out = vertexPair.second->getOutgoingEdges();
+
+		//Get every outgoing edge of current vertex
+		for (Edge* &edge : out) {
+			//Get ID and Process of Vertex
+			int endVertexID = edge->getVertices().second->getID();
+			int endVertexProcess = _vertexProcessMap[endVertexID];
+
+			//VERTEX IN DIFFERENT PROCESS
+			if (endVertexProcess != _rank) {
+
+				int reverseEdgeID = vertexPair.second->incomingNeighbor(endVertexID)->getID();
+
+				//Add both edges of the same street between the two vertices to the correct vector
+				outgoingEdges[endVertexProcess].push_back(edge->getID());
+				incomingEdges[endVertexProcess].push_back(reverseEdgeID);
+			}
+		}
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : incomingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : outgoingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	return std::make_pair(incomingEdges, outgoingEdges);
+}
+
+std::pair<std::map<int, Vertex*>, std::map<int, Edge*>> Graph::getLocalVertexEdgeMaps()
+{
+	//TODO
+}
+
+std::pair<std::vector<Vertex*>, std::vector<Edge*>> Graph::getLocalVerticesEdges()
+{
+	//TODO
+	return std::pair<std::vector<Vertex*>, std::vector<Edge*>>();
+}
+
+
+
+
+
+
+
+
+

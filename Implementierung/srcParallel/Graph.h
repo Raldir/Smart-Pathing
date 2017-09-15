@@ -1,9 +1,4 @@
 #pragma once
-#include <boost/graph/astar_search.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/random.hpp>
-#include <boost/random.hpp>
-#include <boost/graph/graphviz.hpp>
 #include <time.h>
 #include <list>
 #include <fstream>
@@ -36,8 +31,21 @@ public:
 	float getMaxY();
 
 private:
+	int _rank;
+
 	void initGraphProperties();
 	void createTrafficLights();
+
+	/*
+	Returns incomingConnection and outgoingConnection for every connected process
+	Also correct potential conflicts
+	*/
+	void insertVertexProcessMap(std::map<int, std::vector<int>>);
+	void InitLocalVerticesEdges();
+
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
+	std::pair<std::map<int, Vertex*>, std::map<int, Edge*>> getLocalVertexEdgeMaps();
+	std::pair<std::vector<Vertex*>, std::vector<Edge*>> getLocalVerticesEdges();
 
 	float _maxX;
 	float _maxY;
@@ -46,6 +54,30 @@ private:
 	std::vector<Vertex*> _vertices;
 	std::map<int, Edge*> _edgeMap;
 	std::map<int, Vertex*> _vertexMap;
+
+	//std::vector<int> localVerticesID;
+	//std::vector<int> localEdgesID;
+
+	//Direct pointers to vertices and edges
+	std::vector<Vertex*> _localVertices;
+	std::vector<Edge*> _localEdges;
+
+	//Local Vertex Map
+	std::map<int, Vertex*> _localVertexMap;
+	std::map<int, Edge*> _localEdgeMap;
+
+	/*
+		first int -> vertex
+		second int -> process
+	*/
+	std::map<int, int> _vertexProcessMap;
+
+	/*
+		first int -> vertex
+		second int -> second
+	*/
+	std::map<int, int> solveVertexProcessConflicts(std::map<int, std::vector<int>>);
+	int solveProcessConflict(std::vector<int> processes);
 };
 
 
