@@ -54,8 +54,10 @@ void Vertex::Update() {
 */
 void Vertex::transferCar(int incomingEdgeID) {
 
+	//Get front car of vertex
 	Car* car = getEdgeFromID(incomingEdgeID)->getFrontCar();
-	//Checks wheter or not this is the destination of this car
+	
+	//If this vertex is the final destination
 	if (_ID != car->getDestination()) {
 
 		//Get the next edgeID
@@ -64,10 +66,9 @@ void Vertex::transferCar(int incomingEdgeID) {
 		//If car is to be transitioned to other process
 		if (!isInsideProcess(edgeID)) {
 
-			//Is there free space?
-			//TODO
-			if (freeEdgeSpaceMap[edgeID] > 0) {
-				freeEdgeSpaceMap[edgeID]--;
+			//Is there free space
+			if (edgeFreeSpaceMap[edgeID] > 0) {
+				(edgeFreeSpaceMap[edgeID])--;
 
 				//Take car from edge and remove vertex from route
 				takeCar(incomingEdgeID);
@@ -278,10 +279,16 @@ int Vertex::getProcessOfVertex(int vertexID)
 	return -1;
 }
 
+//Is this edge inside the same process?
 bool Vertex::isInsideProcess(int edgeID)
-{
-	//Is this edge inside the same process?
-	return processMap[edgeID] == _rank;
+{	
+	std::map<int, int>::iterator it = processMap.find(edgeID);
+
+	//If there is an entry for this edge in processMap
+	if (it != processMap.end()) {
+		return false;
+	}
+	return true;
 }
 
 //Get cars which want to transition to outgoingEdge
@@ -292,4 +299,14 @@ std::vector<Car*> Vertex::popTransitioningCars(int outgoingEdgeID)
 	transitioningCars[outgoingEdgeID].clear();
 
 	return v;
+}
+
+void Vertex::addProcessMap(std::map<int, int> map)
+{
+	processMap = map;
+}
+
+void Vertex::setEdgeFreeSpace(std::map<int, int> map)
+{
+	edgeFreeSpaceMap = map;
 }

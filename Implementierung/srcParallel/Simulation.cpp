@@ -12,8 +12,6 @@ Simulation::Simulation(int world_size, int rank)
 {
 	int root = 0;
 
-	InitEdgeFreeSpaceBuffers();
-
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	_currentTick = 0;
@@ -24,6 +22,11 @@ Simulation::Simulation(int world_size, int rank)
 	parallelRouting();
 	system("Pause");
 	initSpawner();
+	
+	InitLocalVectors();
+	InitConnections();
+	InitEdgeFreeSpaceBuffers();
+
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
 		std::cout << rank << " came to barrier on tick " << i << std::endl;
 		_currentTick++;
@@ -234,10 +237,11 @@ void Simulation::nextTick()
 {
 	int timeStamp = _currentTick %_TIMETABLE_SPAN;
 	std::cout << "begin update" << '\n';
-	vertexContainer vertices = _graph->getVertices();
+	
+	//vertexContainer vertices = _graph->getVertices(); Use localVertices instead
 
 	//Update Vertices (TrafficLight)
-	for (vertexContainer::iterator it2 = vertices.begin(); it2 != vertices.end(); it2++) {
+	for (vertexContainer::iterator it2 = localVertices.begin(); it2 != localVertices.end(); it2++) {
 		(*it2)->Update();
 	}
 
@@ -250,7 +254,8 @@ void Simulation::nextTick()
 
 	//First Update
 	std::cout << "Vertex update completed" << '\n';
-	for (Edge* ed : _graph->getEdges()) {
+	//for (Edge* ed : _graph->getEdges()) {
+	for (Edge* ed : localEdges) {
 		ed->Update(_currentTick);
 	}
 
@@ -259,8 +264,8 @@ void Simulation::nextTick()
 	receiveCarInformation();
 
 	std::cout << "Edge update Phase 1 completed" << '\n';
-	std::vector<Edge*> remainingEdges = _graph->getEdges();
-	for (int i = 0; i < _graph->getEdges().size(); i++) {
+	std::vector<Edge*> remainingEdges = localEdges;
+	for (int i = 0; i < localEdges.size(); i++) {
 		
 		//After every Update, exchange the space
 		fillEdgeSpaceSendBuffer();
@@ -283,7 +288,8 @@ void Simulation::nextTick()
 	exchangeEgdeFreeSpace();
 
 	std::cout << "Edge update Phase 2 completed" << '\n';
-	spawnerContainer spawners = _graph->getSpawner();
+	//spawnerContainer spawners = _graph->getSpawner();
+	spawnerContainer spawners = localSpawners;
 	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
 		//std::cout << "hello";
 		//VON CHRISTOPH --> gibt tick an update weiter
@@ -343,6 +349,36 @@ void Simulation::exchangeEgdeFreeSpace() {
 	//Wait for ISends and IRecv to finish 
 	MPI_Status *status = new MPI_Status[incomingConnections.size() + outgoingConnections.size()];
 	MPI_Waitall(outgoingConnections.size() + incomingConnections.size(), req, status);
+
+	std::map<int, std::map<int, int>> freeSpaceMap = getEdgeFreeSpaceMaps();
+	for (auto vectorMap : freeSpaceMap) {
+		//Call vector and set new map with free edge space
+		localVertexMap[vectorMap.first]->setEdgeFreeSpace(vectorMap.second);
+	}
+}
+
+//Returns map of free space of every edge mapped to vector in local process
+std::map<int, std::map<int,int>> Simulation::getEdgeFreeSpaceMaps() {
+
+	std::map<int, std::map<int, int>> edgeFreeSpaceMaps;
+
+	//Go through every buffer sent from every process
+	for (std::pair<const int , int*> &pair : edgeSpaceRecvBuffer) {
+		//Get outgoing connections which have the same order (ascending)
+		std::vector<int> outCon = outgoingConnections[pair.first];
+
+		//Then go through the edges in the correct order, VERY IMPORTANT
+		for (int counter = 0; counter < outCon.size(); counter++) {
+			int edgeID = outCon[counter];
+
+			//Get start vertex of edge
+			int vertexID = _graph->getEdge(edgeID)->getVertices().first->getID();
+			//Put value into the map inside the correct vertex
+			edgeFreeSpaceMaps[vertexID][edgeID] = pair.second[counter];
+		}
+	}
+
+	return edgeFreeSpaceMaps;
 }
 
 void Simulation::sendCarInformation() {
@@ -498,10 +534,37 @@ void Simulation::InitEdgeFreeSpaceBuffers() {
 	}
 }
 
-void Simulation::InitConnections(std::map<int,int> vertexVector)
+//Assigns processMap to each vertex and intialize connections for process
+void Simulation::InitConnections()
 {
-	std::vector<int> incoming;
-	std::vector<int> outgoing;
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPairs = _routingTable->getProcessConnectionVectors();
+	
+	//Initialize connection vectors of simulation
+	incomingConnections = connectionPairs.first;
+	outgoingConnections = connectionPairs.second;
+
+	//## Initalize connections (processMap) for each vector ##
+
+	std::map<int, std::map<int, int>> vertexProcessMaps;
+
+	//Go through the outgoing connections for every process
+	for (auto outgoingProcessCon : connectionPairs.second) {
+		//Go through every edge and find startVertex to put edge/process pair to the vertex' process map
+		for (int &edgeID : outgoingProcessCon.second) {
+			//VertexID the connection is coming from
+			int vertexID = localEdgeMap.find(edgeID)->second->getVertices().first->getID();
+			vertexProcessMaps[vertexID][edgeID] = outgoingProcessCon.first;
+		}
+	}
+
+	//Add processMap into vertexMap
+	for (auto &pair : vertexProcessMaps) {
+		localVertexMap[pair.first]->addProcessMap(pair.second);
+	}
+}
+
+void Simulation::InitLocalVectors()
+{
 }
 
 int Simulation::getEnd(std::queue<int> route) {

@@ -51,10 +51,15 @@ public:
 	void setCost(int originID, int destID, float cost);
 	float getCost(int originID, int destID);
 
-	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
 	
-	//Returns incomingConnection and outgoingConnection for every connected process
-	void insertProcessRoutes(std::pair<int, std::vector<std::pair<int, int>>>);
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
+	std::pair<std::map<int, Vertex*>, std::map<int,Edge*>> getLocalVerticesEdges();
+
+	/* 
+		Returns incomingConnection and outgoingConnection for every connected process
+		Also correct potential conflicts
+	*/
+	void insertProcessRoutes(std::map<int, std::vector<int>>);
 
 private:
 	std::queue<int> reverseQueue(std::queue<int> queue);
@@ -73,8 +78,9 @@ private:
 	KNearestNeighborMatrix k_nn;
 	Graph* _graph;
 
-	//Contains every route inside this process
-	std::vector<std::vector<int>> processRoutingMatrix;
+	std::map<int, int> solveVertexConflicts(std::map<int, std::vector<int>>);
+	static int solveVertexConflict(std::vector<int> processes);
 
-	std::map<int, std::vector<std::pair<int, int>>> processRoutesMap;
+	std::vector<int> localProcessVertices;
+	std::map<int, int> vertexProcessMap;	
 };

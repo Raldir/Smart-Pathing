@@ -12,8 +12,7 @@ public:
 	Simulation(int numberProcesses, int rank);
 	~Simulation();
 	void writeResultsCurrentTick();
-
-
+	
 private:
 	std::vector<std::vector<int>> splitGraph(int numberProcesses);
 	void parallelRouting();
@@ -33,8 +32,21 @@ private:
 	Graph* _graph;
 	int _currentTick;
 
+	//All local Vertices and Edges to iterate through in Update
+	std::vector<Edge*> localEdges;
+	std::vector<Vertex*> localVertices;
+	//TODO
+	std::vector<Spawner*> localSpawners;
+
+	//All Edges and Vertices mapped to their ID for easier access
+	std::map<int, Edge*> localEdgeMap;
+	std::map<int, Vertex*> localVertexMap;
+
 	void fillEdgeSpaceSendBuffer();
 	void exchangeEgdeFreeSpace();
+
+	//Get Free Space from every relevant edge
+	std::map<int, std::map<int,int>> getEdgeFreeSpaceMaps();
 
 	void sendCarInformation();
 	void receiveCarInformation();
@@ -47,6 +59,10 @@ private:
 	*/
 	std::map<int, std::vector<int>> incomingConnections;
 	std::map<int, std::vector<int>> outgoingConnections;
+
+	void InitEdgeFreeSpaceBuffers();
+	void InitConnections();
+	void InitLocalVectors();
 
 	//Vectors of vectors of pointers to buffer for information about other processes edges
 	/*
@@ -65,8 +81,5 @@ private:
 	*/
 	MPI_Request *req = new MPI_Request[outgoingConnections.size() + incomingConnections.size()];
 	int reqCounter;
-
-	void InitEdgeFreeSpaceBuffers();
-	void InitConnections(std::map<int,int> vertexVector);
 };
 

@@ -65,6 +65,9 @@ public:
 
 	std::vector<Car*> popTransitioningCars(int outgoingEdgeID);
 
+	void addProcessMap(std::map<int, int> map);
+	void setEdgeFreeSpace(std::map<int, int> map);
+
 protected:
 
 	TrafficLight trafficLight;
@@ -98,10 +101,12 @@ protected:
 
 	//TODO
 	/*
+		Should only contain freeSpace of connected edges on other processes
+
 		first int -> edge
 		second int -> freeSpace
 	*/
-	std::map<int, int> freeEdgeSpaceMap;
+	std::map<int, int> edgeFreeSpaceMap;
 
 	//After each update is finished transitioning cars will have been stored here
 	std::map<int, std::vector<Car*>> transitioningCars;
