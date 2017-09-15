@@ -6,3 +6,5 @@ void testChristoph();
 
 void testRami();
 
+void parallelRoutingInitBoost(int argc, char *argv[]);
+

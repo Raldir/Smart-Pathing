@@ -1,9 +1,4 @@
 #pragma once
-#include <boost/graph/astar_search.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/random.hpp>
-#include <boost/random.hpp>
-#include <boost/graph/graphviz.hpp>
 #include <time.h>
 #include <list>
 #include <fstream>

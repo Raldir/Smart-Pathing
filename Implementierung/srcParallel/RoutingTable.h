@@ -2,33 +2,10 @@
 #include <queue>
 #include <map>
 #include <algorithm>
-#include <boost/graph/astar_search.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/random.hpp>
-#include <boost/random.hpp>
-#include <boost/graph/graphviz.hpp>
 #include <time.h>
-#include <list>
-#include <fstream>
-#include <math.h>  
+#include <limits.h>
+#include <math.h>
 #include "Graph.h"
-#include <boost/lambda/lambda.hpp>  // _1
-#include <boost/lambda/bind.hpp>    // bind()
-#include <boost/tuple/tuple_io.hpp>
-#include <boost/config.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <memory>
-
-#include <iostream>
-#include <boost/graph/use_mpi.hpp>
-#include <boost/config.hpp>
-#include <boost/throw_exception.hpp>
-#include <boost/serialization/vector.hpp>
-//#include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/distributed/mpi_process_group.hpp>
-#include <boost/graph/distributed/adjacency_list.hpp>
-//#include <boost/test/minimal.hpp>
 
 class Edge;
 class Vertex;

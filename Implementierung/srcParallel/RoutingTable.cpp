@@ -1,5 +1,17 @@
 #include "RoutingTable.h"
-#include <algorithm>
+
+#include <boost/graph/use_mpi.hpp>
+#include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/serialization/vector.hpp>
+//#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/distributed/mpi_process_group.hpp>
+#include <boost/graph/distributed/adjacency_list.hpp>
+//#include <boost/test/minimal.hpp>
+
+#include <boost/graph/astar_search.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
@@ -73,7 +85,7 @@ std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> Rout
 
 			//If the endVertex of the edge is not inside this process (localVertices)
 			if (std::find(localVertices.begin(), localVertices.end(), currentEndVertex->getID()) == localVertices.end()) {
-				
+
 				//TODO
 				int currentEndVertexProcessID;
 				//Add both edges of the same street between the two vertices to the proper vector
@@ -223,11 +235,11 @@ void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 			try {
 				// call astar named parameter interface
 				astar_search
-				(g, start,
-					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-					(_vertexMap, goal),
-					predecessor_map(&p[0]).distance_map(&d[0]).
-					visitor(astar_goal_visitor<vertex>(goal)));
+					(g, start,
+						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+						(_vertexMap, goal),
+						predecessor_map(&p[0]).distance_map(&d[0]).
+						visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -422,69 +434,87 @@ std::vector<std::vector<int>> RoutingTable::getKNearestMatrix()
 Parallelism which calculates each Route parallel but the number of Routes sequential
 */
 template<typename Vertex, typename Graph>
-int get_vertex_name(Vertex v, const Graph& g, std::vector<int> spawners)
+int get_vertex_name(Vertex v, const Graph& g, std::vector<int> vertex_names)
 {
-	return spawners[g.distribution().global(owner(v), local(v))];
+	return vertex_names[g.distribution().global(owner(v), local(v))];
 }
 
 void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
-	std::map<int, Vertex*> _vertexMap = _graph->getVertexMap();
+	std::map<int, int> vertices_ID;
 	std::vector<Vertex*> _vertices = _graph->getVertices();
-
-	std::vector<int> vertices_ID;
-
-	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
-		vertices_ID.push_back((*it)->getID());
-	}
+	std::vector<int> vertex_names;
 	typedef adjacency_list<listS, distributedS<mpi_process_group, vecS>, directedS,
 		no_property,                 // Vertex properties
 		property<edge_weight_t, int> // Edge properties
 	> graph_t;
 	typedef graph_traits < graph_t >::vertex_descriptor vertex_descriptor;
 	typedef graph_traits < graph_t >::edge_descriptor edge_descriptor;
+
+	int count = 0;
+	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+		vertices_ID[(*it)->getID()] = count;
+		vertex_names.push_back((*it)->getID());
+		count++;
+	}
 	graph_t g(_graph->getNumberVertices());
 
 	for (std::vector<Edge*>::iterator it = _edges.begin(); it != _edges.end(); it++) {
-		add_edge(vertex((*it)->getVertices().first->getID(), g), vertex((*it)->getVertices().second->getID(), g), int((*it)->getLength()), g);
+		add_edge(vertex((*it)->getVertices().first->getID(), g), vertex((*it)->getVertices().second->getID(), g), int((*it)->getLength()) + 1, g);
+		std::cout << int((*it)->getLength());
 	}
 	synchronize(g.process_group());
-
-	// Keeps track of the predecessor of each vertex
-	std::vector<vertex_descriptor> p(num_vertices(g));
-	// Keeps track of the distance to each vertex
-	std::vector<int> d(num_vertices(g));
 
 	for (spawnerContainer::iterator it2 = _spawner.begin(); it2 != _spawner.end(); it2++) {
 		vertex_descriptor s = vertex((*it2)->getID(), g);
 
-		/*dijkstra_shortest_paths
-		(g, s,
-		predecessor_map(
-		make_iterator_property_map(p.begin(), get(vertex_index, g))).
-		distance_map(
-		make_iterator_property_map(d.begin(), get(vertex_index, g)))
-		);*/
+		std::vector<vertex_descriptor> p(num_vertices(g));
+		std::vector<int> d(num_vertices(g));
+		auto parents =
+			make_iterator_property_map(p.begin(), get(vertex_index, g));
 
-		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
+		//*************NUR AUF UNIXSYSTEMEN AUSKOMMENTIEREN; FUNKTIONIERT AUF WINDOWS NICHT!*******************************
+		//dijkstra_shortest_paths
+		//	(g, s,
+		//		predecessor_map(parents).
+		//		distance_map(
+		//			make_iterator_property_map(d.begin(), get(vertex_index, g)))
+		//		);
+		synchronize(g.process_group());
+
+		for (spawnerContainer::iterator it = _spawner.begin(); it != _spawner.end(); it++) {
 			vertex_descriptor v = vertex((*it)->getID(), g);
 			std::vector<int> route;
-			vertex_descriptor current = p[v.local];
-			std::cout << "pathOf(" << get_vertex_name(v, g, vertices_ID) << ") = " << get_vertex_name(current, g, vertices_ID) << " ";
-			while (current != s) {
-				route.push_back(get_vertex_name(current, g, vertices_ID));
-				current = p[current.local];
-				std::cout << get_vertex_name(current, g, vertices_ID) << " ";
+			request(parents, v);
+			synchronize(parents);
+			vertex_descriptor current = get(parents, v);
+			route.push_back(get_vertex_name(v, g, vertex_names));
+			route.push_back(get_vertex_name(current, g, vertex_names));
+			if (process_id(g.process_group()) == 0) {
+				std::cout << "pathOf(" << get_vertex_name(v, g, vertex_names) << ") = " << get_vertex_name(current, g, vertex_names) << " ";
 			}
-			std::cout << std::endl;
-			std::reverse(route.begin(), route.end());
+			while (current != s) {
+				current = get(parents, current);
+				if (std::find(route.begin(), route.end(), get_vertex_name(current, g, vertex_names)) != route.end()) {
+					break;
+				}
+				route.push_back(get_vertex_name(current, g, vertex_names));
+				if (process_id(g.process_group()) == 0) {
+					std::cout << get_vertex_name(current, g, vertex_names) << " ";
+				}
+			}
+			if (process_id(g.process_group()) == 0) {
+				std::cout << std::endl;
+			}
 
+			std::reverse(route.begin(), route.end());
 			std::queue<int> routeQ;
 			for (size_t i = 0; i < route.size(); i++) {
 				routeQ.push(route[i]);
 			}
-			insertRoute(get_vertex_name(s, g, vertices_ID), (*it)->getID(), routeQ);
+			insertRoute(get_vertex_name(s, g, vertex_names), get_vertex_name(v, g, vertex_names), routeQ);
+			//Kosten müssten noch berechent werden, soll aber für weiteres nicht wichtig sein.....
 		}
 	}
 }
@@ -497,7 +527,7 @@ void RoutingTable::calculateKNearest() {
 		int start = (*it2)->getID();
 		for (spawnerContainer::iterator it = spawners.begin(); it != spawners.end(); it++) {
 			int goal = (*it)->getID();
-			v.push_back(std::pair<int, float> (goal, costMatrix[start][goal]));
+			v.push_back(std::pair<int, float>(goal, costMatrix[start][goal]));
 		}
 		int m = _numberNearestNeighbors;
 		if (int(v.size()) < _numberNearestNeighbors) {

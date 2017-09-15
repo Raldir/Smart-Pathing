@@ -4,10 +4,11 @@
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
 #include "main.h"
+#include <limits.h>
 
 
 
-using namespace boost;
+
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 typedef std::vector<Edge*> edgeContainer;
