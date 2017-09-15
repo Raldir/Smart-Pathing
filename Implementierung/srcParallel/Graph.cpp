@@ -1,3 +1,13 @@
+/*############################################
+
+Author: Rami Aly and Christoph Hueter
+Date : 20.09.17
+Libraries and Licences:
+Boost Library 1.60, MPI Boost Library 1.60, Open Streetmaps andMPI in use.
+All used Maps are licensed under the Open Street Maps License.
+
+#############################################*/
+
 #include "Graph.h"
 #include <iostream>
 #include <vector>
@@ -83,32 +93,22 @@ void Graph::initGraphProperties() {
 	int maxX = INT_MIN;
 	int maxY = INT_MIN;
 	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
-		//TODO Wert nicht statisch setzen sondern dynamisch bestimmen. Veilleicht später die n wenigsten verbundenen Knoten nehmen
+		//TODO Chnge method of choosing spawner, adding variable or sth to choose density etc...
+		//Selection of spawner is currently static every vertex that is at the border of the graph
 		if ((*it)->getEdges().size() == 2) {
 			Spawner* spawner = new Spawner((*it)->getID(), (*it)->getX(), (*it)->getY());
 			spawner->setIncomingEdges((*it)->getIncomingEdges());
 			spawner->setOutigoingEdges((*it)->getOutgoingEdges());
 			_spawner.push_back(spawner);
-
 		}
 
+		//Stores the highest x and y value of all vertices
 		if ((*it)->getX() > maxX) {
 			maxX = (*it)->getX();
 		}
 		if ((*it)->getY() > maxY) {
 			maxY = (*it)->getY();
 		}
-		//	std::vector<Edge*> edges = (*it)->getEdges();
-		//	//TODO Laufzeit ist katastrophal, bessere Lösung überlegen
-		//	int edgecount = edges.size();
-		//	for (std::vector<Edge*>::iterator it2 = edges.begin(); it2 != edges.end(); it2++){
-		//		for (std::vector<Edge*>::iterator it3 = edges.begin(); it3 != edges.end(); it3++) {
-		//			if ((*it2)->getVertices().first->getID() == (*it3)->getVertices().second->getID()) {
-		//				edgecount --;
-		//				break;
-		//			}
-		//		}
-		//	}
 	}
 	_maxX = maxX;
 	_maxY = maxY;
@@ -116,13 +116,10 @@ void Graph::initGraphProperties() {
 }
 
 float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
-	//std::cout <<"Start" << vertex1 <<" Goal"<< vertex2<< '\n';
 	float distance = 0;
 	int origin = vertex1;
-	//route.pop();
-	//std::cout << "OutgoingNeighbor:" << route.front() << '\n';
+	//Collect the sum length of all Edges on the route
 	while (route.size() > 0) {
-		//std::cout<<" EdgetoNextNeighbor: "<< _vertexMap[origin]->outgoingNeighbor(route.front())->getID()<<std::endl;
 		distance +=_vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
 		origin = route.front();
 		if (route.front() == vertex2)  break;
@@ -132,18 +129,18 @@ float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
 }
 
 void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {
+	//Copy route
 	std::queue<int> tempqueue = route;
-	//remove first element
+	//remove first element, because it is the origin
 	tempqueue.pop();
 	int origin = startID;
 	float totaldistance = 0;
 	while (tempqueue.size() > 0) {
 		int tempgoal = tempqueue.front();
+		//Used as a heuristik to approximate the time and as such the index of the timetable 
 		totaldistance += distance(origin, tempgoal, tempqueue);
-		//VON CHRISTOPH
-		/*_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(currentTimeTableIndex
-			+ (totaldistance / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE/totaldistance);*/
 		std::pair<int, int> timetableValuePair = calculateTimetableValues(currentTimeTableIndex, totaldistance);
+		//Add Value to the timetable at the calculated index
 		_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(timetableValuePair.first, timetableValuePair.second);
 		origin = tempqueue.front();
 		if(tempqueue.front() == route.back()) return;
@@ -152,12 +149,14 @@ void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableI
 }
 
 void Graph::createTrafficLights() {
+	//Create TrafficLight for every vertex
 	for (vertexContainer::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
 		edgeContainer inEdges = (*it)->getIncomingEdges();
 		std::vector<std::pair<int, int>> tLMap;
-		//for (edgeContainer::iterator it2 = inEdges.begin(); it2 != inEdges.end(); it2++) {
+		/*Traffic lights will always be green when there is only one one effektive direction and/or street.
+		Otherwise handle situation for a crossing and T-Road
+		*/
 		if(inEdges.size() > 1){
-			//std::cout << inEdges[0]->getID() << "\n";
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[1]->getID()));
 		}
 		if (inEdges.size() == 4 ) {
@@ -169,49 +168,46 @@ void Graph::createTrafficLights() {
 		else if (inEdges.size() == 1){
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[0]->getID()));
 		}
-		//for (std::vector<std::pair<int, int>> ::iterator it = tLMap.begin(); it != tLMap.end(); ++it) {
-		//	std::cout << (*it).first << " " << (*it).second << "\n";
-		//}
 
-		//nicht "wirklich" zufällig, soll aber reicehn (Bei jeder durchführung wird gleiche generierungsufnktion
+		//nicht "wirklich" zufällig, soll aber reichen (Bei jeder durchführung wird gleiche generierungsufnktion
 		//für zufallzahl genommen
 		int start = rand() % TRAFFICLIGHT_DURATION;
-		//std::cout << "rand:" << start;
+		//Create TrafficLight and add it to the Vertex
 		TrafficLight tl(tLMap, TRAFFICLIGHT_DURATION, start);
 		(*it)->setTrafficLight(tl);
 	}
 }
-//Calculate values to enter into add and remove function for timetables
+
 std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
 	return std::make_pair(intitialTimetableIndex + (totalDist/ _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
 }
 
 int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {
-	//std::cout << " New Goal : Start" << startID << " Goal" << destID << " " << route.front() <<'\n';
 	std::map<int, float> costs;
 	std::queue<int> tempqueue = route;
 	int origin = startID;
+	//Remove first since the origin is stored in it
 	tempqueue.pop();
 	int timeTableValues = 0;
 	float totaldistance = 0;
 	while (tempqueue.size() > 0) {
 		int tempgoal = tempqueue.front();
-		//std::cout << "CurrentnextVertex:" << route.front() << '\n';
+		//Calculate right index of Timetable
 		totaldistance += distance(origin, tempgoal, tempqueue);
-		//std::cout << "distance" << totaldistance << '\n';
+		//Get Value of index and add to sum
 		timeTableValues += _vertexMap[origin]->outgoingNeighbor(tempgoal)->
 			getWeightTimetable(currentTimeTableIndex
 				+ (totaldistance / _CAR_SPEED_PER_TICK));
 			origin = tempqueue.front();
-			//std::cout << "reached end" << std::endl;
+			//reached the destination
 			if (tempqueue.front() == route.back()) return timeTableValues;
-			//std::cout << "nextIteration for getSumWeight"<< std::endl;
 			tempqueue.pop();
 	}
 	return timeTableValues;
 }
 
 float Graph::distance_heuristicOverID(size_t start, size_t goal) {
+	//TODO Refactoring, already used in similar manner in Routingtable
 	std::pair<float, float> korStart = _vertexMap[start]->getPosition();
 	std::pair<float, float> korEnd = _vertexMap[goal]->getPosition();
 	return sqrt(pow((korStart.first - korEnd.first), 2.0f) +

@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
 	std::cout << "Prozess " << rank << "Worldsize: " << world_size<<std::endl;
-	Simulation* simulation = new Simulation(world_size, rank);
+	Simulation simulation(world_size, rank);
 	MPI_Finalize();
 
 	

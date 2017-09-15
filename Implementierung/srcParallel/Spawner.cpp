@@ -1,3 +1,13 @@
+/*############################################
+
+Author: Rami Aly and Christoph Hueter
+Date : 20.09.17
+Libraries and Licences:
+Boost Library 1.60, MPI Boost Library 1.60, Open Streetmaps and MPI in use.
+All used Maps are licensed under the Open Street Maps License.
+
+#############################################*/
+
 #include "Spawner.h"
 #include "Car.h"
 #include <stdlib.h>
@@ -26,9 +36,11 @@ void Spawner::randomizeSpawnRate()
 
 void Spawner::spawnCar(int currentTick) {
 
-	//TODO Einbauen dass Car sich current tick merkt;
+	//Create a Goal for the Car
 	Spawner* initDestination = createPartlyRandomizedGoal();
+	//Calculates if alternative Route in neighborhood is better
 	int bestVertexID = _routingTable->calculateBestGoal(_ID, initDestination->getID(), currentTick);
+	//Catch if no path is found
 	if (bestVertexID == -1) {
 		std::cout << "No path to current goal" << std::endl;
 		return;
@@ -36,15 +48,16 @@ void Spawner::spawnCar(int currentTick) {
 	std::queue<int> route =_routingTable->getRoute(_ID, bestVertexID);
 	route.pop();
 	Edge* edge = this->Vertex::outgoingNeighbor(route.front());
-	//std::cout << this->getOutgoingEdges().size();
+	//Check if it is possible to spawn car on edge or if it is full
 	if (edge->isFull()) {
-		std::cout << "Edge is Full, no new car, created on Spawner " << this->getID() <<"and Edge" <<  edge->getID()<<std::endl;
 		return;
 	}
 	std::cout<<"Create Car on Spawner " << this->getID() <<"and " << edge->getID()<< std::endl;
+	//Creates new car and assign the route and current Tick, as well on the Edge
 	Car* car = new Car(currentTick);
 	car->assignRoute(route);
 	this->giveCar(edge, car);
+	//Add the ocsts to the Timetables on the paths
 	_routingTable->addCosts(_ID, bestVertexID, currentTick);
 	
 }
@@ -55,7 +68,7 @@ Spawner* Spawner::createPartlyRandomizedGoal() {
 	for (std::vector<std::pair<Spawner*, int>>::iterator it2 = _vertexPriorities.begin(); it2 != _vertexPriorities.end(); it2++) {
 		sumElements += (*it2).second;
 	}
-	//std::cout << "sumElements:" << sumElements<<'\n';
+	//The selected goal depends on the vertexPriorities, higher value increases the chance that this method returns this spawner
 	int random = rand() % sumElements;
 	int paircount = 0;
 	int currentCount = 0;
@@ -71,6 +84,7 @@ Spawner* Spawner::createPartlyRandomizedGoal() {
 }
 
 void Spawner::Update(int cT) {
+	//Tries to spawn a car when step reach 0 and sets new countdown
 	if (_stepsToNextSpawn == 0) {
 		spawnCar(cT);
 		_stepsToNextSpawn = _spawnRate;
