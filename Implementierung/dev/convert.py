@@ -4,6 +4,11 @@ Partly use of the code of Brandon Martin-Anderson under the BSD License http://g
 """
 import xml.sax
 import copy
+import sys
+
+
+
+
 
 def mapVertices(vertices):
     iDMapping = {}
@@ -27,6 +32,7 @@ def twopointWays(i, size, file, nodes, edge):
         return nodes
 
 def read_osm(filename_or_stream, only_roads=True):
+    sys.setrecursionlimit(2000)
     "TODO Nomalisiere Koordinaten der Nodes"
     "TODO Speichere Relevanz der Straße"
     osm = OSM(filename_or_stream)

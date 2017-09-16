@@ -9,6 +9,7 @@ All used Maps are licensed under the Open Street Maps License.
 #############################################*/
 
 #include "RoutingTable.h"
+
 #include <boost/graph/use_mpi.hpp>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
@@ -546,6 +547,7 @@ void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 			while (current != s) {
 				//store the parent of the current vertex in same variable
 				current = get(parents, current);
+				//In case no path exists break
 				if (std::find(route.begin(), route.end(), get_vertex_name(current, g, vertex_names)) != route.end()) {
 					break;
 				}

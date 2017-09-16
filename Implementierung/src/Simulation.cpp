@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <ctime>
 
 typedef std::vector<Edge*> edgeContainer;
 typedef std::vector<Spawner*> spawnerContainer;
@@ -19,8 +20,13 @@ Simulation::Simulation()
 
 	_currentTick = 0;
 
+	clock_t begin = clock();
 	_graph = new Graph();
+
 	_routingTable = new RoutingTable(_graph, 3);
+	clock_t end = clock();
+	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+	std::cout << "Gesamte Zeit: " << elapsed_secs << std::endl;
 	initSpawner();
 	std::cout << "Init completed";
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
@@ -64,7 +70,6 @@ void Simulation::writeResultsCurrentTick()
 
 void Simulation::nextTick()
 {
-	//VON CHRISTOPH
 	_currentTick++;
 	int timeStamp = _currentTick %_TIMETABLE_SPAN;
 	std::cout << "begin update" << '\n';
@@ -75,26 +80,21 @@ void Simulation::nextTick()
 	std::cout<< "Vertex update completed" << '\n';
 	for (Edge* ed : _graph->getEdges()) {
 		ed->Update(_currentTick);
-		//Methode zum Testen
-		//ed->printCars();
 	}
 	std::cout << "Edge update Phase 1 completed" << '\n';
 	std::vector<Edge*> remainingEdges = _graph->getEdges();
-	for (int i = 0; i < _graph->getEdges().size(); i++) {
+	//for (int i = 0; i < _graph->getEdges().size(); i++) {
 		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end();) {
 			(*it2)->UpdateOverflow();
-			//(*it2)->printCars();
 			if (!(*it2)->hasOverflow()) {
 				it2 = remainingEdges.erase(it2);
 			}
 			else it2++;
 		}
-	}
+	//}
 	std::cout << "Edge update Phase 2 completed" << '\n';
 	spawnerContainer spawners = _graph->getSpawner();
 	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
-		//std::cout << "hello";
-		//VON CHRISTOPH --> gibt tick an update weiter
 		(*it2)->Update(timeStamp);
 	}
 	std::cout << "Tick " << _currentTick << "finished" << '\n';
