@@ -11,6 +11,7 @@
 class Graph
 {
 public:
+	//Creates a Graph with Vertices and Edges, out of the Input files in "../../dev/OutputMap/nodes"
 	Graph();
 
 	std::vector<Spawner*> getSpawner();
@@ -18,17 +19,34 @@ public:
 	std::vector<Edge*> getEdges();
 	std::vector<Vertex*> getVertices();
 	std::map<int, Vertex*> getVertexMap();
+
+	//Calculates the distance between two Vertices and a given Route
 	float distance(int vertex1, int vertex2, std::queue<int> route);
+
+	//Adds Weight to each Edge on the route between the StartVertex and the DEstinationVertex in the position, choosen by heuristik
 	void addWeightToTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
 	std::map<int, Spawner*> createSpawnerMap();
+
+	//Calculate values to enter into add and remove function for timetables
 	static std::pair<int,int> calculateTimetableValues(int intitialTimetableIndex, float toaldistance);
+
 	std::vector<int> createSpawnerIDVector();
+
+	//gets the Summation of the Values of the Timetables on the Route of the car
 	int getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route);
+
+	//Calculate the airline distance between two vertices
 	float distance_heuristicOverID(size_t start, size_t goal);
+
 	int getNumberVertices();
 	int getNumberEdges();
 	float getMaxX();
 	float getMaxY();
+
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
+	std::pair<std::map<int, Vertex*>, std::map<int, Edge*>> getLocalVertexEdgeMaps();
+	std::pair<std::vector<Vertex*>, std::vector<Edge*>> getLocalVerticesEdges();
+	std::vector<Spawner*> getLocalSpawners();
 
 private:
 	int _rank;
@@ -42,10 +60,6 @@ private:
 	*/
 	void insertVertexProcessMap(std::map<int, std::vector<int>>);
 	void InitLocalVerticesEdges();
-
-	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
-	std::pair<std::map<int, Vertex*>, std::map<int, Edge*>> getLocalVertexEdgeMaps();
-	std::pair<std::vector<Vertex*>, std::vector<Edge*>> getLocalVerticesEdges();
 
 	float _maxX;
 	float _maxY;
@@ -61,6 +75,7 @@ private:
 	//Direct pointers to vertices and edges
 	std::vector<Vertex*> _localVertices;
 	std::vector<Edge*> _localEdges;
+	std::vector<Spawner*> _localSpawners;
 
 	//Local Vertex Map
 	std::map<int, Vertex*> _localVertexMap;

@@ -1,3 +1,14 @@
+/*############################################
+
+Author: Rami Aly and Christoph Hueter
+Date : 20.09.17
+Libraries and Licences:
+Boost Library 1.60, MPI Boost Library 1.60, Open Streetmaps and MPI in use.
+All used Maps are licensed under the Open Street Maps License.
+
+#############################################*/
+
+
 #include "Simulation.h"
 #include <iostream>
 #include <fstream>
@@ -11,6 +22,7 @@ typedef std::vector<Edge*> edgeContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 typedef std::vector<Vertex*> vertexContainer;
 
+
 Simulation::Simulation(int world_size, int rank)
 {
 	int root = 0;
@@ -22,6 +34,7 @@ Simulation::Simulation(int world_size, int rank)
 	_world_size = world_size;
 	_graph = new Graph();
 	clock_t begin = clock();
+
 	//Auskommentieren falls Boost parallelisierung verwendet wird
 	parallelRouting();
 	system("Pause");
@@ -31,27 +44,24 @@ Simulation::Simulation(int world_size, int rank)
 	InitConnections();
 	InitEdgeFreeSpaceBuffers();
 
+	req = new MPI_Request[outgoingConnections.size() + incomingConnections.size()];
+
 	for (int i = 0; i < _SIMULATION_TICKS; i++) {
 		//Auskommentieren falls normale routingparallisierung verwendet wird
 		//_routingTable = new RoutingTable(_graph, _NEAREST_NEIGHBOR);
-		clock_t end = clock();
-		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-		std::cout << "Gesamte Zeit: " << elapsed_secs << std::endl;
 
 		std::cout << rank << " came to barrier on tick " << i << std::endl;
 		_currentTick++;
 		nextTick();
-
-		writeResultsCurrentTick();
 	}
+
+	clock_t end = clock();
+	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+	std::cout << "Gesamte Zeit: " << elapsed_secs << std::endl;
+
 }
 
-/*
-Complete Algorithm for calculating the routing tables distributed, so that the routes will be sequentially calculated on multiple nodes and exchanged with each other to form a complete routing table.
-*/
 void Simulation::parallelRouting() {
-
-
 	//Init splitting parameters:Splitting spawners for which the processes should calculate the routes
 	std::vector<int> ids = _graph->createSpawnerIDVector();
 	int* send_buf = &ids[0];
@@ -133,6 +143,7 @@ void Simulation::parallelRouting() {
 }
 
 
+
 /*
 Parallel Collecting(Gatherv) algorithm that uses a two dimensional Sendbuffer
 */
@@ -160,7 +171,6 @@ void Simulation::executeGatherRouting(std::vector<std::vector<int>> matrix, int*
 
 
 /*
-Clears a Queue
 TODO Needs a refactoring, does not belong here
 */
 void Simulation::clear(std::queue<int> &q)
@@ -169,9 +179,7 @@ void Simulation::clear(std::queue<int> &q)
 	std::swap(q, empty);
 }
 
-/*
-Converts a twodimensional vector into a continiously spaced array and return the pointer to it.
-*/
+
 int** Simulation::setupHMM(std::vector<std::vector<int>> &vals, int N, int M)
 {
 	int *buffer = new int[M*N];
@@ -191,14 +199,12 @@ int** Simulation::setupHMM(std::vector<std::vector<int>> &vals, int N, int M)
 }
 
 
-/*
-Splits the Spawners of the graph in evenly splitted parts and returns the size of the splititng
-*/
 std::vector<int> Simulation::splitGraphSize(int numberProcesses) {
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<int> splitedGraphSize;
-	//system("Pause");
 	int eachSpawnerNumber = int(spawners.size() / numberProcesses);
+	//Stores the rest. Since it is < numberProcesses iterate through them and add one as long
+	//as overflow is > 0
 	int overflow = spawners.size() - eachSpawnerNumber * numberProcesses;
 	for (int j = 0; j < numberProcesses; j++) {
 		int margin = eachSpawnerNumber;
@@ -211,9 +217,7 @@ std::vector<int> Simulation::splitGraphSize(int numberProcesses) {
 	return splitedGraphSize;
 }
 
-/*
-Calculates the position of the spawnerstructure in which it should be splitted
-*/
+
 std::vector<int> Simulation::splitGraphLocation(std::vector<int> buffer) {
 	std::vector<int> splitedGraphLocation;
 	int count = 0;
@@ -224,12 +228,12 @@ std::vector<int> Simulation::splitGraphLocation(std::vector<int> buffer) {
 	return splitedGraphLocation;
 }
 
-/*
-Splits the Spawners of the graph in evenly splitted parts.
-*/
+
 std::vector<std::vector<int>> Simulation::splitGraph(int numberProcesses) {
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<std::vector<int>> splitedGraph;
+	//Stores the rest. Since it is < numberProcesses iterate through them and add one as long
+	//as overflow is > 0
 	int eachSpawnerNumber = int(spawners.size() / numberProcesses);
 	int overflow = spawners.size() - eachSpawnerNumber * numberProcesses;
 	for (int i = 0; i < numberProcesses; i++) {
@@ -243,13 +247,6 @@ std::vector<std::vector<int>> Simulation::splitGraph(int numberProcesses) {
 	return splitedGraph;
 }
 
-Simulation::~Simulation()
-{
-}
-
-/*
-Write down the load of each road of the graph into a file of the current tick
-*/
 void Simulation::writeResultsCurrentTick()
 {
 	std::ofstream results;
@@ -261,33 +258,28 @@ void Simulation::writeResultsCurrentTick()
 	results.close();
 }
 
-
 void Simulation::nextTick()
 {
 	int timeStamp = _currentTick %_TIMETABLE_SPAN;
 	std::cout << "begin update" << '\n';
 
 	//vertexContainer vertices = _graph->getVertices(); Use localVertices instead
-
 	//Update Vertices (TrafficLight)
 	for (vertexContainer::iterator it2 = localVertices.begin(); it2 != localVertices.end(); it2++) {
 		(*it2)->Update();
 	}
 
 	//########### PARALLEL ###########
-
 	//Prepare send buffer for free space of edges
 	fillEdgeSpaceSendBuffer();
 	//Send and receive messages in buffer
 	exchangeEgdeFreeSpace();
-
 	//First Update
 	std::cout << "Vertex update completed" << '\n';
 	//for (Edge* ed : _graph->getEdges()) {
 	for (Edge* ed : localEdges) {
 		ed->Update(_currentTick);
 	}
-
 	//SENDING CAR INFORMATION
 	sendCarInformation();
 	receiveCarInformation();
@@ -299,7 +291,6 @@ void Simulation::nextTick()
 		//After every Update, exchange the space
 		fillEdgeSpaceSendBuffer();
 		exchangeEgdeFreeSpace();
-
 		for (edgeContainer::iterator it2 = remainingEdges.begin(); it2 != remainingEdges.end();) {
 			(*it2)->UpdateOverflow();
 			if (!(*it2)->hasOverflow()) {
@@ -307,7 +298,6 @@ void Simulation::nextTick()
 			}
 			else it2++;
 		}
-
 		sendCarInformation();
 		receiveCarInformation();
 	}
@@ -318,8 +308,7 @@ void Simulation::nextTick()
 
 	std::cout << "Edge update Phase 2 completed" << '\n';
 	//spawnerContainer spawners = _graph->getSpawner();
-	spawnerContainer spawners = localSpawners;
-	for (spawnerContainer::iterator it2 = spawners.begin(); it2 != spawners.end(); it2++) {
+	for (spawnerContainer::iterator it2 = localSpawners.begin(); it2 != localSpawners.end(); it2++) {
 		(*it2)->Update(timeStamp);
 	}
 	std::cout << "Tick " << _currentTick << "finished" << '\n';
@@ -347,9 +336,8 @@ void Simulation::fillEdgeSpaceSendBuffer() {
 
 		//Go through the vector of edges and get the amount of free space in them
 		for (std::vector<int>::iterator it = outCon.second.begin(); it != outCon.second.end(); it++) {
-
 			//Get free space amount from edge (must be in the same process)
-			int freeSpaceAmount = _graph->getEdge(outCon.second[*it])->getFreeSpaceAmount();
+			int freeSpaceAmount = localEdgeMap[*it]->getFreeSpaceAmount();
 			//Push free space amount into the corresponding place inside buffer
 			edgeSpaceSendBuffer[outCon.first][*it] = freeSpaceAmount;
 		}
@@ -377,6 +365,7 @@ void Simulation::exchangeEgdeFreeSpace() {
 	MPI_Status *status = new MPI_Status[incomingConnections.size() + outgoingConnections.size()];
 	MPI_Waitall(outgoingConnections.size() + incomingConnections.size(), req, status);
 
+	//Put free edge maps into the vertices
 	std::map<int, std::map<int, int>> freeSpaceMap = getEdgeFreeSpaceMaps();
 	for (auto vectorMap : freeSpaceMap) {
 		//Call vector and set new map with free edge space
@@ -394,6 +383,7 @@ std::map<int, std::map<int, int>> Simulation::getEdgeFreeSpaceMaps() {
 		//Get outgoing connections which have the same order (ascending)
 		std::vector<int> outCon = outgoingConnections[pair.first];
 
+		//TODO
 		//Then go through the edges in the correct order, VERY IMPORTANT
 		for (int counter = 0; counter < outCon.size(); counter++) {
 			int edgeID = outCon[counter];
@@ -402,6 +392,11 @@ std::map<int, std::map<int, int>> Simulation::getEdgeFreeSpaceMaps() {
 			int vertexID = _graph->getEdge(edgeID)->getVertices().first->getID();
 			//Put value into the map inside the correct vertex
 			edgeFreeSpaceMaps[vertexID][edgeID] = pair.second[counter];
+		}
+
+		//Iterate through vector
+		for (int &edge : outCon) {
+			
 		}
 	}
 
@@ -564,7 +559,7 @@ void Simulation::InitEdgeFreeSpaceBuffers() {
 //Assigns processMap to each vertex and intialize connections for process
 void Simulation::InitConnections()
 {
-	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPairs = _routingTable->getProcessConnectionVectors();
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPairs = _graph->getProcessConnectionVectors();
 
 	//Initialize connection vectors of simulation
 	incomingConnections = connectionPairs.first;
@@ -591,6 +586,15 @@ void Simulation::InitConnections()
 }
 
 void Simulation::InitLocalVectors() {
+	auto maps = _graph->getLocalVertexEdgeMaps();
+	auto vectors = _graph->getLocalVerticesEdges();
+
+	localVertexMap = maps.first;
+	localEdgeMap = maps.second;
+	localSpawners = _graph->getLocalSpawners();
+
+	localVertices = vectors.first;
+	localEdges = vectors.second;
 
 }
 

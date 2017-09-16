@@ -9,22 +9,44 @@
 class Simulation
 {
 public:
+	//Creates an Simulation instance with the number of processes and the rank of the process calling this instance
 	Simulation(int numberProcesses, int rank);
-	~Simulation();
+
+	/*
+	Write down the load of each road of the graph into a file of the current tick
+	*/
 	void writeResultsCurrentTick();
 	
 private:
+
+	/*
+	Splits the Spawners of the graph in evenly splitted parts.
+	*/
 	std::vector<std::vector<int>> splitGraph(int numberProcesses);
+	/*
+	Complete Algorithm for calculating the routing tables distributed, so that the routes will be sequentially
+	calculated on multiple nodes and exchanged with each other to form a complete routing table.
+	*/
 	void parallelRouting();
+
+	//Splits the Spawners of the graph in evenly splitted parts and returns the size of the splititng
 	std::vector<int> splitGraphSize(int numberProcesses);
+
+
+	//Calculates the position of the spawnerstructure in which it should be splitted
 	std::vector<int> splitGraphLocation(std::vector<int> buffer);
 	void nextTick();
 	void initSpawner();
+
+	//Parallel Collecting(Gatherv) algorithm that uses a two dimensional Sendbuffer
 	void executeGatherRouting(std::vector<std::vector<int>> matrix,
 		int* displays, int*splitting, int cols, int totalRows);
 	int getEnd(std::queue<int> route);
+
+	//Clears a Queue
 	void clear(std::queue<int> &q);
-	int getMaxCol(std::vector < std::vector<int>> &vals);
+
+	//Converts a twodimensional vector into a continiously spaced array and return the pointer to it.
 	int** setupHMM(std::vector<std::vector<int>> &vals, int N, int M);
 
 	RoutingTable* _routingTable;
@@ -87,7 +109,7 @@ private:
 	/*
 	Request arrays for Waitall
 	*/
-	MPI_Request *req = new MPI_Request[outgoingConnections.size() + incomingConnections.size()];
+	MPI_Request *req;
 	int reqCounter;
 };
 
