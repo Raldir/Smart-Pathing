@@ -1,7 +1,16 @@
-#include "RoutingTable.h"
+/*############################################
+
+Author: Rami Aly and Christoph Hueter
+Date : 20.09.17
+Libraries and Licences:
+Boost Library 1.60, MPI Boost Library 1.60, Open Streetmaps and MPI in use.
+All used Maps are licensed under the Open Street Maps License.
+
+#############################################*/
 
 //TODO WIEDER EINKOMMENTIEREN
 
+#include "RoutingTable.h"
 #include <boost/graph/use_mpi.hpp>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
@@ -399,7 +408,6 @@ int get_vertex_name(Vertex v, const Graph& g, std::vector<int> vertex_names)
 Parallelism which calculates each Route parallel but the number of Routes sequential
 */
 void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
-	/*
 	//Init values of graph(needed since the algorithm uses seperate Graph)
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
@@ -459,8 +467,8 @@ void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 			std::vector<int> route;
 			/*This part is crucial. Since the properties of The graph are distributed, because the Graph itself is distributed, the
 			correct properties, in this case the predecessor of the shortest route is only stored in its owner. Every other process
-			probably has a ghost value and the correct value must be requested./
-			COMMENT HERE
+			probably has a ghost value and the correct value must be requested.*/
+
 			request(parents, v);
 			//After the request is made, it is necessary to synchronize the property map to get the value from its owner
 			synchronize(parents);
@@ -497,7 +505,6 @@ void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 			//Kosten müssten noch berechent werden, soll aber für Weiteres nicht wichtig sein.....
 		}
 	}
-	*/
 }
 
 //Calculates the k nearest neighbors sequential

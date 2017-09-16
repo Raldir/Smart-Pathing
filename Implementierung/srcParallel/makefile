@@ -1,18 +1,24 @@
-# include_directories()
-add_library(papo-utils SHARED grid/grid.c grid/hexagons.c grid/triangles.c grid/rectangles.c option-parser.c util-time.c util-main.c)
+#TODO: Implement better structure, automatic installation of the boost mpi library
 
-target_link_libraries(papo-utils
-  ${MPI_C_LIBRARIES}
-)
+#Please execute spack load --dependencies mpi beforehand
+#Pleae use correct path for $LIBS of your boost and built mpi boost, since the size of the library is too big to link it directly
 
-# your executable requires certain source files:
-add_executable(my-model.exe main.c model.c)
 
-# link it against useful libraries
-target_link_libraries(my-model.exe
-  papo-utils
-)
+LIBS = /home/aly/boost_1_65_0/
 
-# install required libraries
-install(TARGETS papo-utils LIBRARY DESTINATION lib)
-install(FILES grid/grid.h DESTINATION include/grid/)
+CC = mpic++
+SRC = Project1.cpp Edge.cpp Simulation.cpp VertexFileReader.cpp RoutingTable.cpp TrafficLight.cpp ObserverPattern.cpp Spawner.cpp Graph.cpp EdgeFileReader.cpp Vertex.cpp Car.cpp
+
+LIBSL =stage/lib -lboost_serialization -lboost_system -lboost_mpi -lboost_graph_parallel
+
+FLAGS = -Wl,-rpath=$(LIBS)stage/lib
+
+
+TARGET = example2
+
+program: $(SRC)
+	$(CC) -I$(LIBS) -L$(LIBS)$(LIBSL) $(FLAGS) $(SRC) -o $(TARGET)
+
+
+
+
