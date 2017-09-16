@@ -23,13 +23,6 @@
 #include <boost/graph/use_mpi.hpp>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
-/*
-#include <boost/serialization/vector.hpp>
-#include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/distributed/mpi_process_group.hpp>
-#include <boost/graph/distributed/adjacency_list.hpp>*/
-//#include <boost/test/minimal.hpp>
 
 #ifdef BOOST_NO_EXCEPTIONS
 void
@@ -76,7 +69,7 @@ void parallelRoutingInitBoost(int argc, char *argv[]) {
 	mpi::communicator world;
 	std::cout << "I am process " << world.rank() << " of " << world.size()
 		<< "." << std::endl;
-	Simulation* simulation = new Simulation(world.rank(), world.size());
+	Simulation simulation(world.rank(), world.size());
 }*/
 
 

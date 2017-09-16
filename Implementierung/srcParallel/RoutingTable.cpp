@@ -31,7 +31,7 @@ typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
 using namespace boost;
-//using boost::graph::distributed::mpi_process_group;
+using boost::graph::distributed::mpi_process_group;
 
 //Reverse Queue
 std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)

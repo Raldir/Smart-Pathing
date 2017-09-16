@@ -110,6 +110,7 @@ void Simulation::parallelRouting() {
 			}
 			else {
 				route.push(receive_buf[j + lastC]);
+				_graph->insertVertexProcessPair(receive_buf[j + lastC], i);
 				last = receive_buf[j + lastC];
 			}
 		}
