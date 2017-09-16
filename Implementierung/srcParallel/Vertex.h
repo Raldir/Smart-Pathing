@@ -99,7 +99,6 @@ protected:
 	//TODO Nötig?
 	bool isInsideProcess(int edgeID);
 
-	//TODO
 	/*
 		Should only contain freeSpace of connected edges on other processes
 

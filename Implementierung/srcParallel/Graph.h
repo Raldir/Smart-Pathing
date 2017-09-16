@@ -48,18 +48,16 @@ public:
 	std::pair<std::vector<Vertex*>, std::vector<Edge*>> getLocalVerticesEdges();
 	std::vector<Spawner*> getLocalSpawners();
 
+	//Old function for inserting map at once
+	void calculateVertexProcessMap();
+	void insertVertexProcessPair(int vertexID, int process);
+	void InitLocalVerticesEdges();
+
 private:
 	int _rank;
 
 	void initGraphProperties();
 	void createTrafficLights();
-
-	/*
-	Returns incomingConnection and outgoingConnection for every connected process
-	Also correct potential conflicts
-	*/
-	void insertVertexProcessMap(std::map<int, std::vector<int>>);
-	void InitLocalVerticesEdges();
 
 	float _maxX;
 	float _maxY;
@@ -86,6 +84,7 @@ private:
 		second int -> process
 	*/
 	std::map<int, int> _vertexProcessMap;
+	std::map<int, std::vector<int>> _vertexProcessConflictMap;
 
 	/*
 		first int -> vertex

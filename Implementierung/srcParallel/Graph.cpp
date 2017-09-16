@@ -119,7 +119,7 @@ float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
 	int origin = vertex1;
 	//Collect the sum length of all Edges on the route
 	while (route.size() > 0) {
-		distance +=_vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
+		distance += _vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
 		origin = route.front();
 		if (route.front() == vertex2)  break;
 		route.pop();
@@ -142,7 +142,7 @@ void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableI
 		//Add Value to the timetable at the calculated index
 		_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(timetableValuePair.first, timetableValuePair.second);
 		origin = tempqueue.front();
-		if(tempqueue.front() == route.back()) return;
+		if (tempqueue.front() == route.back()) return;
 		tempqueue.pop();
 	}
 }
@@ -155,16 +155,16 @@ void Graph::createTrafficLights() {
 		/*Traffic lights will always be green when there is only one one effektive direction and/or street.
 		Otherwise handle situation for a crossing and T-Road
 		*/
-		if(inEdges.size() > 1){
+		if (inEdges.size() > 1) {
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[1]->getID()));
 		}
-		if (inEdges.size() == 4 ) {
+		if (inEdges.size() == 4) {
 			tLMap.push_back(std::make_pair(inEdges[2]->getID(), inEdges[3]->getID()));
 		}
 		if (inEdges.size() == 3) {
 			tLMap.push_back(std::make_pair(inEdges[2]->getID(), inEdges[2]->getID()));
 		}
-		else if (inEdges.size() == 1){
+		else if (inEdges.size() == 1) {
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[0]->getID()));
 		}
 
@@ -177,8 +177,8 @@ void Graph::createTrafficLights() {
 	}
 }
 
-std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
-	return std::make_pair(intitialTimetableIndex + (totalDist/ _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
+std::pair<int, int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
+	return std::make_pair(intitialTimetableIndex + (totalDist / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
 }
 
 int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {
@@ -197,10 +197,10 @@ int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTa
 		timeTableValues += _vertexMap[origin]->outgoingNeighbor(tempgoal)->
 			getWeightTimetable(currentTimeTableIndex
 				+ (totaldistance / _CAR_SPEED_PER_TICK));
-			origin = tempqueue.front();
-			//reached the destination
-			if (tempqueue.front() == route.back()) return timeTableValues;
-			tempqueue.pop();
+		origin = tempqueue.front();
+		//reached the destination
+		if (tempqueue.front() == route.back()) return timeTableValues;
+		tempqueue.pop();
 	}
 	return timeTableValues;
 }
@@ -229,13 +229,6 @@ int Graph::getNumberEdges()
 		SIMULATION
 ############################
 */
-
-//TODO Umbauen zu single insert und nicht ganze map einfügen
-void Graph::insertVertexProcessMap(std::map<int, std::vector<int>> map)
-{
-	//Assign new map with resolved conflicts
-	_vertexProcessMap = solveVertexProcessConflicts(map);
-}
 
 /*
 	Initializes local vertex and edge vectors and maps
@@ -294,6 +287,18 @@ void Graph::InitLocalVerticesEdges()
 	_localSpawners = localSpawners;
 }
 
+
+void Graph::calculateVertexProcessMap()
+{
+	//Assign new map with resolved conflicts
+	_vertexProcessMap = solveVertexProcessConflicts(_vertexProcessConflictMap);
+}
+
+//Insert vertexID and a process claiming this vertex
+void Graph::insertVertexProcessPair(int vertexID, int processID) {
+	_vertexProcessConflictMap[vertexID].push_back(processID);
+}
+
 //Assigns every Vertex a single processID
 std::map<int, int> Graph::solveVertexProcessConflicts(std::map<int, std::vector<int>> vertexProcessesMap) {
 
@@ -319,9 +324,6 @@ std::map<int, int> Graph::solveVertexProcessConflicts(std::map<int, std::vector<
 }
 
 int Graph::solveProcessConflict(std::vector<int> processes) {
-	//int world_size;
-	//MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
 	return *std::max_element(processes.begin(), processes.end());
 }
 

@@ -40,6 +40,11 @@ Simulation::Simulation(int world_size, int rank)
 	system("Pause");
 	initSpawner();
 
+	_graph->calculateVertexProcessMap();
+	//Generate local vectors for vertices, spawners, edges
+	_graph->InitLocalVerticesEdges();
+
+	//Init stuff for sending and receiving
 	InitLocalVectors();
 	InitConnections();
 	InitEdgeFreeSpaceBuffers();
@@ -269,24 +274,26 @@ void Simulation::nextTick()
 		(*it2)->Update();
 	}
 
+	//First Update
+	std::cout << "Vertex update completed" << '\n';
+
 	//########### PARALLEL ###########
 	//Prepare send buffer for free space of edges
 	fillEdgeSpaceSendBuffer();
 	//Send and receive messages in buffer
 	exchangeEgdeFreeSpace();
-	//First Update
-	std::cout << "Vertex update completed" << '\n';
-	//for (Edge* ed : _graph->getEdges()) {
+
+	//Update every local edge
 	for (Edge* ed : localEdges) {
 		ed->Update(_currentTick);
 	}
-	//SENDING CAR INFORMATION
+	//EXCHANGING CAR INFORMATION
 	sendCarInformation();
 	receiveCarInformation();
 
 	std::cout << "Edge update Phase 1 completed" << '\n';
 	std::vector<Edge*> remainingEdges = localEdges;
-	for (int i = 0; i < localEdges.size(); i++) {
+	for (int i = 0; i < _graph->getNumberEdges(); i++) {
 
 		//After every Update, exchange the space
 		fillEdgeSpaceSendBuffer();
@@ -379,27 +386,21 @@ std::map<int, std::map<int, int>> Simulation::getEdgeFreeSpaceMaps() {
 	std::map<int, std::map<int, int>> edgeFreeSpaceMaps;
 
 	//Go through every buffer sent from every process
-	for (std::pair<const int, int*> &pair : edgeSpaceRecvBuffer) {
+	for (std::pair<const int, int*> &bufferPair : edgeSpaceRecvBuffer) {
 		//Get outgoing connections which have the same order (ascending)
-		std::vector<int> outCon = outgoingConnections[pair.first];
+		std::vector<int> outCon = outgoingConnections[bufferPair.first];
 
-		//TODO
 		//Then go through the edges in the correct order, VERY IMPORTANT
-		for (int counter = 0; counter < outCon.size(); counter++) {
-			int edgeID = outCon[counter];
+		for (std::vector<int>::iterator it = outCon.begin(); it != outCon.end(); it++) {
+			int counter = std::distance(it, outCon.begin());
 
 			//Get start vertex of edge
-			int vertexID = _graph->getEdge(edgeID)->getVertices().first->getID();
-			//Put value into the map inside the correct vertex
-			edgeFreeSpaceMaps[vertexID][edgeID] = pair.second[counter];
-		}
+			int vertexID = localEdgeMap[*it]->getVertices().first->getID();
 
-		//Iterate through vector
-		for (int &edge : outCon) {
-			
+			//Put value into the map inside the correct vertex
+			edgeFreeSpaceMaps[vertexID][*it] = bufferPair.second[counter];
 		}
 	}
-
 	return edgeFreeSpaceMaps;
 }
 
@@ -528,7 +529,7 @@ void Simulation::receiveCarInformation() {
 
 			//Create car with parameters and push it on edge
 			Car* car = new Car(overflowPosition, distanceTravelled, route);
-			_graph->getEdge(edgeID)->pushCar(car);
+			localEdgeMap[edgeID]->pushCar(car);
 		}
 	}
 }
@@ -595,7 +596,6 @@ void Simulation::InitLocalVectors() {
 
 	localVertices = vectors.first;
 	localEdges = vectors.second;
-
 }
 
 int Simulation::getEnd(std::queue<int> route) {

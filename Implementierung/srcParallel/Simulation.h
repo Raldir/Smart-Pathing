@@ -73,7 +73,10 @@ private:
 	void fillEdgeSpaceSendBuffer();
 	void exchangeEgdeFreeSpace();
 
-	//Get Free Space from every relevant edge
+	/*
+		first int -> process
+		second int -> (outgoing) map of edges and free space
+	*/
 	std::map<int, std::map<int,int>> getEdgeFreeSpaceMaps();
 
 	void sendCarInformation();

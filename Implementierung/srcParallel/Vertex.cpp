@@ -137,7 +137,6 @@ void Vertex::giveCar(Edge* outgoingEdge, Car* car)
 }
 
 bool Vertex::canTransit(int incomingEdgeID, int outgoingEdgeID) {
-	//TODO Implement when Traffic Light is ready
 
 	//return !isEdgeFullMap[outgoingEdgeID];
 	return trafficLight.canCross(incomingEdgeID) && !(getEdgeFromID(outgoingEdgeID)->isFull());
