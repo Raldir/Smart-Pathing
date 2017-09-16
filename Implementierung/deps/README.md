@@ -3,10 +3,10 @@
 This directory contains dependencies to third-party code.
 Scripts to download code and build (if possible), otherwise open source compatible code can be stored here.
 
-##Needed Library for extracting Edges and Nodes form .osm:
+## Needed Library for extracting Edges and Nodes form .osm:
 
 
-##Needed Libraries for running the Simulation(incl. RoutingTable calculations, without Paralllel BGL):
+## Needed Libraries for running the Simulation(incl. RoutingTable calculations, without Paralllel BGL):
 http://www.boost.org/users/download/
 Tested with Boost 1.60, needed libs:
 astar_search.hpp
@@ -15,7 +15,7 @@ random.hpp
 Do not forget to update the correct path to the Boost Library to
 the makefile in ../srcParallel/makefile
 
-##Additional needed Libraries for running WITH Parallel BGL):
+## Additional needed Libraries for running WITH Parallel BGL):
 Since the normal Lib does not build the mpi libraries it is
 needed to build them manually:
 1. run bootstrap.sh
@@ -26,7 +26,7 @@ Now there should be a folder called stage with all libraries, including
 the mpi library and parallel graph library.
 Both Libraries and serialization/vector.hpp are required to run the parallel RoutingTable calculations with Parallel BGL.
 
-##Needed Libaries for the Visualisation:
+## Needed Libaries for the Visualisation:
 python networkx
 python matplotlib
 python cv2!!
