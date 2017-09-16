@@ -61,29 +61,21 @@ public:
 	*/
 	std::vector<std::vector<int>> getKNearestMatrix();
 
+	//Set/get cost from origin to dest in Costmatrix
+	void setCost(int originID, int destID, float cost);
+	float getCost(int originID, int destID);
 
 	//Calculates the k nearest neighbors sequential
 	void calculateKNearest();
 
-	//Set/get cost from origin to dest in Costmatrix
-	void setCost(int originID, int destID, float cost);
-    float getCost(int originID, int destID);
-
-
-	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
-	
-	//Returns incomingConnection and outgoingConnection for every connected process
-	void insertProcessRoutes(std::pair<int, std::vector<std::pair<int, int>>>);
-
-
-
 private:
+	int rank;
+
 	//Reverse Queue
 	std::queue<int> reverseQueue(std::queue<int> queue);
 
 	//Comperator that compares two pairs by it second value in ascending
 	static bool comp(const std::pair<int, float> &a, const std::pair<int, float> &b);
-
 
 	int dimension;
 	int _numberNearestNeighbors;
@@ -97,8 +89,5 @@ private:
 	CostMatrix costMatrix;
 	KNearestNeighborMatrix k_nn;
 	Graph* _graph;
-	//Contains every route inside this process
-	std::vector<std::vector<int>> processRoutingMatrix;
 
-	std::map<int, std::vector<std::pair<int, int>>> processRoutesMap;
 };

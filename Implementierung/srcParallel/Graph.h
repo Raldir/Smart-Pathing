@@ -43,7 +43,19 @@ public:
 	float getMaxX();
 	float getMaxY();
 
+	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> getProcessConnectionVectors();
+	std::pair<std::map<int, Vertex*>, std::map<int, Edge*>> getLocalVertexEdgeMaps();
+	std::pair<std::vector<Vertex*>, std::vector<Edge*>> getLocalVerticesEdges();
+	std::vector<Spawner*> getLocalSpawners();
+
+	//Old function for inserting map at once
+	void calculateVertexProcessMap();
+	void insertVertexProcessPair(int vertexID, int process);
+	void InitLocalVerticesEdges();
+
 private:
+	int _rank;
+
 	void initGraphProperties();
 	void createTrafficLights();
 
@@ -54,6 +66,32 @@ private:
 	std::vector<Vertex*> _vertices;
 	std::map<int, Edge*> _edgeMap;
 	std::map<int, Vertex*> _vertexMap;
+
+	//std::vector<int> localVerticesID;
+	//std::vector<int> localEdgesID;
+
+	//Direct pointers to vertices and edges
+	std::vector<Vertex*> _localVertices;
+	std::vector<Edge*> _localEdges;
+	std::vector<Spawner*> _localSpawners;
+
+	//Local Vertex Map
+	std::map<int, Vertex*> _localVertexMap;
+	std::map<int, Edge*> _localEdgeMap;
+
+	/*
+		first int -> vertex
+		second int -> process
+	*/
+	std::map<int, int> _vertexProcessMap;
+	std::map<int, std::vector<int>> _vertexProcessConflictMap;
+
+	/*
+		first int -> vertex
+		second int -> second
+	*/
+	std::map<int, int> solveVertexProcessConflicts(std::map<int, std::vector<int>>);
+	int solveProcessConflict(std::vector<int> processes);
 };
 
 

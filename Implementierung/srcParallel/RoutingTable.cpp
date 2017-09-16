@@ -8,17 +8,21 @@ All used Maps are licensed under the Open Street Maps License.
 
 #############################################*/
 
+//TODO WIEDER EINKOMMENTIEREN
+
 #include "RoutingTable.h"
 
 #include <boost/graph/use_mpi.hpp>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
+
 #include <boost/serialization/vector.hpp>
-//#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/distributed/mpi_process_group.hpp>
 #include <boost/graph/distributed/adjacency_list.hpp>
 //#include <boost/test/minimal.hpp>
+
 
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -26,10 +30,8 @@ All used Maps are licensed under the Open Street Maps License.
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
-
 using namespace boost;
-using boost::graph::distributed::mpi_process_group;
-
+//using boost::graph::distributed::mpi_process_group;
 
 //Reverse Queue
 std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
@@ -51,76 +53,6 @@ std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
 //Comperator that compares two pairs by it second value in ascending
 bool RoutingTable::comp(const std::pair<int, float> &a, const std::pair<int, float> &b) {
 	return a.second < b.second;
-}
-
-//TODO
-void RoutingTable::insertProcessRoutes(std::pair<int, std::vector<std::pair<int, int>>> map)
-{
-	processRoutesMap[map.first] = map.second;
-}
-
-//Returns connections used in Simulation.cpp
-std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> RoutingTable::getProcessConnectionVectors()
-{
-	std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> connectionPair;
-
-	int rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-	std::vector<int> localVertices;
-
-	//Get vertecies which are in this process by reconstructing routes via routing table
-	for (const std::vector<int> &vector : processRoutingMatrix) {
-		//Go through every vertex in the vector
-		for (const int &vertex : vector) {
-			//If this vertex is not yet contained in localVertices
-			if (std::find(localVertices.begin(), localVertices.end(), vertex) == localVertices.end()) {
-				//Add vertex localVertices
-				localVertices.push_back(vertex);
-			}
-		}
-	}
-
-	//first int -> processID, second int -> edgeID
-	std::map<int, std::vector<int>> incomingEdges;
-	std::map<int, std::vector<int>> outgoingEdges;
-
-	//Map which contains every vertex of the graph
-	std::map<int, Vertex*> globalVerticesMap = _graph->getVertexMap();
-
-	//Go through vertices of the local process and add the edges attached to them 
-	for (int &vertexID : localVertices) {
-		//Get every outgoing edge of current vertex
-		for (Edge* &edge : globalVerticesMap[vertexID]->getOutgoingEdges()) {
-
-			Vertex* currentEndVertex = edge->getVertices().second;
-
-			//If the endVertex of the edge is not inside this process (localVertices)
-			if (std::find(localVertices.begin(), localVertices.end(), currentEndVertex->getID()) == localVertices.end()) {
-
-				//TODO
-				int currentEndVertexProcessID;
-				//Add both edges of the same street between the two vertices to the proper vector
-				outgoingEdges[currentEndVertexProcessID].push_back(edge->getID());
-				incomingEdges[currentEndVertexProcessID].push_back(currentEndVertex->outgoingNeighbor(vertexID)->getID());
-			}
-		}
-	}
-
-	//Sort vectors in ascending order
-	for (auto &v : incomingEdges) {
-		std::sort(v.second.begin(), v.second.end(), std::less<int>());
-	}
-
-	//Sort vectors in ascending order
-	for (auto &v : outgoingEdges) {
-		std::sort(v.second.begin(), v.second.end(), std::less<int>());
-	}
-
-	connectionPair.first = incomingEdges;
-	connectionPair.second = outgoingEdges;
-
-	return connectionPair;
 }
 
 //Templates for the Distance heuristic, used for shortest paths A_star
@@ -173,6 +105,7 @@ float RoutingTable::getCost(int originID, int destID)
 The Constructor for the Routingtable, that will calculate each Route parallel but the number of Routes sequential
 */
 RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
+
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> _spawner = graph->getSpawner();
@@ -183,6 +116,7 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors) {
 The Constructor for the Routingtable, that will calculate each Route sequential (used for sequential distributed calculations
 */
 RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<int, std::map<int, std::queue<int>>> routingMatrixP, std::map<int, std::map<int, float>> costs) {
+
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	routingMatrix = routingMatrixP;
@@ -193,6 +127,7 @@ RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::map<in
 The Constructor for the Routingtable, that will calculate each Route sequential (used for sequential distributed calculations
 */
 RoutingTable::RoutingTable(Graph* graph, int numberNearestNeighbors, std::vector<int> verticesID) {
+
 	_graph = graph;
 	_numberNearestNeighbors = numberNearestNeighbors;
 	std::vector<Spawner*> spawner;
@@ -469,6 +404,7 @@ int get_vertex_name(Vertex v, const Graph& g, std::vector<int> vertex_names)
 	return vertex_names[g.distribution().global(owner(v), local(v))];
 }
 
+//TODO WIEDER EINKOMMENTIEREN
 /*
 Parallelism which calculates each Route parallel but the number of Routes sequential
 */
@@ -533,6 +469,7 @@ void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 			/*This part is crucial. Since the properties of The graph are distributed, because the Graph itself is distributed, the
 			correct properties, in this case the predecessor of the shortest route is only stored in its owner. Every other process
 			probably has a ghost value and the correct value must be requested.*/
+
 			request(parents, v);
 			//After the request is made, it is necessary to synchronize the property map to get the value from its owner
 			synchronize(parents);

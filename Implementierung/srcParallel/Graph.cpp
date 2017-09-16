@@ -14,10 +14,8 @@ All used Maps are licensed under the Open Street Maps License.
 #include "VertexFileReader.h"
 #include "EdgeFileReader.h"
 #include "main.h"
+#include "mpi.h"
 #include <limits.h>
-
-
-
 
 typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
@@ -26,6 +24,8 @@ typedef std::vector<Edge*> edgeContainer;
 
 Graph::Graph()
 {
+	MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
+
 	_vertices = readVertexFile("../../dev/OutputMap/nodes");
 	_edges = calculateEdges(_vertices, "../../dev/OutputMap/edges");
 	connectVertices(_edges);
@@ -88,7 +88,6 @@ std::vector<Vertex*> Graph::getVertices()
 	return _vertices;
 }
 
-
 void Graph::initGraphProperties() {
 	int maxX = INT_MIN;
 	int maxY = INT_MIN;
@@ -120,7 +119,7 @@ float Graph::distance(int vertex1, int vertex2, std::queue<int> route) {
 	int origin = vertex1;
 	//Collect the sum length of all Edges on the route
 	while (route.size() > 0) {
-		distance +=_vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
+		distance += _vertexMap[origin]->outgoingNeighbor(route.front())->getLength();
 		origin = route.front();
 		if (route.front() == vertex2)  break;
 		route.pop();
@@ -143,7 +142,7 @@ void Graph::addWeightToTimeTables(int startID, int destID, int currentTimeTableI
 		//Add Value to the timetable at the calculated index
 		_vertexMap[origin]->outgoingNeighbor(tempgoal)->addWeightTimetable(timetableValuePair.first, timetableValuePair.second);
 		origin = tempqueue.front();
-		if(tempqueue.front() == route.back()) return;
+		if (tempqueue.front() == route.back()) return;
 		tempqueue.pop();
 	}
 }
@@ -156,16 +155,16 @@ void Graph::createTrafficLights() {
 		/*Traffic lights will always be green when there is only one one effektive direction and/or street.
 		Otherwise handle situation for a crossing and T-Road
 		*/
-		if(inEdges.size() > 1){
+		if (inEdges.size() > 1) {
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[1]->getID()));
 		}
-		if (inEdges.size() == 4 ) {
+		if (inEdges.size() == 4) {
 			tLMap.push_back(std::make_pair(inEdges[2]->getID(), inEdges[3]->getID()));
 		}
 		if (inEdges.size() == 3) {
 			tLMap.push_back(std::make_pair(inEdges[2]->getID(), inEdges[2]->getID()));
 		}
-		else if (inEdges.size() == 1){
+		else if (inEdges.size() == 1) {
 			tLMap.push_back(std::make_pair(inEdges[0]->getID(), inEdges[0]->getID()));
 		}
 
@@ -178,8 +177,8 @@ void Graph::createTrafficLights() {
 	}
 }
 
-std::pair<int,int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
-	return std::make_pair(intitialTimetableIndex + (totalDist/ _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
+std::pair<int, int> Graph::calculateTimetableValues(int intitialTimetableIndex, float totalDist) {
+	return std::make_pair(intitialTimetableIndex + (totalDist / _CAR_SPEED_PER_TICK), _CAR_RELEVANCE);
 }
 
 int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTableIndex, std::queue<int> route) {
@@ -198,10 +197,10 @@ int Graph::getSumWeightFromTimeTables(int startID, int destID, int currentTimeTa
 		timeTableValues += _vertexMap[origin]->outgoingNeighbor(tempgoal)->
 			getWeightTimetable(currentTimeTableIndex
 				+ (totaldistance / _CAR_SPEED_PER_TICK));
-			origin = tempqueue.front();
-			//reached the destination
-			if (tempqueue.front() == route.back()) return timeTableValues;
-			tempqueue.pop();
+		origin = tempqueue.front();
+		//reached the destination
+		if (tempqueue.front() == route.back()) return timeTableValues;
+		tempqueue.pop();
 	}
 	return timeTableValues;
 }
@@ -223,3 +222,181 @@ int Graph::getNumberEdges()
 {
 	return _edges.size();
 }
+
+/*
+############################
+		FOR PARALLEL
+		SIMULATION
+############################
+*/
+
+/*
+	Initializes local vertex and edge vectors and maps
+*/
+void Graph::InitLocalVerticesEdges()
+{
+	//Get all spawners in a map
+	std::map<int, Spawner*> globalSpawnerMap = createSpawnerMap();
+
+	//id, vertex
+	std::map<int, Vertex*> localVertexMap;
+	//id, edge
+	std::map<int, Edge*> localEdgeMap;
+
+	std::vector<Edge*> localEdges;
+	std::vector<Vertex*> localVertices;
+	std::vector<Spawner*> localSpawners;
+
+	//Go through every vertex of the map and filter all relevant local vertices and edges
+	for (std::pair<const int, int> &processPair : _vertexProcessMap) {
+		//If vertex is a local vertex
+		if (_rank == processPair.second) {
+
+			//Get vertex pointer and incoming edges attached to it
+			Vertex* vertex = _vertexMap.find(processPair.first)->second;
+
+			//Get only incoming edges
+			std::vector<Edge*> incomingEdges = vertex->getIncomingEdges();
+
+			//Iterate through edges attached to vertex
+			for (std::vector<Edge*>::iterator edgeIt = incomingEdges.begin(); edgeIt != incomingEdges.end(); edgeIt++) {
+				//Push edge into vector and map with ID
+				localEdges.push_back(*edgeIt);
+				localEdgeMap[(*edgeIt)->getID()] = *edgeIt;
+			}
+
+			//Map vertex int to vertex pointer
+			localVertices.push_back(vertex);
+			localVertexMap[processPair.first] = vertex;
+
+			//If this vertex is a spawner add it to the spawner vector
+			if (globalSpawnerMap.find(processPair.first) != globalSpawnerMap.end()) {
+				localSpawners.push_back((Spawner*)vertex);
+			}
+		}
+	}
+
+	/*
+		Assign each vertex/map
+	*/
+	_localVertexMap = localVertexMap;
+	_localEdgeMap = localEdgeMap;
+
+	_localVertices = localVertices;
+	_localEdges = localEdges;
+	_localSpawners = localSpawners;
+}
+
+
+void Graph::calculateVertexProcessMap()
+{
+	//Assign new map with resolved conflicts
+	_vertexProcessMap = solveVertexProcessConflicts(_vertexProcessConflictMap);
+}
+
+//Insert vertexID and a process claiming this vertex
+void Graph::insertVertexProcessPair(int vertexID, int processID) {
+	_vertexProcessConflictMap[vertexID].push_back(processID);
+}
+
+//Assigns every Vertex a single processID
+std::map<int, int> Graph::solveVertexProcessConflicts(std::map<int, std::vector<int>> vertexProcessesMap) {
+
+	/*
+	first int -> vertex
+	second int -> process
+	*/
+	std::map<int, int> procVertexMap;
+
+	//Check if vertex has already been assigned to a process before
+	for (auto &conflictVertexMap : vertexProcessesMap) {
+		//If a conflict is found find the process to claim this vertex
+		if (conflictVertexMap.second.size() > 1) {
+			//SOLVE CONFLICT
+			procVertexMap[conflictVertexMap.first] = solveProcessConflict(conflictVertexMap.second);
+		}
+		else {
+			//If only one process exists
+			procVertexMap[conflictVertexMap.first] = conflictVertexMap.second.front();
+		}
+	}
+	return procVertexMap;
+}
+
+int Graph::solveProcessConflict(std::vector<int> processes) {
+	return *std::max_element(processes.begin(), processes.end());
+}
+
+/*
+	Returns connections used in Simulation.cpp
+	first map -> incoming
+	second map -> outgoing
+*/
+std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> Graph::getProcessConnectionVectors()
+{
+
+	//first int -> processID, second int -> edgeID
+	std::map<int, std::vector<int>> incomingEdges;
+	std::map<int, std::vector<int>> outgoingEdges;
+
+	//## Check vertices and assign each edge to a processID ##
+
+	//Go through vertexMap of the local process and add the edges attached to them 
+	for (std::pair<const int, Vertex*> &vertexPair : _localVertexMap) {
+
+		std::vector<Edge*> out = vertexPair.second->getOutgoingEdges();
+
+		//Get every outgoing edge of current vertex
+		for (Edge* &edge : out) {
+			//Get ID and Process of Vertex
+			int endVertexID = edge->getVertices().second->getID();
+			int endVertexProcess = _vertexProcessMap[endVertexID];
+
+			//VERTEX IN DIFFERENT PROCESS
+			if (endVertexProcess != _rank) {
+
+				int reverseEdgeID = vertexPair.second->incomingNeighbor(endVertexID)->getID();
+
+				//Add both edges of the same street between the two vertices to the correct vector
+				outgoingEdges[endVertexProcess].push_back(edge->getID());
+				incomingEdges[endVertexProcess].push_back(reverseEdgeID);
+			}
+		}
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : incomingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	//Sort vectors in ascending order
+	for (auto &v : outgoingEdges) {
+		std::sort(v.second.begin(), v.second.end(), std::less<int>());
+	}
+
+	return std::make_pair(incomingEdges, outgoingEdges);
+}
+
+std::pair<std::map<int, Vertex*>, std::map<int, Edge*>> Graph::getLocalVertexEdgeMaps()
+{
+	return std::make_pair(_localVertexMap, _localEdgeMap);
+}
+
+std::pair<std::vector<Vertex*>, std::vector<Edge*>> Graph::getLocalVerticesEdges()
+{
+	return std::make_pair(_localVertices, _localEdges);
+}
+
+std::vector<Spawner*> Graph::getLocalSpawners()
+{
+	return _localSpawners;
+}
+
+
+
+
+
+
+
+
+

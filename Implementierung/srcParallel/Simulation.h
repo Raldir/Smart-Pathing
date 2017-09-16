@@ -16,8 +16,7 @@ public:
 	Write down the load of each road of the graph into a file of the current tick
 	*/
 	void writeResultsCurrentTick();
-
-
+	
 private:
 
 	/*
@@ -56,12 +55,29 @@ private:
 	Graph* _graph;
 	int _currentTick;
 
+	//All local Vertices and Edges to iterate through in Update
+	std::vector<Edge*> localEdges;
+	std::vector<Vertex*> localVertices;
+	//TODO
+	std::vector<Spawner*> localSpawners;
+
+	//All Edges and Vertices mapped to their ID for easier access
+	std::map<int, Edge*> localEdgeMap;
+	std::map<int, Vertex*> localVertexMap;
+
 	//For Parallelisation
 	int* receive_displs;
 	int* receive_elementC;
 	int* receive_buf;
+
 	void fillEdgeSpaceSendBuffer();
 	void exchangeEgdeFreeSpace();
+
+	/*
+		first int -> process
+		second int -> (outgoing) map of edges and free space
+	*/
+	std::map<int, std::map<int,int>> getEdgeFreeSpaceMaps();
 
 	void sendCarInformation();
 	void receiveCarInformation();
@@ -74,6 +90,12 @@ private:
 	*/
 	std::map<int, std::vector<int>> incomingConnections;
 	std::map<int, std::vector<int>> outgoingConnections;
+
+	void InitEdgeFreeSpaceBuffers();
+	//Init outgoing and incoming connections
+	void InitConnections();
+	//Init localEdge and vertices
+	void InitLocalVectors();
 
 	//Vectors of vectors of pointers to buffer for information about other processes edges
 	/*
@@ -90,10 +112,7 @@ private:
 	/*
 	Request arrays for Waitall
 	*/
-	MPI_Request *req = new MPI_Request[outgoingConnections.size() + incomingConnections.size()];
+	MPI_Request *req;
 	int reqCounter;
-
-	void InitEdgeFreeSpaceBuffers();
-	void InitConnections(std::map<int,int> vertexVector);
 };
 
