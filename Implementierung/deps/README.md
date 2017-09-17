@@ -21,8 +21,8 @@ Since the normal Lib does not build the mpi libraries it is
 needed to build them manually:
 1. run bootstrap.sh
 2. add at the bottom of project-config.jam: using mpi ;
-3. run .\b2
 4. ./b2 stage threading=multi link=shared
+
 Now there should be a folder called stage with all libraries, including
 the mpi library and parallel graph library.
 Both Libraries and serialization/vector.hpp are required to run the parallel RoutingTable calculations with Parallel BGL.
