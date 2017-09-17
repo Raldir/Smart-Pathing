@@ -14,7 +14,7 @@ LIBSL =stage/lib -lboost_serialization -lboost_system -lboost_mpi -lboost_graph_
 FLAGS = -Wl,-rpath=$(LIBS)stage/lib
 
 
-TARGET = example2
+TARGET = simulation
 
 program: $(SRC)
 	$(CC) -I$(LIBS) -L$(LIBS)$(LIBSL) $(FLAGS) $(SRC) -o $(TARGET)

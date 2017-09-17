@@ -1,7 +1,8 @@
 # Content of the deps directory
 
-This directory contains dependencies to third-party code.
-Scripts to download code and build (if possible), otherwise open source compatible code can be stored here.
+This directory contains instructions for including third-party code.
+The used open-source libraries where to big to include, we added a description where
+to get them from.
 
 ## Needed Library for extracting Edges and Nodes form .osm:
 

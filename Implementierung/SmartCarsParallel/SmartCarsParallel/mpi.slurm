@@ -20,4 +20,4 @@ then
 fi
 
 srun hostname
-mpiexec ../../srcParallel/example2
+mpiexec ../../srcParallel/simulation

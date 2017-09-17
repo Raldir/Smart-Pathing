@@ -1,0 +1,120 @@
+\documentclass[paper=A4,pagesize=auto,12pt,headinclude=true,footinclude=true,BCOR=0mm,DIV=calc]{scrartcl}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage[scaled]{uarial}
+\usepackage{blindtext}
+\usepackage{hyperref}
+\usepackage{eurosym}
+\usepackage{color}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{wrapfig}
+\usepackage{setspace}
+\usepackage[font=footnotesize]{caption}
+\usepackage[format=plain,
+justification=RaggedRight,
+singlelinecheck=false]
+{caption}
+\usepackage{textcomp}
+\geometry{
+	left=2.5cm,
+	right=2.5cm,
+	top=2.5cm,
+	bottom=2cm,
+}
+\makeatletter
+\newcommand{\MSonehalfspacing}{%
+	\setstretch{1.44}%  default
+	\ifcase \@ptsize \relax % 10pt
+	\setstretch {1.44}%
+	\or % 11pt
+	\setstretch {1.44}%
+	\or % 12pt
+	\setstretch {1.44}%
+	\fi
+}
+\MSonehalfspacing
+\setlength{\parindent}{0pt}
+
+\begin{document}
+	
+	\title{Smart Cars\\
+	\small{Ausarbeitung im Zuge des Praktikums Parallele Programmierung}}
+	\author{\textbf{Rami Aly, Christoph Hueter}\\
+	\\University of Hamburg}
+
+	\maketitle
+	
+	\newpage
+	
+	\section{Abstract}
+	In dieser Arbeit wird die parallelisierte intelligente Wegfindung und Bewegung von Objekten durch einen Graphen für den Anwendungsbereich des Hochleistungsrechnen simuliert.\\
+	
+	Hierfür wurde das Programm in zwei Teile unterteilt. Im ersten Abschnitt wird eine Routingtable erzeugt, eine Tabelle in der für selektierte Knoten der optimale Pfad und dazugehörige Eigenschaften zu allen Anderen ausgewählten Knoten gespeichert wird. Zwei implementierte Parallelisierungsstrategien werden miteinander verglichen und Verwendungszwecke erörtert.
+	
+	Abschließend wird die parallelisierte Bewegung der Objekte im Graphen simuliert. Der Pfad des Objektes wird in Abhängigkeit der Pfade aller weiteren Autos gewählt. Ziel hierbei ist es, alternative Pfade zu erkennen, auf denen ein Auto sein Ziel trotz längerer Strecke schneller erreichen kann.
+	
+	
+	\newpage
+	
+	\tableofcontents 
+	
+	\newpage
+	\section{Selecting features} 
+	
+	
+	\section{Removing irrelevant information from selected features}
+	\label{sec: dictionary}
+	\begin{figure}[H]
+		%\subfigure{\label{konfiguration}\includegraphics[scale = 0.40]{images/Woerterbuchbildung.png}}
+		%\caption{Dictionary calculation visualized}
+		% \cite
+	\end{figure}
+	
+	
+	\newpage
+	
+	\begin{thebibliography}{xxxxxx}
+		\bibitem [1] {DukeUniversity} David P. Williams "Gaussian Processes" (2006) \url{http://people.ee.duke.edu/~lcarin/David1.27.06.pdf}
+		\bibitem [2] {ApproximateAnyFunction}  Cybenko., G. (1989) "Approximations by superpositions of sigmoidal functions", Mathematics of Control, Signals, and Systems \url{http://deeplearning.cs.cmu.edu/pdfs/Cybenko.pdf}
+		\bibitem[3] {EvaluateNetwork} Marina Sokolova, Guy Lapalme "A systematic analysis of performance measures for classification tasks" \url{http://rali.iro.umontreal.ca/rali/sites/default/files/publis/SokolovaLapalme-JIPM09.pdf}
+	
+	\end{thebibliography}
+	
+	
+	\section{Source Code, used external Libraries and Repositories}
+	\paragraph{Source Code}
+	Github: \url{https://github.com/Crigges/InformatiCup2017}\\
+	\paragraph{Repository Dataset}
+	\label{src:Repositories}
+	\url{https://github.com/InformatiCup/InformatiCup2017/tree/master/additional_data_sets}	\\
+	
+	\label{src:TrainingRepositories}
+	\paragraph{Training Repositories}
+	Exact repositories used fo training can be found in the document TrainingRepositories.txt.
+	
+	\label{src:TestRepositories}
+	\paragraph{Test Repositories}
+	Every testrepository can be found in the document TestRepositories.txt.
+	\paragraph{Intuitive Classification}
+	\label{src:ClassifyTestRepositories}
+	intuitve classification of the repositories can be found in the document IntuitiveClassificationTestRepositories.txt.
+	
+	\label{src:recordingsOfResults}
+	\paragraph{Recording of Results}
+	Some recordings of our (non optimal) results are located in recordedResults.txt
+	
+	
+\end{document}
+
+
+

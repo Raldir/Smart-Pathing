@@ -1,0 +1,11 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Abstract}{2}{section.1}
+\contentsline {section}{\numberline {2}Selecting features}{4}{section.2}
+\contentsline {section}{\numberline {3}Removing irrelevant information from selected features}{4}{section.3}
+\contentsline {section}{\numberline {4}Source Code, used external Libraries and Repositories}{5}{section.4}
+\contentsline {paragraph}{\nonumberline Source Code}{5}{section*.4}
+\contentsline {paragraph}{\nonumberline Repository Dataset}{5}{section*.5}
+\contentsline {paragraph}{\nonumberline Training Repositories}{5}{section*.6}
+\contentsline {paragraph}{\nonumberline Test Repositories}{5}{section*.7}
+\contentsline {paragraph}{\nonumberline Intuitive Classification}{5}{section*.8}
+\contentsline {paragraph}{\nonumberline Recording of Results}{5}{section*.9}
