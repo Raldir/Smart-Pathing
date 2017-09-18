@@ -37,9 +37,12 @@ Simulation::Simulation(int world_size, int rank)
 
 	//Auskommentieren falls Boost parallelisierung verwendet wird
 	parallelRouting();
+	//system("Pause");
 
 	//Auskommentieren falls normale Parallelisierung verwendet wird
 	/*_routingTable = new RoutingTable(_graph, _NEAREST_NEIGHBOR);*/
+
+
 	initSpawner();
 
 	_graph->calculateVertexProcessMap();
@@ -318,7 +321,7 @@ void Simulation::nextTick()
 
 	std::cout << "Edge update Phase 2 completed" << '\n';
 	//spawnerContainer spawners = _graph->getSpawner();
-	for (spawnerContainer::iterator it2 = localSpawners.begin(); it2 != localSpawners.end(); it2++) {
+ 	for (spawnerContainer::iterator it2 = localSpawners.begin(); it2 != localSpawners.end(); it2++) {
 		(*it2)->Update(timeStamp);
 	}
 	std::cout << "Tick " << _currentTick << "finished" << '\n';

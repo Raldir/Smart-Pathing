@@ -1,0 +1,8 @@
+Konkretes Beispiel: Ein Akteur möchte vom Informatikum zum DKRZ fahren. Dem System sind sechs
+ verschiedene Routen bekannt und der Akteur möchte möglichst schnell sein Ziel erreichen.
+
+
+
+
+Folie 8
+Auswahl des Zieles soll Ballungsräume simulieren, weshalb bestimmte Spawner wahrscheinlicher als Ziel ausgewählt werden
