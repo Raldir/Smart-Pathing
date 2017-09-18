@@ -149,7 +149,7 @@ singlelinecheck=false]
 			\caption{Konzept der Scatterv/Gatherv Parallelisierung}
 		\end{figure}
 	
-	\subsubsection{Berechnung parallel, Sequenziell}
+	\subsubsection{Berechnung parallel, nacheinander}
 	Bei der alternativen Parallelisierungsmethode (Methode B) wird der Graph auf die Prozesse aufgeteilt \ref{boostGraph} und die Berechnung des optimalen Pfades parallelisiert durchgeführt und dies für alle Paare von S nacheinander ausgeführt. Es wird also der Algorithmus selbst parallelisiert, während das Programm selbst sequenziell läuft. Zur Implementierung haben wir auf die Parallel BGL zurückgegriffen [\cite{ParallelBGL}. Die Library verwendet zur Kommunikation Boost::MPI. Da ein parallelisierter A* nicht in der Library vorhanden war, haben wir auf den Dijkstra-Algorithmus zurückgegriffen.
 	
 	Zu Beginn wird der Graph auf alle Prozesse möglichst gleichmäßig aufgeteilt \ und alle Eigenschaften die in dem Graph gespeichert werden sollen, definiert. In unserem Falle ist der Vorgänger eines Knotens $v \in V$ eine solche Eigenschaft, die von dem Dijkstra-Algorithmus gesetzt wird.

@@ -27,17 +27,19 @@ Simulation::Simulation(int world_size, int rank)
 {
 	int root = 0;
 
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
+	std::cout << "hello";
 	_currentTick = 0;
 	_rank = rank;
 	_world_size = world_size;
 	_graph = new Graph();
+	std::cout << "hello";
 	clock_t begin = clock();
 
 	//Auskommentieren falls Boost parallelisierung verwendet wird
 	parallelRouting();
-	system("Pause");
+
+	//Auskommentieren falls normale Parallelisierung verwendet wird
+	/*_routingTable = new RoutingTable(_graph, _NEAREST_NEIGHBOR);*/
 	initSpawner();
 
 	_graph->calculateVertexProcessMap();

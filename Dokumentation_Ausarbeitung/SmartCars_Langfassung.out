@@ -7,7 +7,7 @@
 \BOOKMARK [1][-]{section.5}{Parallelisierung}{}% 7
 \BOOKMARK [2][-]{subsection.5.1}{RoutingTable}{section.5}% 8
 \BOOKMARK [3][-]{subsubsection.5.1.1}{Berechnung sequenziell, parallelisiert}{subsection.5.1}% 9
-\BOOKMARK [3][-]{subsubsection.5.1.2}{Berechnung parallel, Sequenziell}{subsection.5.1}% 10
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Berechnung parallel, nacheinander}{subsection.5.1}% 10
 \BOOKMARK [2][-]{subsection.5.2}{Simulation}{section.5}% 11
 \BOOKMARK [1][-]{section.6}{Leistungsanalyse und Skalierbarkeit}{}% 12
 \BOOKMARK [2][-]{subsection.6.1}{RoutingTable}{section.6}% 13
