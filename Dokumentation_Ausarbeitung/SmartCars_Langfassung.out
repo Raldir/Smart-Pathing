@@ -1,4 +1,17 @@
 \BOOKMARK [1][-]{section.1}{Abstract}{}% 1
-\BOOKMARK [1][-]{section.2}{Selecting features}{}% 2
-\BOOKMARK [1][-]{section.3}{Removing irrelevant information from selected features}{}% 3
-\BOOKMARK [1][-]{section.4}{Source Code, used external Libraries and Repositories}{}% 4
+\BOOKMARK [1][-]{section.2}{Kontext und Problembeschreibung}{}% 2
+\BOOKMARK [1][-]{section.3}{Modellbeschreibung}{}% 3
+\BOOKMARK [1][-]{section.4}{Sequentielles Programm}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{L\366sungsansatz}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Implementierung}{section.4}% 6
+\BOOKMARK [1][-]{section.5}{Parallelisierung}{}% 7
+\BOOKMARK [2][-]{subsection.5.1}{RoutingTable}{section.5}% 8
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Berechnung sequenziell, parallelisiert}{subsection.5.1}% 9
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Berechnung parallel, Sequenziell}{subsection.5.1}% 10
+\BOOKMARK [2][-]{subsection.5.2}{Simulation}{section.5}% 11
+\BOOKMARK [1][-]{section.6}{Leistungsanalyse und Skalierbarkeit}{}% 12
+\BOOKMARK [2][-]{subsection.6.1}{RoutingTable}{section.6}% 13
+\BOOKMARK [3][-]{subsubsection.6.1.1}{Methode A}{subsection.6.1}% 14
+\BOOKMARK [3][-]{subsubsection.6.1.2}{Methode B}{subsection.6.1}% 15
+\BOOKMARK [1][-]{section.7}{Verbesserungen und Ausblick}{}% 16
+\BOOKMARK [1][-]{section.8}{Removing irrelevant information from selected features}{}% 17

@@ -17,7 +17,6 @@ All used Maps are licensed under the Open Street Maps License.
 #include <boost/throw_exception.hpp>
 
 #include <boost/serialization/vector.hpp>
-#include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/distributed/mpi_process_group.hpp>
 #include <boost/graph/distributed/adjacency_list.hpp>
