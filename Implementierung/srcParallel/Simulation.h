@@ -58,7 +58,6 @@ private:
 	//All local Vertices and Edges to iterate through in Update
 	std::vector<Edge*> localEdges;
 	std::vector<Vertex*> localVertices;
-	//TODO
 	std::vector<Spawner*> localSpawners;
 
 	//All Edges and Vertices mapped to their ID for easier access

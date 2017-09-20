@@ -14,7 +14,6 @@ Car::Car(int overfl, int distTravelled, std::queue<int> r) : overflow(overfl), d
 
 Car::~Car()
 {
-	//TODO
 }
 
 void Car::Update(float nextCarPosition) {

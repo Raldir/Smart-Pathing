@@ -323,11 +323,8 @@ void Edge::notifyVertex() {
 	//If a car has reached the end of the street with a small margin
 	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH * 0.98) {
 
-		//std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
+		std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
 		endVertex->transferCar(_ID);
-	}
-	else {
-		std::cout << "Edge " << _ID << " to vertex " << endVertex->getID() << ", transfer not possible!" << std::endl;
 	}
 }
 

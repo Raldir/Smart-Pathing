@@ -68,7 +68,7 @@ void Vertex::transferCar(int incomingEdgeID) {
 
 			//Is there free space
 			if (edgeFreeSpaceMap[edgeID] > 0) {
-				(edgeFreeSpaceMap[edgeID])--;
+				edgeFreeSpaceMap[edgeID]--;
 
 				//Take car from edge and remove vertex from route
 				takeCar(incomingEdgeID);

@@ -270,8 +270,9 @@ void Graph::InitLocalVerticesEdges()
 			localVertexMap[processPair.first] = vertex;
 
 			//If this vertex is a spawner add it to the spawner vector
-			if (globalSpawnerMap.find(processPair.first) != globalSpawnerMap.end()) {
-				localSpawners.push_back((Spawner*)vertex);
+			std::map<int, Spawner*>::iterator spawner = globalSpawnerMap.find(processPair.first);
+			if (spawner != globalSpawnerMap.end()) {
+				localSpawners.push_back((*spawner).second);
 			}
 		}
 	}
@@ -311,20 +312,22 @@ std::map<int, int> Graph::solveVertexProcessConflicts(std::map<int, std::vector<
 	//Check if vertex has already been assigned to a process before
 	for (auto &conflictVertexMap : vertexProcessesMap) {
 		//If a conflict is found find the process to claim this vertex
-		if (conflictVertexMap.second.size() > 1) {
-			//SOLVE CONFLICT
-			procVertexMap[conflictVertexMap.first] = solveProcessConflict(conflictVertexMap.second);
-		}
-		else {
-			//If only one process exists
-			procVertexMap[conflictVertexMap.first] = conflictVertexMap.second.front();
-		}
+		procVertexMap[conflictVertexMap.first] = solveProcessConflict(conflictVertexMap.first, conflictVertexMap.second);
 	}
 	return procVertexMap;
 }
 
-int Graph::solveProcessConflict(std::vector<int> processes) {
-	return *std::max_element(processes.begin(), processes.end());
+int Graph::solveProcessConflict(int vertexID, std::vector<int> processes) {
+	int world_size;
+	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+	std::sort(processes.begin(), processes.end());
+	processes.erase(std::unique(processes.begin(), processes.end()), processes.end());
+
+	int value = vertexID % processes.size();
+
+	//return *std::max_element(processes.begin(), processes.end());
+	return processes[value];
 }
 
 /*
@@ -334,7 +337,6 @@ int Graph::solveProcessConflict(std::vector<int> processes) {
 */
 std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> Graph::getProcessConnectionVectors()
 {
-
 	//first int -> processID, second int -> edgeID
 	std::map<int, std::vector<int>> incomingEdges;
 	std::map<int, std::vector<int>> outgoingEdges;
@@ -364,6 +366,8 @@ std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> Grap
 		}
 	}
 
+	std::cout << _rank << ": got incoming and outgoing edges" << std::endl;
+
 	//Sort vectors in ascending order
 	for (auto &v : incomingEdges) {
 		std::sort(v.second.begin(), v.second.end(), std::less<int>());
@@ -373,6 +377,8 @@ std::pair<std::map<int, std::vector<int>>, std::map<int, std::vector<int>>> Grap
 	for (auto &v : outgoingEdges) {
 		std::sort(v.second.begin(), v.second.end(), std::less<int>());
 	}
+
+	std::cout << _rank << ", globalSpawners: " << _spawner.size() << std::endl;
 
 	return std::make_pair(incomingEdges, outgoingEdges);
 }

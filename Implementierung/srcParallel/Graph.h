@@ -91,7 +91,7 @@ private:
 		second int -> second
 	*/
 	std::map<int, int> solveVertexProcessConflicts(std::map<int, std::vector<int>>);
-	int solveProcessConflict(std::vector<int> processes);
+	int solveProcessConflict(int vertexID, std::vector<int> processes);
 };
 
 

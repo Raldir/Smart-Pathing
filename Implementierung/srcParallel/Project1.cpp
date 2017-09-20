@@ -20,10 +20,12 @@
 
 #include <iostream>
 
-#include <boost/graph/use_mpi.hpp>
+
+//#include <boost/graph/use_mpi.hpp>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
 
+/*
 #ifdef BOOST_NO_EXCEPTIONS
 void
 boost::throw_exception(std::exception const& ex)
@@ -31,7 +33,7 @@ boost::throw_exception(std::exception const& ex)
 	std::cout << ex.what() << std::endl;
 	abort();
 }
-#endif
+#endif*/
 
 using namespace boost;
 
@@ -43,13 +45,6 @@ int main(int argc, char *argv[]) {
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-	std::vector<int> f;
-	f.resize(10);
-
-	for (std::vector<int>::iterator it = f.begin(); it != f.end(); it++) {
-		std::cout << std::distance(it, f.begin());
-	}
 
 	std::cout << "Prozess " << rank << "Worldsize: " << world_size<<std::endl;
 	Simulation simulation(world_size, rank);

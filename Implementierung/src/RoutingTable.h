@@ -12,9 +12,10 @@
 #include <fstream>
 #include <math.h>  
 #include "Graph.h"
+/*
 #include <boost/lambda/lambda.hpp>  // _1
 #include <boost/lambda/bind.hpp>    // bind()
-#include <boost/tuple/tuple_io.hpp>
+#include <boost/tuple/tuple_io.hpp>*/
 
 class Edge;
 class Vertex;
@@ -30,7 +31,6 @@ public:
 	//TODO Mulitple Routenfindungsalgorithmen implementieren
 
 	RoutingTable(Graph* g, int numberNearestNeighbors);
-
 
 	void insertRoute(int originID, int destID, std::queue<int> route);
 	void removeRoute(int originID, int destID);

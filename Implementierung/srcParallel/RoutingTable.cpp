@@ -12,14 +12,13 @@ All used Maps are licensed under the Open Street Maps License.
 
 #include "RoutingTable.h"
 
-#include <boost/graph/use_mpi.hpp>
+/*#include <boost/graph/use_mpi.hpp>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
-
 #include <boost/serialization/vector.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/distributed/mpi_process_group.hpp>
-#include <boost/graph/distributed/adjacency_list.hpp>
+#include <boost/graph/distributed/adjacency_list.hpp>*/
 //#include <boost/test/minimal.hpp>
 
 
@@ -30,7 +29,7 @@ typedef std::vector<Vertex*> vertexContainer;
 typedef std::vector<Spawner*> spawnerContainer;
 
 using namespace boost;
-using boost::graph::distributed::mpi_process_group;
+//using boost::graph::distributed::mpi_process_group;
 
 //Reverse Queue
 std::queue<int> RoutingTable::reverseQueue(std::queue<int> queue)
@@ -190,11 +189,11 @@ void RoutingTable::calculateRoutes(std::vector<Spawner*> _spawner) {
 			try {
 				// call astar 
 				astar_search
-					(g, start,
-						distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
-						(_vertexMap, goal),
-						predecessor_map(&p[0]).distance_map(&d[0]).
-						visitor(astar_goal_visitor<vertex>(goal)));
+				(g, start,
+					distance_heuristic<mygraph_t, float, std::map<int, Vertex*>>
+					(_vertexMap, goal),
+					predecessor_map(&p[0]).distance_map(&d[0]).
+					visitor(astar_goal_visitor<vertex>(goal)));
 
 
 			}
@@ -407,7 +406,7 @@ int get_vertex_name(Vertex v, const Graph& g, std::vector<int> vertex_names)
 /*
 Parallelism which calculates each Route parallel but the number of Routes sequential
 */
-void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
+void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) { /*
 	//Init values of graph(needed since the algorithm uses seperate Graph)
 	std::vector<Spawner*> spawners = _graph->getSpawner();
 	std::vector<Edge*> _edges = _graph->getEdges();
@@ -467,7 +466,9 @@ void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 			std::vector<int> route;
 			/*This part is crucial. Since the properties of The graph are distributed, because the Graph itself is distributed, the
 			correct properties, in this case the predecessor of the shortest route is only stored in its owner. Every other process
-			probably has a ghost value and the correct value must be requested.*/
+			probably has a ghost value and the correct value must be requested.
+
+			WIEDER EINKOMMENTIEREN * /
 
 			request(parents, v);
 			//After the request is made, it is necessary to synchronize the property map to get the value from its owner
@@ -506,7 +507,9 @@ void RoutingTable::calculateRoutesParallel(std::vector<Spawner*> _spawner) {
 			//Kosten müssten noch berechent werden, soll aber für Weiteres nicht wichtig sein.....
 		}
 	}
+	*/
 }
+
 
 //Calculates the k nearest neighbors sequential
 void RoutingTable::calculateKNearest() {
