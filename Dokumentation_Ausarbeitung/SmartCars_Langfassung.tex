@@ -183,7 +183,7 @@ singlelinecheck=false]
 		\caption{Vampir Visualisierung 8 und 16 Prozesse}
 	\end{figure}
 		
-	Negativ aufgefallen ist uns die doch vergleichsweise lange Zeit die benötigt wird, um den Graphen zu erzeugen. Nach Amdahls Gesetz \cite{PaPoBuch} ist der Speedup des gesamten Programmes limitiert durch den sequenziellen Anteil des Programmes, sodass die Effizienz bei niedrigerem Parallelisierungsanteil deutlich geringer ausfällt. Mit einem maximalen Speedup von 5.8 sind die Ergebnisse bei 15 (Efizienz: 0.39) insgesamt jedoch zufriedenstellend.
+	Negativ aufgefallen ist uns die doch vergleichsweise lange Zeit die benötigt wird, um den Graphen zu erzeugen. Nach Amdahls Gesetz \cite{PaPoBuch} ist beim Strong Scaling Speedup des gesamten Programmes limitiert durch den sequenziellen Anteil des Programmes, sodass die Effizienz bei niedrigerem Parallelisierungsanteil deutlich geringer ausfällt. Mit einem maximalen Speedup von 5.8 sind die Ergebnisse bei 15 (Efizienz: 0.39) insgesamt jedoch zufriedenstellend.
 		\label{speedUpA}
 		\begin{figure}[H]
 			\includegraphics[scale = 0.55]{Prasentation/speedupPa.png}
@@ -204,6 +204,8 @@ singlelinecheck=false]
 		\caption{Speedup Methode A}
 	\end{figure}
 	Zu Beginn waren wir darüber recht verwundert, haben uns genauer die von Boost dargestellten Ergebnisse analysiert und gemerkt, dass erwarteter Weise die Dimension des Graphens um ein Vielfaches größer ist. Getestet wurde mit 1 Millionen Knoten und 15 Millionen Kanten\cite{DijkstraBoost}. Anscheinend lohnt es sich erst ab unglaublich großen Graphen die Wegfindung mit dem parallelen Dijksta zu gestalten. Abschließend haben wir einen Graphen mit 16700 Knoten und 39982 Kanten getestet und sind bei 2 Prozessen inzwischen bei einem 'Speedup' von 0.976 anheben, was eine Verbesserung darstellt \ref{speedUpB}.
+	
+	Übersehen sollte man jedoch auch nicht, dass sich Gustafsons Gesetz \cite{PaPoBuch}, also bezüglich des Weak Scalings nicht ohne Weiteres auf unsere Simulation übertragen lässt, da bei einer Vergrößerung der Dimension des Problemes der sequenzielle Teil ebenfalls deutlich komplexer wird, und eine Aussage über das Verhältnis zwischen parallelem und sequenziellen Programm bei komplexer werdendem Problem zusätzlich herausgefunden werden müsste.
 	\subsubsection{Vergleich}
 	Es werden bei beiden Methoden unterschiedliche Probleme in Teilaufgaben zerlegt. Bei Methode A wird das Berechnen der Einträge der Routingtabelle parallelisiert, während in Methode B das Berechnen des kürzesten Pfades parallelisiert wird. Dies wirkt sich signifikant auf die Granularität der Verfahren aus.
 	
@@ -221,6 +223,14 @@ singlelinecheck=false]
 	Während bei dem Sequenziellen Durchlauf 3.5 Sekunden benötigt werden, wird bei 15 Prozessen ein Minimum von 0.604 Sekunden erreicht.
 	\section{Verbesserungen und Ausblick}
 	An vielen verschiedenen Stellen lassen sich noch mögliche Ausbaumöglichkeiten finden. Die Approximation zum bestimmen des Indexes in der Timetable könnte dahingehend optimiert werden, dass genau berechnet wird, welche Ampeln grün sein werden, wenn das Auto dort ankommt und von welchem Typ die Ampel (Kreuzung, T-Straße...). 
+	
+	
+	Darüber hinaus ist der parallelisierte Dijkstra zur Berechnung der Routingtabelle nicht der schnellste parallele Wegfindungsalgorithmus, der von der Parallel BGL zur Verfügung gestellt wird. Hier könnte man überlegen, beispielsweise den Eager Dijkstra Algortihmus oder den Delta-Stepping shortest path Algorithmus zu verwenden, die besseren strong scaling haben.
+	
+	
+	Hinzu kommt die Möglichkeit statt eines Gatherv für alle Prozesse ein Alltoallv zu verwenden, um möglichen Overhead zu reduzieren.
+	
+	Ein weiterer relevanter Aspekt wäre das Aktuallisieren der Werte in den Timetables, nachdem eine Marke gespawned wurde. Bei großer Distanz wird die Heurisik ungenau, auch wenn man sie wie oben vorgeschlagen verbessern sollte. Die Überlegung besteht, den hinzuaddierten Wert bei größerer Distanz zu reduzieren, beispielsweise um $\frac{1}{distance}$.
 	
 	Des Weiteren besteht natürlich die Möglichkeit Teile des Programmes mit OpenMP zu parallelisieren, die über Shared Memory verfügen. MPI würde also nur zur Kommunikation zwischen Prozessen verwendet werden, die nicht über einen gemeinsamen Speicher verfügen.
 	
