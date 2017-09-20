@@ -1,4 +1,4 @@
-# Smart Pather
+# Smart Pathing
 
 This Project is designed to demonstrate a high performance and parallized version of smart pathing in a directed graph.
 
