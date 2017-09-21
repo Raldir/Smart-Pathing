@@ -40,7 +40,7 @@ Simulation::Simulation()
 		timePointBeginning[i] = chrono_t::now();
 		nextTick();
 		timePointEnding[i] = chrono_t::now();
-		//writeResultsCurrentTick();
+		writeResultsCurrentTick();
 
 		std::cout << "#####################################Time after tick " << _currentTick << ": " << std::chrono::duration_cast<std::chrono::duration<double>>(timePointEnding[i] - t1).count() << std::endl;
 
