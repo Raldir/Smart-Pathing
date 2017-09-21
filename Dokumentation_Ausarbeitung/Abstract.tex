@@ -1,0 +1,71 @@
+\documentclass[paper=A4,pagesize=auto,12pt,headinclude=true,footinclude=true,BCOR=0mm,DIV=calc]{scrartcl}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage[scaled]{uarial}
+\usepackage{blindtext}
+\usepackage{hyperref}
+\usepackage{eurosym}
+\usepackage{color}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{wrapfig}
+\usepackage{setspace}
+\usepackage[font=footnotesize]{caption}
+\usepackage[format=plain,
+justification=RaggedRight,
+singlelinecheck=false]
+{caption}
+\usepackage{textcomp}
+\geometry{
+	left=2.5cm,
+	right=2.5cm,
+	top=2.5cm,
+	bottom=2cm,
+}
+\makeatletter
+\newcommand{\MSonehalfspacing}{%
+	\setstretch{1.44}%  default
+	\ifcase \@ptsize \relax % 10pt
+	\setstretch {1.44}%
+	\or % 11pt
+	\setstretch {1.44}%
+	\or % 12pt
+	\setstretch {1.44}%
+	\fi
+}
+\MSonehalfspacing
+\setlength{\parindent}{0pt}
+
+\begin{document}
+	
+	\title{Smart Pathing\\
+	\small{Ausarbeitung im Zuge des Praktikums Parallele Programmierung}}
+	\author{\textbf{Rami Aly, Christoph Hueter}\\
+	\\University of Hamburg}
+
+	\maketitle
+	
+	\section*{Abstract}
+	In dieser Arbeit wird die parallelisierte intelligente Wegfindung und Bewegung von Objekten durch einen Graphen für den Anwendungsbereich des Hochleistungsrechnen simuliert.\\
+	
+	Hierfür wurde das Programm in zwei Teile unterteilt. Im ersten Abschnitt wird eine Routingtable erzeugt, eine Tabelle in der für selektierte Knoten der optimale Pfad und dazugehörige Eigenschaften zu allen Anderen ausgewählten Knoten gespeichert wird. Zwei implementierte Parallelisierungsstrategien werden miteinander verglichen und Verwendungszwecke erörtert.
+	
+	Abschließend wird die parallelisierte Bewegung der Objekte im Graphen simuliert. Der Pfad des Objektes wird in Abhängigkeit der Pfade aller weiteren Autos gewählt. Ziel hierbei ist es, alternative Pfade zu erkennen, auf denen ein Auto sein Ziel trotz längerer Strecke schneller erreichen kann.
+	
+ 
+	
+	
+	
+\end{document}
+
+
+
