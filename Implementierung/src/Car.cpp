@@ -116,8 +116,6 @@ int Car::getCurrentVertexID() {
 		return route.front();
 	}
 	else {
-		std::cout << "empty"<<std::endl;
-
 		return NULL;
 	}
 }

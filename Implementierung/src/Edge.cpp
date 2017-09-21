@@ -64,7 +64,7 @@ void Edge::Update(int currentTick) {
 
 		//Delete car
 		if (car->isMarkedAsDeleted()) {
-			std::cout << "VERTEX " << endVertex->getID() << ", EDGE " << _ID << ", DELETE CAR!" << std::endl;
+			//std::cout << "VERTEX " << endVertex->getID() << ", EDGE " << _ID << ", DELETE CAR!" << std::endl;
 			it2 = copy.erase(it2);
 			carQueue.erase(std::remove(carQueue.begin(), carQueue.end(), car));
 			delete car;
@@ -117,7 +117,7 @@ void Edge::UpdateOverflow() {
 
 			//Delete car
 			if (car->isMarkedAsDeleted()) {
-				std::cout << "VERTEX " << endVertex->getID() << ", EDGE " << _ID << ", DELETE CAR!" << std::endl;
+				//std::cout << "VERTEX " << endVertex->getID() << ", EDGE " << _ID << ", DELETE CAR!" << std::endl;
 				it2 = copy.erase(it2);
 				carQueue.erase(std::remove(carQueue.begin(), carQueue.end(), car));
 				delete car;
@@ -180,8 +180,8 @@ int Edge::getEdgeCapacity() {
 ///Removes first car from queue
 ///</summary>
 Car * Edge::popCar() {
-	std::cout << "DELETED CAR";
-	std::cout << "CarQueue Size " << carQueue.size() << std::endl;
+	//std::cout << "DELETED CAR";
+	//std::cout << "CarQueue Size " << carQueue.size() << std::endl;
 	if (!carQueue.empty()) {
 		//Save pointer for car in front of queue
 		Car* carPtr = *carQueue.begin();
@@ -189,7 +189,7 @@ Car * Edge::popCar() {
 
 		//Remove car from queue
 		//carQueue.pop();
-		std::cout << "CarQueue Size After " << carQueue.size() << std::endl;
+		//std::cout << "CarQueue Size After " << carQueue.size() << std::endl;
 		return carPtr;
 	}
 	else {
@@ -254,7 +254,7 @@ void Edge::printCars() {
 
 	std::deque<Car*> q = carQueue;
 
-	std::cout << "EDGE " << _ID << std::endl;
+	//std::cout << "EDGE " << _ID << std::endl;
 
 	//Iterate through queue and printing cars
 	//Wofür hier eine DoWhile?!?
@@ -316,12 +316,12 @@ void Edge::notifyVertex() {
 	//If a car has reached the end of the street with a small margin
 	if (!carQueue.empty() && getFrontCar()->getCurrentPosition() >= _LENGTH * 0.98) {
 
-		std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
+		//std::cout << "Car transfer initiated by vertex " << endVertex->getID() << " from edge " << _ID << std::endl;
 		//std::cout << "Called Vertex " << endVertex->getID() << "to transfer Car " << this->getFrontCar()->getID() << std::endl;
 		endVertex->transferCar(_ID);
 	}
 	else {
-		std::cout << "Edge " << _ID << " to vertex " << endVertex->getID() << ", transfer not possible!" << std::endl;
+		//std::cout << "Edge " << _ID << " to vertex " << endVertex->getID() << ", transfer not possible!" << std::endl;
 	}
 }
 
