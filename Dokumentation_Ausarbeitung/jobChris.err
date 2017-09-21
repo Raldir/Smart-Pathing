@@ -1,0 +1,76 @@
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+Fatal error in MPI_Init: Internal MPI error!, error stack:
+MPIR_Init_thread(514)....: 
+MPID_Init(365)...........: channel initialization failed
+MPIDI_CH3_Init(104)......: 
+MPID_nem_init(320).......: 
+MPID_nem_ib_init(346)....: Failed to init HCA
+MPID_nem_ib_init_hca(221): No IB device found
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+example2: ../src/measurement/paradigm/mpi/scorep_ipc_mpi.c:179: SCOREP_IpcGroup_GetSize: Assertion `SCOREP_Status_IsMppInitialized()' failed.
+[proxy:0:0@west2] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:909): assert (!closed) failed
+[proxy:0:0@west2] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[proxy:0:0@west2] main (pm/pmiserv/pmip.c:256): demux engine error waiting for event
+srun: error: west2: task 0: Exited with exit code 7
+[mpiexec@west2] HYDT_bscu_wait_for_completion (tools/bootstrap/utils/bscu_wait.c:76): one of the processes terminated badly; aborting
+[mpiexec@west2] HYDT_bsci_wait_for_completion (tools/bootstrap/src/bsci_wait.c:23): launcher returned error waiting for completion
+[mpiexec@west2] HYD_pmci_wait_for_completion (pm/pmiserv/pmiserv_pmci.c:218): launcher returned error waiting for completion
+[mpiexec@west2] main (ui/mpich/mpiexec.c:344): process manager error waiting for completion
+
+real	0m1.425s
+user	0m0.012s
+sys	0m0.004s
